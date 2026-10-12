@@ -19,6 +19,34 @@ de plus en plus difficiles (homophones, pluriels, conjugaison, participes passé
   contenant les mystères résolus, les écus et les objets achetés/portés.
   **📂 Charger** (écran titre ou maison) recharge ce fichier, par exemple sur un autre appareil.
 
+## Répartition des énigmes
+
+### Par type
+
+| Chapitre | Trouver les fautes | Compléter les trous | Réponse à taper | Total |
+|---|---|---|---|---|
+| 1 — Le manoir | 3 | 5 | 2 | 10 |
+| 2 — Le village | 3 | 4 | 3 | 10 |
+| 3 — La gare | 3 | 4 | 3 | 10 |
+| 4 — Le château | 2 | 4 | 4 | 10 |
+| 5 — Le grenier | 2 | 4 | 4 | 10 |
+| **Total** | **13 (26 %)** | **21 (42 %)** | **16 (32 %)** | **50** |
+
+### Par catégorie
+
+| Catégorie | Nb | Énigmes | Notions |
+|---|---|---|---|
+| Homophones grammaticaux | 12 | 1-10, 43, 49 | et/est, a/à, son/sont, on/ont, ces/ses, ou/où, ce/se, c'est/s'est, mes/mais, la/là/l'a, peu/peut, quand/quant, leur/leurs, sans/s'en, dans/d'en, quel que/quelque |
+| Participes passés | 13 | 31-40, 45, 46, 48 | avec être, avec avoir (COD placé avant ou après), voix passive, verbes pronominaux, formes irrégulières |
+| Conjugaison | 10 | 21-30 | -er/-é, présent, imparfait, futur, conditionnel, passé simple, subjonctif, impératif, verbes irréguliers |
+| Pluriels et accords dans le groupe du nom | 8 | 11-18 | pluriels en -al/-ou, œil/yeux, adjectifs de couleur, féminins particuliers, tout/tous/toute/toutes |
+| Orthographe des mots | 5 | 41, 42, 44, 47, 50 | consonnes doubles, accueil, dilemme, -emment, mots invariables, cédille |
+| Nombres en lettres | 2 | 19, 20 | accord de vingt et cent |
+
+Certaines énigmes mélangent plusieurs notions ; elles sont classées selon la notion principale
+(9 : aussi un accord du déterminant ; 21 : aussi un homophone ; 33 : aussi près de/prêt et aucun ;
+49 : aussi l'accord de « eux-mêmes »).
+
 ## Menu de test
 
 Pour tester le jeu sans tout résoudre : bouton **🔑** du menu principal (écran titre), mot de passe `tes1`.
