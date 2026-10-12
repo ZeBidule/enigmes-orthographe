@@ -1,5 +1,5 @@
 /* =====================================================================
-   Les 90 mystères de Plume & Cie.
+   Les 96 mystères de l'histoire de Plume & Cie (+ 10 bonus).
    Chaque énigme a :
    - id   : identifiant stable (sert aux sauvegardes : ne jamais le changer).
    - cat  : catégorie (voir CATEGORIES).
@@ -19,7 +19,9 @@ const CATEGORIES = {
   conjugaison: "Conjugaison",
   accords:     "Pluriels et accords",
   orthographe: "Orthographe des mots",
-  nombres:     "Nombres en lettres"
+  nombres:     "Nombres en lettres",
+  muettes:     "Lettres muettes en fin de mot",
+  sons:        "Un son, plusieurs écritures"
 };
 const CHAPTER_NAMES = [
   "Le mot sur la porte",
@@ -72,15 +74,6 @@ const ALL_PUZZLES = [
     hints:["« se » et « s'est » vont avec un verbe pronominal (se lever, se demander). « ce » et « c'est » montrent quelque chose (= cela).",
            "Les fautes : « Se » (→ Ce), « c'est » (→ s'est), « ce » (→ se). « C'est étrange » est correct."],
     rule:"<b>ce / se</b> : « se » accompagne un verbe (elle se lève) ; « ce » accompagne un nom (ce matin).<br><b>c'est / s'est</b> : « c'est » = cela est ; « s'est » = verbe pronominal (elle s'est levée)." },
-
-  { id:"p06", cat:"homophones", lvl:1, t:"fill", title:"Le sac du facteur",
-    story:"Le facteur est passé au manoir. Il semble fâché.",
-    parts:["J'ai cherché "," clés partout, "," je ne les trouve pas."],
-    blanks:[{o:["mes","mais","met"],a:"mes"},{o:["mes","mais","mets"],a:"mais"}],
-    hints:["« mes » = les miennes. « mais » marque une opposition (= pourtant).",
-           "Réponses : mes, mais."],
-    rule:"<b>mes</b> = les miens (possession).<br><b>mais</b> = pourtant (opposition)." },
-
   { id:"p07", cat:"homophones", lvl:1, t:"fill", title:"La table vide",
     story:"Où était le manuscrit avant le vol ?",
     parts:["Le manuscrit était ",", sur "," table. Quelqu'un "," pris."],
@@ -95,16 +88,6 @@ const ALL_PUZZLES = [
     hints:["« peut » = pouvait. « quand » = lorsque. « quant à » = en ce qui concerne.",
            "Les fautes : « peut » (→ peu), « Quant » (→ Quand), « peu » (→ peut)."],
     rule:"<b>peu / peut</b> : « peut » se remplace par « pouvait ».<br><b>quand / quant</b> : « quand » = lorsque ; « quant à » = pour ce qui est de." },
-
-  { id:"p09", cat:"homophones", lvl:1, t:"type", title:"Les outils",
-    story:"Les jardiniers rangent la remise après l'enquête.",
-    q:"Écris « leur » ou « leurs ».",
-    sentence:"Les jardiniers rangent ___ outils.",
-    answers:["leurs"],
-    hints:["Devant un nom, « leur » s'accorde : un seul objet → leur, plusieurs → leurs.",
-           "« outils » est au pluriel : leurs."],
-    rule:"<b>leur</b> devant un nom singulier, <b>leurs</b> devant un nom pluriel.<br>Devant un verbe, « leur » ne prend jamais de s (je leur parle)." },
-
   { id:"p10", cat:"homophones", lvl:1, t:"fill", title:"La fuite du voleur",
     story:"On comprend enfin comment le voleur est sorti.",
     parts:["Le voleur est parti "," laisser de trace. Il "," est allé par la fenêtre, "," la nuit."],
@@ -136,23 +119,6 @@ const ALL_PUZZLES = [
     hints:["Les adjectifs de couleur s'accordent... sauf ceux qui viennent d'un nom de fruit, de fleur ou d'objet.",
            "Réponses : bleue, marron, orange. (Exceptions : rose, mauve, fauve s'accordent.)"],
     rule:"Adjectif de couleur simple → accord (une robe bleue).<br>Couleur venant d'un nom (marron, orange, cerise) → <b>invariable</b>. Exceptions : rose, mauve, fauve, écarlate." },
-
-  { id:"p14", cat:"accords", lvl:2, t:"type", title:"La vieille dame",
-    story:"Une passante a vu quelqu'un courir avec un gros livre.",
-    q:"Mets au féminin : « un vieil homme ».",
-    sentence:"une ___ femme",
-    answers:["vieille"],
-    hints:["Au masculin : vieux, vieil. Au féminin, on double une lettre.",
-           "Il y a deux « l » et un « e » final."],
-    rule:"<b>vieux / vieil → vieille</b>. De même : beau / bel → belle ; nouveau / nouvel → nouvelle." },
-
-  { id:"p15", cat:"accords", lvl:2, t:"find", title:"Les rues du village",
-    story:"Le professeur lit le journal local.",
-    text:"Les [enfant|enfants] du village jouent dans les rues [étroite|étroites]. Leurs ballons rouges roulent vers les [maison|maisons].",
-    hints:["Après « les », le nom et son adjectif prennent la marque du pluriel.",
-           "Les fautes : enfant, étroite, maison (il manque le « s »)."],
-    rule:"Le nom et l'adjectif s'accordent en genre et en nombre avec le déterminant (les rues étroites)." },
-
   { id:"p16", cat:"accords", lvl:2, t:"fill", title:"Toute la ville",
     story:"Le vol fait le tour du village.",
     parts:[""," les habitants sont là. "," la ville parle du vol. "," les maisons sont fermées. Le chien a mangé "," le gâteau."],
@@ -160,15 +126,6 @@ const ALL_PUZZLES = [
     hints:["« tout » s'accorde avec le nom qui suit : habitants (masc. pl.), ville (fém. sing.)...",
            "Réponses : Tous, Toute, Toutes, tout."],
     rule:"<b>tout</b> (masc. sing.), <b>toute</b> (fém. sing.), <b>tous</b> (masc. pl.), <b>toutes</b> (fém. pl.)." },
-
-  { id:"p17", cat:"accords", lvl:2, t:"fill", title:"La fête du village",
-    story:"Le maire annonce le programme des festivités.",
-    parts:["Le village organise des "," et des "," remplis d'","."],
-    blanks:[{o:["bals","baux"],a:"bals"},{o:["festivals","festivaux"],a:"festivals"},{o:["animals","animaux"],a:"animaux"}],
-    hints:["Bal et festival font partie des exceptions en -al.",
-           "Réponses : bals, festivals, animaux."],
-    rule:"Exceptions en <b>-als</b> : bal, carnaval, chacal, festival, récital, régal." },
-
   { id:"p18", cat:"accords", lvl:2, t:"find", title:"La boulangère",
     story:"La boulangère a vu passer le voleur. Son témoignage écrit contient des erreurs.",
     text:"La boulangère porte une veste [neuf|neuve] et une jupe [long|longue]. Son mari a une chemise [blanc|blanche].",
@@ -183,16 +140,6 @@ const ALL_PUZZLES = [
     hints:["« vingt » et « cent » prennent un s quand ils sont multipliés ET qu'ils terminent le nombre.",
            "Réponses : quatre-vingts (80), deux cents (200), deux cent quatre-vingts (280)."],
     rule:"<b>vingt</b> et <b>cent</b> prennent un s s'ils sont multipliés et en fin de nombre : quatre-vingts, deux cents. Mais : quatre-vingt-deux, deux cent trois." },
-
-  { id:"p20", cat:"nombres", lvl:2, t:"type", title:"L'âge du maire",
-    story:"Le maire est très fier de son âge.",
-    q:"Écris le nombre 80 en lettres.",
-    sentence:"Le maire a ___ ans.",
-    answers:["quatre-vingts"],
-    hints:["Le nombre est « quatre fois vingt », et rien ne vient après.",
-           "Avec un trait d'union et un s à la fin."],
-    rule:"<b>quatre-vingts</b> prend un s, mais <b>quatre-vingt-un</b> n'en prend pas." },
-
   { id:"p21", cat:"conjugaison", lvl:3, t:"fill", title:"Le quai n°3",
     story:"La piste mène à la gare. Un train va bientôt partir !",
     parts:["Le train va ",". Le chef de gare a ",". Il faut "," vite !"],
@@ -209,14 +156,6 @@ const ALL_PUZZLES = [
     hints:["« finir » est un verbe du 2e groupe (finissant).",
            "On ajoute « -iss- » au pluriel."],
     rule:"2e groupe au présent : je finis, tu finis, il finit, nous <b>finissons</b>, vous finissez, ils finissent." },
-
-  { id:"p23", cat:"conjugaison", lvl:3, t:"find", title:"Le contrôleur",
-    story:"Le carnet du contrôleur contient des notes... pleines de fautes.",
-    text:"Le contrôleur [vérifit|vérifie] les billets. Tu [prend|prends] ta valise et je [cour|cours] vers le quai.",
-    hints:["Verbes en -ier : il vérifie (comme il crie). Avec « tu », toujours un s. « courir » : je cours.",
-           "Les fautes : vérifit (→ vérifie), prend (→ prends), cour (→ cours)."],
-    rule:"Avec <b>tu</b>, le verbe se termine presque toujours par <b>-s</b>.<br>Verbes en -ier : je vérifie, il vérifie." },
-
   { id:"p24", cat:"conjugaison", lvl:3, t:"fill", title:"Futur ou conditionnel ?",
     story:"Un voyageur raconte ses projets.",
     parts:["Demain, je "," à Paris, c'est sûr. Si j'avais un billet, je "," ce soir. Quand tu ",", nous verrons."],
@@ -239,26 +178,7 @@ const ALL_PUZZLES = [
     text:"Le train [roulé|roulait] lentement. Les voyageurs [regardait|regardaient] le paysage. Soudain, un homme [criat|cria] : « Au voleur ! »",
     hints:["Imparfait : -ait / -aient. Passé simple des verbes en -er : il cria, il chanta (jamais de t).",
            "Les fautes : roulé (→ roulait), regardait (→ regardaient), criat (→ cria)."],
-    rule:"<b>Imparfait</b> : action longue (il roulait).<br><b>Passé simple</b> 1er groupe : il cria, ils crièrent." },
-
-  { id:"p27", cat:"conjugaison", lvl:3, t:"type", title:"Le départ",
-    story:"Le chef de gare annonce le prochain départ.",
-    q:"Conjugue « aller » au futur.",
-    sentence:"Demain, ils ___ à la mer.",
-    answers:["iront"],
-    hints:["Le futur de « aller » est irrégulier : j'irai...",
-           "Avec « ils », terminaison -ont."],
-    rule:"<b>aller</b> au futur : j'irai, tu iras, il ira, nous irons, vous irez, ils <b>iront</b>." },
-
-  { id:"p28", cat:"conjugaison", lvl:3, t:"fill", title:"La nuit sur le quai",
-    story:"Le professeur imagine la scène du vol.",
-    parts:["J'"," le train. Le quai "," vide. Les lampes "," faiblement."],
-    blanks:[{o:["attendais","attendait","attendaient"],a:"attendais"},{o:["étais","était","étaient"],a:"était"},{o:["brillait","brillais","brillaient"],a:"brillaient"}],
-    hints:["Imparfait : je → -ais, il → -ait, ils → -aient.",
-           "Réponses : attendais, était, brillaient."],
-    rule:"Terminaisons de l'imparfait : -ais, -ais, -ait, -ions, -iez, <b>-aient</b>." },
-
-  { id:"p29", cat:"conjugaison", lvl:3, t:"fill", title:"Les bagages",
+    rule:"<b>Imparfait</b> : action longue (il roulait).<br><b>Passé simple</b> 1er groupe : il cria, ils crièrent." },  { id:"p29", cat:"conjugaison", lvl:3, t:"fill", title:"Les bagages",
     story:"Le porteur aide les voyageurs.",
     parts:["Vous "," vos valises et vous "," au revoir. Nous "," prêts !"],
     blanks:[{o:["faites","faisez","fêtes"],a:"faites"},{o:["dites","disez"],a:"dites"},{o:["sommes","somme","êtes"],a:"sommes"}],
@@ -313,31 +233,6 @@ const ALL_PUZZLES = [
     hints:["« qu' » remplace « la tour », COD placé avant « ont ».",
            "Féminin singulier."],
     rule:"La tour qu'ils ont <b>construite</b> : COD (qu' = la tour) placé avant → accord." },
-
-  { id:"p36", cat:"participes", lvl:4, t:"fill", title:"Les ombres",
-    story:"Un garde a vu des ombres dans les couloirs.",
-    parts:["J'ai "," des ombres. Les ombres que j'ai "," étaient grandes. Puis elles sont ","."],
-    blanks:[{o:["vu","vue","vus","vues"],a:"vu"},{o:["vu","vue","vus","vues"],a:"vues"},{o:["disparu","disparue","disparus","disparues"],a:"disparues"}],
-    hints:["1) COD après → pas d'accord. 2) COD avant → accord. 3) Avec être → accord avec le sujet.",
-           "Réponses : vu, vues, disparues."],
-    rule:"Récapitulatif : être → accord avec le sujet ; avoir → accord avec le COD seulement s'il est placé avant." },
-
-  { id:"p37", cat:"participes", lvl:4, t:"type", title:"Les histoires du garde",
-    story:"Le garde aime lire des romans policiers.",
-    q:"Accorde le participe passé de « lire ».",
-    sentence:"Ces histoires, je les ai ___ hier.",
-    answers:["lues"],
-    hints:["« les » remplace « ces histoires » et se trouve avant « ai ».",
-           "Le participe de « lire » est « lu ». Ajoute l'accord féminin pluriel."],
-    rule:"« les », « la », « l' » placés avant avoir sont des COD : je les ai <b>lues</b>." },
-
-  { id:"p38", cat:"participes", lvl:4, t:"find", title:"Les chevaliers",
-    story:"Une vieille chronique du château raconte une légende.",
-    text:"Les chevaliers sont [partit|partis] à l'aube. La reine les a [salué|salués] de la tour. Leurs armures étaient [brillante|brillantes].",
-    hints:["Sujet pluriel avec être ; « les » = COD avant ; adjectif qui s'accorde avec « armures ».",
-           "partit → partis, salué → salués, brillante → brillantes."],
-    rule:"Pense à toujours chercher qui ou quoi est concerné par le participe ou l'adjectif." },
-
   { id:"p39", cat:"participes", lvl:4, t:"type", title:"Les efforts du professeur",
     story:"Le professeur est fier de son enquête.",
     q:"Accorde le participe passé de « fournir ».",
@@ -461,25 +356,7 @@ const ALL_PUZZLES = [
     blanks:[{o:["mille","milles","mil"],a:"mille"},{o:["deux mille","deux milles","deux mils"],a:"deux mille"}],
     hints:["« mille » est invariable : il ne prend jamais de s.",
            "Réponses : mille, deux mille."],
-    rule:"<b>mille</b> est toujours invariable : deux mille, trois mille." },
-
-  { id:"p54", cat:"nombres", lvl:2, t:"type", title:"L'âge du jardinier",
-    story:"Le jardinier travaille au manoir depuis toujours.",
-    q:"Écris le nombre 70 en lettres.",
-    sentence:"Le vieux jardinier a ___ ans.",
-    answers:["soixante-dix"],
-    hints:["70 = 60 + 10.",
-           "Avec un trait d'union."],
-    rule:"70 = <b>soixante-dix</b>, 71 = soixante et onze, 72 = soixante-douze." },
-
-  { id:"p55", cat:"nombres", lvl:2, t:"find", title:"Le tableau des départs",
-    story:"À la gare, le panneau d'affichage a été repeint à la main.",
-    text:"La gare a [quatres|quatre] quais et [troi|trois] horloges. Le train part à [onse|onze] heures.",
-    hints:["« quatre » ne prend jamais de s. « trois » en prend toujours un.",
-           "quatres → quatre, troi → trois, onse → onze."],
-    rule:"Les nombres comme <b>quatre</b>, <b>trois</b>, <b>onze</b> ne s'accordent pas : leur orthographe est fixe." },
-
-  { id:"p56", cat:"nombres", lvl:2, t:"type", title:"Le vieux pont",
+    rule:"<b>mille</b> est toujours invariable : deux mille, trois mille." },  { id:"p56", cat:"nombres", lvl:2, t:"type", title:"Le vieux pont",
     story:"Pour rejoindre le village, il faut traverser un long pont de pierre.",
     q:"Écris le nombre 300 en lettres.",
     sentence:"Le pont mesure ___ mètres.",
@@ -568,16 +445,6 @@ const ALL_PUZZLES = [
     hints:["Devant m, b et p, on écrit m au lieu de n.",
            "combat, important, champion."],
     rule:"<b>m devant m, b, p</b> : combat, important, champion, emmener. Exceptions : bonbon, bonbonne, néanmoins." },
-
-  { id:"p67", cat:"orthographe", lvl:2, t:"type", title:"Toujours en retard",
-    story:"Le facteur n'arrive jamais à l'heure.",
-    q:"Écris correctement le mot « toujour ».",
-    sentence:"Le facteur est ___ en retard.",
-    answers:["toujours"],
-    hints:["C'est un mot invariable qui se termine par une lettre muette.",
-           "Comme « jamais » ou « alors »… mais avec un s."],
-    rule:"Mots invariables terminés par s : toujour<b>s</b>, jamai<b>s</b>, alor<b>s</b>, volontier<b>s</b>." },
-
   { id:"p68", cat:"orthographe", lvl:3, t:"find", title:"Le bocal",
     story:"Sur le bureau du conservateur, un bocal... et une note étrange.",
     text:"Le [poison|poisson] rouge fait une [glisade|glissade] dans le bocal, puis boit une [boison|boisson].",
@@ -608,22 +475,6 @@ const ALL_PUZZLES = [
     hints:["Ces mots ont un piège de consonne simple ou double.",
            "aperçu (1 p), silhouette (2 t), échafaudage (1 f)."],
     rule:"À retenir : a<b>p</b>ercevoir, silhoue<b>tt</b>e, écha<b>f</b>aud." },
-
-  { id:"p72", cat:"orthographe", lvl:5, t:"type", title:"Le gâteau du chef",
-    story:"Le chef de l'observatoire a préparé un gâteau pour le professeur.",
-    q:"Écris correctement le mot « exelent ».",
-    sentence:"Ce gâteau est ___ !",
-    answers:["excellent"],
-    hints:["Le son [ks] s'écrit « xc » ici, et il y a une consonne double.",
-           "ex-cel-lent."],
-    rule:"e<b>xc</b>e<b>ll</b>ent, comme e<b>xc</b>eption, e<b>xc</b>iter." },
-
-  { id:"p73", cat:"orthographe", lvl:5, t:"find", title:"La promesse",
-    story:"Le voleur a laissé un mot d'excuse.",
-    text:"[Néanmoin|Néanmoins], j'ai [dorénavent|dorénavant] promis d'être [plutot|plutôt] calme.",
-    hints:["Des mots invariables avec des pièges : s final, -ant, accent circonflexe.",
-           "Néanmoins, dorénavant, plutôt."],
-    rule:"Invariables à retenir : néanmoin<b>s</b>, doréna<b>vant</b>, plut<b>ô</b>t, aussitôt, bientôt." },
 
   // ---- Pluriels et accords ----
   { id:"p74", cat:"accords", lvl:1, t:"find", title:"Les vélos",
@@ -721,13 +572,6 @@ const ALL_PUZZLES = [
     rule:"Subjonctifs irréguliers : qu'il <b>pleuve</b>, que vous <b>fassiez</b>, que nous <b>allions</b>, qu'il <b>soit</b>." },
 
   // ---- Homophones ----
-  { id:"p86", cat:"homophones", lvl:3, t:"find", title:"Le conte du comte",
-    story:"Au bal, un invité lit une histoire.",
-    text:"Le [conte|comte] a lu un [comte|conte] à [sang|cent] invités.",
-    hints:["Un comte est un noble ; un conte est une histoire. 100 s'écrit cent.",
-           "comte, conte, cent."],
-    rule:"<b>comte</b> (noble) / <b>conte</b> (histoire) / <b>compte</b> (calcul).<br><b>cent</b> (100) / <b>sang</b> / <b>sans</b>." },
-
   { id:"p87", cat:"homophones", lvl:4, t:"fill", title:"Plutôt ou plus tôt ?",
     story:"Le conservateur laisse des instructions.",
     parts:[""," il arrive, prévenez-moi. Il est venu "," que prévu. "," que de dormir, il lit."],
@@ -759,12 +603,207 @@ const ALL_PUZZLES = [
     text:"Les musiciens que j'ai [entendu|entendus] jouer étaient doués. Les fleurs se sont [fanés|fanées]. Les heures se sont [succédées|succédé].",
     hints:["Les musiciens font l'action de jouer → accord. « se faner » : accord avec le sujet. « succéder À » : se n'est pas COD → pas d'accord.",
            "entendus, fanées, succédé."],
-    rule:"Participe + infinitif : accord si le COD fait l'action (les musiciens que j'ai entendus jouer).<br>Pronominaux : pas d'accord si « se » est COI (elles se sont succédé, parlé, plu)." }
+    rule:"Participe + infinitif : accord si le COD fait l'action (les musiciens que j'ai entendus jouer).<br>Pronominaux : pas d'accord si « se » est COI (elles se sont succédé, parlé, plu)." },
+  // ---- Lettres muettes en fin de mot ----
+  { id:"p91", cat:"muettes", lvl:1, t:"find", title:"La sieste du chat",
+    story:"Le chat du manoir dort... sur une preuve !",
+    text:"Le [cha|chat] dort près du [boi|bois], sur le [tapi|tapis].",
+    hints:["Pour trouver la lettre muette, cherche un mot de la même famille : chaton, boisé, tapisser.",
+           "chat (t), bois (s), tapis (s)."],
+    rule:"Pour trouver la <b>lettre muette</b> en fin de mot, cherche un mot de la même famille : cha<b>t</b> → chaton, boi<b>s</b> → boiser, tapi<b>s</b> → tapisser." },
+
+  { id:"p92", cat:"muettes", lvl:1, t:"type", title:"Au galop",
+    story:"Un cavalier quitte le manoir à toute vitesse.",
+    q:"Écris le mot qui manque (pense au verbe « galoper »).",
+    sentence:"Le cheval part au ___.",
+    answers:["galop"],
+    hints:["On entend [galo]. Quelle lettre entend-on dans « galoper » ?",
+           "Un p muet à la fin."],
+    rule:"galo<b>p</b> → galoper. De même : tro<b>t</b> → trotter, cam<b>p</b> → camper." },
+
+  { id:"p93", cat:"muettes", lvl:2, t:"fill", title:"La chambre d'amis",
+    story:"Le professeur inspecte la chambre où dormait un invité suspect.",
+    parts:["Le "," est sous la fenêtre, à côté d'un "," de laine et d'un vieux ","."],
+    blanks:[{o:["lit","li","lis"],a:"lit"},{o:["tricot","tricau","trico"],a:"tricot"},{o:["tambour","tambourd","tambours"],a:"tambour"}],
+    hints:["lit → literie ; tricot → tricoter ; tambour → tambourin (le r s'entend déjà, rien à ajouter).",
+           "Réponses : lit, tricot, tambour."],
+    rule:"Lettre muette retrouvée grâce à la famille : li<b>t</b> (literie), trico<b>t</b> (tricoter). Pas de lettre muette quand la dernière lettre s'entend déjà : tambou<b>r</b>." },
+
+  { id:"p94", cat:"muettes", lvl:2, t:"type", title:"Le grand saut",
+    story:"Le voleur a sauté par-dessus le mur du jardin !",
+    q:"Écris le mot qui manque (pense au verbe « sauter »).",
+    sentence:"Il a fait un grand ___ par-dessus le mur.",
+    answers:["saut"],
+    hints:["On entend [so]. Le verbe « sauter » fait entendre une lettre.",
+           "Un t muet à la fin."],
+    rule:"sau<b>t</b> → sauter, sauteur. Attention aux homophones : un seau (d'eau), un sot (idiot), un sceau (cachet)." },
+
+  { id:"p95", cat:"muettes", lvl:2, t:"find", title:"Le couloir",
+    story:"Dans le couloir, un miroir a été déplacé.",
+    text:"Le [miroire|miroir] du [couloire|couloir] reflète l'[armoir|armoire].",
+    hints:["Les noms masculins en [war] s'écrivent le plus souvent -oir ; les noms féminins, -oire.",
+           "miroir, couloir (masculins), armoire (féminin)."],
+    rule:"Nom masculin → <b>-oir</b> (miroir, couloir, trottoir). Nom féminin → <b>-oire</b> (armoire, histoire).<br>Exceptions masculines en -oire : laboratoire, répertoire, territoire, interrogatoire." },
+
+  { id:"p96", cat:"muettes", lvl:3, t:"fill", title:"La soirée",
+    story:"Un invité raconte la soirée du vol.",
+    parts:["Cette "," passée dans la "," principale fut la plus belle de ma ","."],
+    blanks:[{o:["soiré","soirée","soirer"],a:"soirée"},{o:["ru","rue","rux"],a:"rue"},{o:["vi","vie","vit"],a:"vie"}],
+    hints:["Les noms féminins terminés par le son [e], [i] ou [y] prennent souvent un e muet.",
+           "Réponses : soirée, rue, vie."],
+    rule:"Noms féminins en <b>-ée, -ie, -ue</b> : une soirée, la vie, la rue.<br>Exceptions : la clé, la fourmi, la souris, la tribu, la vertu, et les noms en -té / -tié (la beauté, la moitié)." },
+
+  { id:"p97", cat:"muettes", lvl:3, t:"type", title:"Le partage",
+    story:"Le cuisinier a remarqué qu'il manquait un morceau du gâteau.",
+    q:"Corrige le mot « moitiée ».",
+    sentence:"Quelqu'un a mangé la ___ du gâteau.",
+    answers:["moitié"],
+    hints:["C'est un nom féminin en -tié : il fait partie des exceptions.",
+           "Pas de e muet à la fin."],
+    rule:"Les noms féminins en <b>-té</b> et <b>-tié</b> ne prennent pas de e : la moitié, l'amitié, la beauté, la liberté. Exceptions : la dictée, la montée, la portée, la jetée, la pâtée." },
+
+  { id:"p98", cat:"muettes", lvl:3, t:"find", title:"Un poil de preuve",
+    story:"Sur le fauteuil du salon, le professeur trouve un indice minuscule.",
+    text:"Un [poile|poil] de chat sur le [fauteuille|fauteuil], à côté d'un [rest|reste] de gâteau.",
+    hints:["Les noms masculins en -oil, -euil, -ail, -eil ne prennent pas de e. Mais « reste » vient du verbe « rester » : il garde son e.",
+           "poil, fauteuil, reste."],
+    rule:"Noms masculins sans e : un poi<b>l</b>, un fauteui<b>l</b>, un travai<b>l</b>, un sommei<b>l</b>.<br>Noms féminins avec e : une paille, une bouteille, une feuille. « Un reste » s'écrit avec e, comme « rester »." },
+
+  { id:"p99", cat:"muettes", lvl:4, t:"type", title:"Au bord de l'eau",
+    story:"Des traces de pas mènent jusqu'à la rivière.",
+    q:"Écris le mot qui manque (pense au verbe « border »).",
+    sentence:"Les traces s'arrêtent au ___ de la rivière.",
+    answers:["bord"],
+    hints:["On entend [bor]. Quelle lettre entend-on dans « border » ?",
+           "Un d muet à la fin."],
+    rule:"bor<b>d</b> → border, bordure. De même : un accor<b>d</b> (accorder), le nor<b>d</b> (nordique)." },
+
+  { id:"p100", cat:"muettes", lvl:4, t:"find", title:"Le loup du parc",
+    story:"Le gardien du parc accuse un loup d'avoir semé le désordre.",
+    text:"Le [crot|croc] du loup a déchiré le [dra|drap] posé sur le [banq|banc].",
+    hints:["Cherche la famille : crochet, draper, banquette.",
+           "croc (c), drap (p), banc (c)."],
+    rule:"Lettres muettes rares : cro<b>c</b> (crochet), dra<b>p</b> (draper), ban<b>c</b> (banquette), estoma<b>c</b>, taba<b>c</b>." },
+
+  { id:"p101", cat:"muettes", lvl:5, t:"type", title:"Le chasseur",
+    story:"Un chasseur a croisé le voleur dans la forêt.",
+    q:"Écris le mot qui manque (pense au verbe « fusiller »).",
+    sentence:"Le chasseur porte un ___ sur l'épaule.",
+    answers:["fusil"],
+    hints:["La lettre muette n'est pas un t ni un s ! Écoute « fusiller ».",
+           "Un l muet à la fin."],
+    rule:"Le <b>l</b> final est muet dans fusi<b>l</b>, outi<b>l</b>, genti<b>l</b>, sourci<b>l</b>, persi<b>l</b>." },
+
+  { id:"p102", cat:"muettes", lvl:5, t:"fill", title:"Le colis",
+    story:"Un colis mystérieux arrive au manoir.",
+    parts:["Le "," de ce colis est de cinq kilos ; il contient des "," chiches et un "," de miel."],
+    blanks:[{o:["poids","poid","pois"],a:"poids"},{o:["poix","pois","poids"],a:"pois"},{o:["pot","peau","pô"],a:"pot"}],
+    hints:["Le poids se pèse, les pois se mangent, un pot contient quelque chose (potier).",
+           "Réponses : poids, pois, pot."],
+    rule:"Mêmes sons, lettres muettes différentes : le poi<b>ds</b> (masse), des poi<b>s</b> (légumes), la poi<b>x</b> (colle), un po<b>t</b> (potier)." },
+
+  // ---- Un son, plusieurs écritures ----
+  { id:"p103", cat:"sons", lvl:1, t:"find", title:"Le chapeau jaune",
+    story:"Un témoin se souvient d'un détail : un chapeau !",
+    text:"Le [chapau|chapeau] [jone|jaune] est tombé du [bato|bateau].",
+    hints:["Le son [o] peut s'écrire o, au ou eau.",
+           "chapeau (eau), jaune (au), bateau (eau)."],
+    rule:"Le son <b>[o]</b> : o (moto), <b>au</b> (jaune, auto), <b>eau</b> (chapeau, bateau). Souvent -eau en fin de nom masculin." },
+
+  { id:"p104", cat:"sons", lvl:1, t:"type", title:"Le coup de fil",
+    story:"Le téléphone du manoir sonne au milieu de la nuit.",
+    q:"Corrige le mot « téléfone ».",
+    sentence:"Le ___ sonne au milieu de la nuit.",
+    answers:["téléphone"],
+    hints:["Le son [f] peut s'écrire f, ff ou ph.",
+           "Les mots d'origine grecque utilisent souvent « ph »."],
+    rule:"Le son <b>[f]</b> : f (fil), ff (effacer), <b>ph</b> (téléphone, photo, pharmacie)." },
+
+  { id:"p105", cat:"sons", lvl:2, t:"fill", title:"Le maçon",
+    story:"Le maçon répare le mur abîmé par le voleur.",
+    parts:["Un "," répare le mur avec du ",", puis se rafraîchit avec une ","."],
+    blanks:[{o:["maçon","masson","macon"],a:"maçon"},{o:["ciment","siment","ssiment"],a:"ciment"},{o:["glace","glasse","glaçe"],a:"glace"}],
+    hints:["Le son [s] : c devant e, i, y ; ç devant a, o, u ; ss entre deux voyelles.",
+           "Réponses : maçon, ciment, glace."],
+    rule:"Le son <b>[s]</b> : s (sac), ss (poisson), <b>c</b> devant e, i, y (ciment, glace), <b>ç</b> devant a, o, u (maçon)." },
+
+  { id:"p106", cat:"sons", lvl:2, t:"type", title:"Le métier du témoin",
+    story:"Le premier témoin du matin fabrique le pain du village.",
+    q:"Écris le nom de son métier.",
+    sentence:"Le ___ fait du pain.",
+    answers:["boulanger"],
+    hints:["Le son [e] à la fin d'un nom de métier s'écrit souvent -er.",
+           "Comme épicier, plombier, pâtissier."],
+    rule:"Le son <b>[e]</b> : é (café), <b>er</b> (boulanger, premier), ez (nez), et (et), ai (j'ai). Les noms de métier en [e] s'écrivent souvent -er." },
+
+  { id:"p107", cat:"sons", lvl:2, t:"find", title:"Le goûter",
+    story:"Le voleur avait faim : il a laissé un mot dans la cuisine.",
+    text:"J'avais [fin|faim], alors j'ai mangé du [pin|pain] et du [rézin|raisin].",
+    hints:["Le son [ɛ̃] s'écrit in, ain, ein, aim... « fin » et « pin » existent, mais ont un autre sens !",
+           "faim, pain, raisin (et le s entre deux voyelles se prononce [z])."],
+    rule:"Le son <b>[ɛ̃]</b> : in (lapin), <b>ain</b> (pain), ein (peinture), <b>aim</b> (faim). La famille aide : faim → affamé, pain → panier." },
+
+  { id:"p108", cat:"sons", lvl:3, t:"fill", title:"Le verger",
+    story:"Le professeur traverse le verger du manoir.",
+    parts:["Le "," donne des pommes. Au ",", on vend du "," frais."],
+    blanks:[{o:["pommié","pommier","pommiez"],a:"pommier"},{o:["marché","marcher","marchet"],a:"marché"},{o:["lait","lé","laid"],a:"lait"}],
+    hints:["Les noms d'arbres fruitiers se terminent par -ier. « marcher » est un verbe ; ici il faut un nom. Le lait → laitier.",
+           "Réponses : pommier, marché, lait."],
+    rule:"Arbres fruitiers en <b>-ier</b> (pommier, cerisier). Le nom <b>marché</b> ≠ le verbe marcher. Le son [ɛ] dans <b>lait</b> (laitier)." },
+
+  { id:"p109", cat:"sons", lvl:3, t:"type", title:"Le concert",
+    story:"Ce soir-là, un orchestre jouait au château.",
+    q:"Corrige le mot « orkestre ».",
+    sentence:"L'___ joue une valse.",
+    answers:["orchestre"],
+    hints:["Le son [k] s'écrit c, qu, k... ou ch dans les mots d'origine grecque.",
+           "Comme « chorale » ou « chrysanthème »."],
+    rule:"Le son <b>[k]</b> : c (car), qu (quai), k (kilo), <b>ch</b> (orchestre, chorale, écho)." },
+
+  { id:"p110", cat:"sons", lvl:3, t:"find", title:"La chambre des parents",
+    story:"Les enfants du manoir ont écrit à leurs parents.",
+    text:"Nos [parants|parents] sont [contants|contents] de leur [chembre|chambre].",
+    hints:["Le son [ɑ̃] s'écrit an, en, am, em. Devant m, b, p : am ou em.",
+           "parents, contents, chambre."],
+    rule:"Le son <b>[ɑ̃]</b> : an (enfant), en (parent), <b>am / em</b> devant b, p (chambre, temps)." },
+
+  { id:"p111", cat:"sons", lvl:4, t:"type", title:"Le panneau",
+    story:"Un panneau est cloué à l'entrée de l'escalier du grenier.",
+    q:"Corrige le mot « atansion ».",
+    sentence:"___ à la marche !",
+    answers:["attention"],
+    hints:["Le son [sjɔ̃] en fin de nom s'écrit souvent -tion.",
+           "Deux t au début, comme « attendre »."],
+    rule:"Le son <b>[sjɔ̃]</b> : -tion (attention, addition), -ssion (passion), -sion (pension)." },
+
+  { id:"p112", cat:"sons", lvl:4, t:"find", title:"La forêt",
+    story:"Le garde-chasse décrit la forêt au printemps.",
+    text:"Le [jibier|gibier] fuit vers la [plaje|plage] et le [bourjon|bourgeon] éclot.",
+    hints:["Le son [ʒ] s'écrit j, g devant e, i, y, ou ge devant a, o, u.",
+           "gibier, plage, bourgeon."],
+    rule:"Le son <b>[ʒ]</b> : j (jardin), <b>g</b> devant e, i, y (gibier, plage), <b>ge</b> devant a, o, u (bourgeon, nageoire)." },
+
+  { id:"p113", cat:"sons", lvl:5, t:"type", title:"Le ménage",
+    story:"Le majordome nettoie la scène du crime.",
+    q:"Corrige le mot « ballait ».",
+    sentence:"Le majordome passe le ___.",
+    answers:["balai"],
+    hints:["Un seul l. Et ce nom se termine par -ai, sans lettre muette.",
+           "Ne pas confondre avec un ballet (danse)."],
+    rule:"Le son <b>[ɛ]</b> en fin de mot : -ai (balai, quai), -et (ballet, jouet), -ais (marais), -ait (lait)." },
+
+  { id:"p114", cat:"sons", lvl:5, t:"fill", title:"Le professeur de sciences",
+    story:"Le professeur Plume reçoit la visite d'un collègue.",
+    parts:["Le professeur de ",", après la ",", aime "," à la cave."],
+    blanks:[{o:["science","sience","ssience"],a:"science"},{o:["piscine","pissine","picine"],a:"piscine"},{o:["descendre","déssendre","decendre"],a:"descendre"}],
+    hints:["Le son [s] peut aussi s'écrire « sc » devant e et i.",
+           "Réponses : science, piscine, descendre."],
+    rule:"Le son <b>[s]</b> s'écrit aussi <b>sc</b> : science, piscine, descendre, scène, conscience." }
 ];
 
 
 /* =====================================================================
-   Mystères bonus : débloqués une fois les 90 mystères de l'histoire résolus.
+   Mystères bonus : débloqués une fois tous les mystères de l'histoire résolus.
    reward : récompense fixe (pas de pénalité en cas d'erreur), calculée pour garantir
    qu'on puisse tout acheter, même en prenant tous les indices et en faisant
    le maximum d'erreurs (voir le test « économie » dans test/check.js).
@@ -854,15 +893,15 @@ BONUS_PUZZLES.forEach(p => { p.bonus = true; p.reward = BONUS_REWARD; });
 
 /* Ordre de jeu : un tableau d'identifiants par chapitre (généré par tools/arrange.js). */
 const CHAPTER_PLAN = [
-  ["p01","p06","p64","p53","p65","p74","p81","p82","p12","p89"],
-  ["p02","p51","p52","p14","p17","p66","p67","p26","p27","p33"],
-  ["p08","p10","p11","p56","p15","p22","p30","p69","p32","p40"],
-  ["p09","p18","p19","p20","p21","p68","p24","p35","p71","p37"],
-  ["p04","p54","p07","p55","p16","p25","p36","p38","p70","p73"],
-  ["p05","p13","p75","p57","p59","p83","p34","p39","p44","p42"],
-  ["p03","p28","p58","p29","p77","p31","p86","p61","p41","p72"],
-  ["p23","p76","p60","p78","p87","p46","p47","p48","p63","p88"],
-  ["p79","p84","p43","p45","p62","p49","p85","p80","p90","p50"]
+  ["p01","p104","p103","p53","p52","p65","p74","p81","p13","p92","p89"],
+  ["p02","p51","p07","p64","p12","p91","p29","p107","p31","p82","p39"],
+  ["p04","p05","p105","p106","p11","p56","p66","p93","p25","p30","p33"],
+  ["p08","p19","p75","p109","p95","p22","p68","p59","p69","p40"],
+  ["p10","p18","p94","p110","p24","p58","p57","p97","p71","p32","p35"],
+  ["p03","p16","p98","p108","p112","p21","p34","p61","p70","p46"],
+  ["p26","p76","p100","p96","p111","p60","p87","p42","p44","p48","p88"],
+  ["p77","p83","p78","p41","p84","p43","p99","p45","p113","p47","p63"],
+  ["p79","p101","p102","p114","p62","p49","p85","p80","p90","p50"]
 ];
 
 /* Liste ordonnée utilisée par le jeu : l'histoire, puis les bonus (chapitre 10). */

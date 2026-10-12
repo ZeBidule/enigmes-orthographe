@@ -1,9 +1,9 @@
 /* Génère l'ordre de jeu (CHAPTER_PLAN) dans js/puzzles.js.
    Lancer : node tools/arrange.js
    Contraintes :
-   - 9 chapitres de 10 énigmes ;
-   - chaque catégorie (15 énigmes) a 1 ou 2 énigmes par chapitre ;
-   - chaque type (30 énigmes) a 3 ou 4 énigmes par chapitre ;
+   - 9 chapitres de taille égale à une énigme près (96 énigmes → 10 ou 11) ;
+   - chaque catégorie a 1 ou 2 énigmes par chapitre ;
+   - chaque type a 3 ou 4 énigmes par chapitre ;
    - dans une catégorie, la difficulté ne baisse jamais d'un chapitre à l'autre ;
    - p01 (début de l'histoire) ouvre le jeu, p50 (manuscrit retrouvé) le termine.
    Le résultat est déterministe (graine fixe). */
@@ -23,17 +23,21 @@ const byCat = {};
 CATS.forEach(c => byCat[c] = ALL_PUZZLES.filter(p => p.cat === c)
   .sort((a, b) => a.lvl - b.lvl || a.id.localeCompare(b.id)));
 
-/* Combien d'énigmes de chaque catégorie par chapitre : 4 catégories à 2, 2 à 1 ;
-   chaque catégorie a exactement 3 chapitres « à 1 ». */
+/* Combien d'énigmes de chaque catégorie par chapitre : 1 de chaque, plus des « doubles ».
+   Une catégorie de n énigmes a (n - 9) chapitres à 2. Les doubles sont répartis pour que
+   les chapitres aient tous la même taille, à une énigme près, sans doublon de catégorie. */
 function slotPlan(){
+  const doubles = CATS.flatMap(c => Array(byCat[c].length - NCH).fill(c));
+  const base = Math.floor(doubles.length / NCH), extra = doubles.length % NCH;
   for (;;) {
-    const singles = shuffle(CATS.flatMap(c => [c, c, c]));
+    const sizes = shuffle(Array.from({ length: NCH }, (_, i) => base + (i < extra ? 1 : 0)));
+    const pool = shuffle(doubles.slice());
     const plan = [];
     let ok = true;
-    for (let ch = 0; ch < NCH; ch++) {
-      const pair = singles.slice(ch * 2, ch * 2 + 2);
-      if (pair[0] === pair[1]) { ok = false; break; }
-      plan.push(Object.fromEntries(CATS.map(c => [c, pair.includes(c) ? 1 : 2])));
+    for (let ch = 0; ch < NCH && ok; ch++) {
+      const picked = pool.splice(0, sizes[ch]);
+      if (new Set(picked).size !== picked.length) ok = false;
+      plan.push(Object.fromEntries(CATS.map(c => [c, picked.includes(c) ? 2 : 1])));
     }
     if (ok) return plan;
   }

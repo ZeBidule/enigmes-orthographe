@@ -64,7 +64,7 @@ const url = `http://localhost:${server.address().port}/`;
   const [chooser] = await Promise.all([p.waitForEvent("filechooser"), p.click("text=Charger une sauvegarde")]);
   await chooser.setFiles(file);
   await p.waitForSelector(".progress");
-  assert.match(await p.textContent("body"), /1 \/ 90 mystères résolus/);
+  assert.match(await p.textContent("body"), /1 \/ 96 mystères résolus/);
   assert.match(await p.textContent(".money"), /10 écus/);
   assert.ok(await p.$("text=Mystère 2"), "mystère 2 débloqué");
   await p.click("text=Boutique");
@@ -82,7 +82,7 @@ const url = `http://localhost:${server.address().port}/`;
   await ch2.setFiles(badFile);
   await p.waitForTimeout(500);
   assert.match(alertMsg, /pas une sauvegarde/);
-  assert.match(await p.textContent("body"), /1 \/ 90 mystères résolus/);
+  assert.match(await p.textContent("body"), /1 \/ 96 mystères résolus/);
   console.log("ok - fichier invalide refusé, progression conservée");
 
   // 6. Écran titre en mode "Continuer"
@@ -152,20 +152,20 @@ const url = `http://localhost:${server.address().port}/`;
   await p.evaluate(() => localStorage.setItem("plume-save-v2", JSON.stringify({ coins: 33, solved: [0, 1, 2], owned: ["tapis"], equipped: {} })));
   await p.reload();
   await p.click("text=Continuer");
-  assert.match(await p.textContent("body"), /3 \/ 90 mystères résolus/);
+  assert.match(await p.textContent("body"), /3 \/ 96 mystères résolus/);
   const migrated = await p.evaluate(() => { G.list(); return [...document.querySelectorAll(".grid button")].filter(b => b.textContent.startsWith("✔")).length; });
   assert.strictEqual(migrated, 3);
   console.log("ok - ancienne sauvegarde du navigateur reprise (3 mystères, écus et objets conservés)");
 
   // 13. Bonus : verrouillés tant que l'histoire n'est pas finie, puis accessibles
   const mainIds = await p.evaluate(() => PUZZLES.filter(x => !x.bonus).map(x => x.id));
-  await p.evaluate(ids => localStorage.setItem("plume-save-v2", JSON.stringify({ coins: 0, solved: ids, owned: [], equipped: {} })), mainIds.slice(0, 89));
+  await p.evaluate(ids => localStorage.setItem("plume-save-v2", JSON.stringify({ coins: 0, solved: ids, owned: [], equipped: {} })), mainIds.slice(0, -1));
   await p.reload(); await p.click("text=Continuer");
   await p.evaluate(() => G.list());
   assert.ok(await p.$(".grid button[disabled]:has-text('B1')"), "B1 verrouillé avant la fin");
   await p.evaluate(ids => localStorage.setItem("plume-save-v2", JSON.stringify({ coins: 0, solved: ids, owned: [], equipped: {} })), mainIds);
   await p.reload(); await p.click("text=Continuer");
-  assert.match(await p.textContent("body"), /90 \/ 90 mystères résolus · ⭐ 0 \/ 10 bonus/);
+  assert.match(await p.textContent("body"), /96 \/ 96 mystères résolus · ⭐ 0 \/ 10 bonus/);
   await p.click("text=⭐ Bonus 1");
   assert.match(await p.textContent("h2"), /⭐ Bonus 1 — /);
   assert.match(await p.textContent(".card"), /Récompense : 190 écus/);

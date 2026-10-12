@@ -10,17 +10,19 @@ const MAIN = PUZZLES.filter(p => !p.bonus);
 let n = 0;
 const t = (name, fn) => { fn(); n++; console.log("ok -", name); };
 
-t("90 énigmes, ids uniques, chacune une seule fois dans le plan", () => {
-  assert.strictEqual(ALL_PUZZLES.length, 90);
-  assert.strictEqual(new Set(ALL_PUZZLES.map(p => p.id)).size, 90);
+t("96 énigmes, ids uniques, chacune une seule fois dans le plan", () => {
+  assert.strictEqual(ALL_PUZZLES.length, 96);
+  assert.strictEqual(new Set(ALL_PUZZLES.map(p => p.id)).size, 96);
   assert.deepStrictEqual(CHAPTER_PLAN.flat().slice().sort(), ALL_PUZZLES.map(p => p.id).sort());
-  assert.strictEqual(MAIN.length, 90);
+  assert.strictEqual(MAIN.length, 96);
   ALL_PUZZLES.forEach(p => { assert.ok(CATEGORIES[p.cat], p.id + " catégorie"); assert.ok(p.lvl >= 1 && p.lvl <= 5, p.id + " niveau"); });
 });
 
-t("15 énigmes par catégorie, 1 ou 2 par chapitre", () => {
+t("8 catégories de 12 énigmes, dont lettres muettes et sons ; 1 ou 2 par chapitre", () => {
+  assert.strictEqual(Object.keys(CATEGORIES).length, 8);
+  assert.ok(CATEGORIES.muettes && CATEGORIES.sons);
   Object.keys(CATEGORIES).forEach(c => {
-    assert.strictEqual(MAIN.filter(p => p.cat === c).length, 15, c);
+    assert.strictEqual(MAIN.filter(p => p.cat === c).length, 12, c);
     for (let ch = 1; ch <= 9; ch++) {
       const k = MAIN.filter(p => p.ch === ch && p.cat === c).length;
       assert.ok(k >= 1 && k <= 2, `${c} chapitre ${ch} : ${k}`);
@@ -28,9 +30,9 @@ t("15 énigmes par catégorie, 1 ou 2 par chapitre", () => {
   });
 });
 
-t("types équilibrés : 30/30/30, et 3 ou 4 de chaque par chapitre", () => {
+t("types équilibrés : 32/32/32, et 3 ou 4 de chaque par chapitre", () => {
   ["find", "fill", "type"].forEach(ty => {
-    assert.strictEqual(MAIN.filter(p => p.t === ty).length, 30, ty);
+    assert.strictEqual(MAIN.filter(p => p.t === ty).length, 32, ty);
     for (let ch = 1; ch <= 9; ch++) {
       const k = MAIN.filter(p => p.ch === ch && p.t === ty).length;
       assert.ok(k >= 3 && k <= 4, `${ty} chapitre ${ch} : ${k}`);
@@ -38,9 +40,9 @@ t("types équilibrés : 30/30/30, et 3 ou 4 de chaque par chapitre", () => {
   });
 });
 
-t("9 chapitres de 10, difficulté jamais en baisse dans une catégorie", () => {
+t("9 chapitres de 10 ou 11, difficulté jamais en baisse dans une catégorie", () => {
   assert.strictEqual(CHAPTER_PLAN.length, 9);
-  CHAPTER_PLAN.forEach(ids => assert.strictEqual(ids.length, 10));
+  CHAPTER_PLAN.forEach(ids => assert.ok(ids.length === 10 || ids.length === 11, "taille " + ids.length));
   assert.ok(CHAPTERS[9]);
   Object.keys(CATEGORIES).forEach(c => {
     const ps = MAIN.filter(p => p.cat === c);
@@ -52,7 +54,7 @@ t("9 chapitres de 10, difficulté jamais en baisse dans une catégorie", () => {
 
 t("l'histoire commence par p01 et finit par p50", () => {
   assert.strictEqual(PUZZLES[0].id, "p01");
-  assert.strictEqual(PUZZLES[89].id, "p50");
+  assert.strictEqual(MAIN[MAIN.length - 1].id, "p50");
 });
 
 t("aucun récit ne cite un ancien numéro de chapitre", () => {
@@ -141,7 +143,7 @@ t("sauvegarde : fichiers invalides refusés, valeurs inconnues ignorées", () =>
   assert.throws(() => G.importSave("pas du json", IDS, ITEMS), /pas une sauvegarde valide/);
   assert.throws(() => G.importSave('{"coins":3}', IDS, ITEMS), /pas une sauvegarde de/);
   assert.throws(() => G.importSave('{"format":"plume-et-cie-save","coins":-5,"solved":[],"owned":[]}', IDS, ITEMS), /abîmée/);
-  const s = G.importSave(JSON.stringify({ format: "plume-et-cie-save", coins: 1, solved: ["p04", "p04", "p99", "x"], owned: ["chat", "fusee", "ballon"],
+  const s = G.importSave(JSON.stringify({ format: "plume-et-cie-save", coins: 1, solved: ["p04", "p04", "p999", "x"], owned: ["chat", "fusee", "ballon"],
     equipped: { hat: "forme", home: "chat", vehicle: "ballon" } }), IDS, ITEMS);
   assert.deepStrictEqual(s, { coins: 1, solved: ["p04"], owned: ["chat", "ballon"], equipped: {} });
 });
@@ -167,7 +169,7 @@ t("économie : avec les bonus, tout est achetable dans le pire des cas (tous les
 t("bonus : 10 mystères difficiles après l'histoire, récompense fixe", () => {
   const bonus = PUZZLES.filter(p => p.bonus);
   assert.strictEqual(bonus.length, 10);
-  assert.deepStrictEqual(PUZZLES.slice(90).map(p => p.id), bonus.map(p => p.id), "après les 90 mystères");
+  assert.deepStrictEqual(PUZZLES.slice(MAIN.length).map(p => p.id), bonus.map(p => p.id), "après les mystères de l'histoire");
   bonus.forEach(p => { assert.strictEqual(p.ch, 10); assert.strictEqual(p.lvl, 5); assert.strictEqual(G.afterMistake(p, p.reward), p.reward); });
   assert.ok(CHAPTERS[10].includes("Bonus"));
   assert.ok(G.baseValue(bonus[0]) > G.baseValue(MAIN[89]), "un bonus rapporte plus qu'un mystère normal");
