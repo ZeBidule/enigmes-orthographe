@@ -90,8 +90,14 @@ const url = `http://localhost:${server.address().port}/`;
   assert.match(await p.textContent(".title-buttons"), /Continuer/);
   console.log("ok - écran titre (continuer)");
 
-  // 7. Menu de test : Ctrl+Maj+T, mauvais puis bon mot de passe
+  // 7. Menu de test : ni raccourci ni appuis sur le titre ; bouton 🔑 du menu principal
+  await p.evaluate(() => G.home());
   await p.keyboard.press("Control+Shift+T");
+  for (let k = 0; k < 5; k++) await p.click("header h1");
+  assert.strictEqual(await p.$("#test-pwd"), null, "aucun menu sans le bouton");
+  assert.ok(await p.$(".progress"), "toujours sur l'écran maison");
+  await p.click("text=⟵ Menu principal");
+  await p.click(".key-btn");
   await p.waitForSelector("#test-pwd");
   await p.fill("#test-pwd", "faux");
   await p.click("text=Déverrouiller");
@@ -100,7 +106,7 @@ const url = `http://localhost:${server.address().port}/`;
   await p.press("#test-pwd", "Enter");
   await p.waitForSelector(".test-badge");
   assert.match(await p.textContent(".money"), /∞/);
-  console.log("ok - menu de test par Ctrl+Maj+T (mot de passe vérifié)");
+  console.log("ok - raccourci et appuis sur le titre inactifs ; bouton 🔑 + mot de passe vérifié");
 
   // 8. Tous les mystères débloqués
   await p.click("text=📜 Mystères");
@@ -125,14 +131,15 @@ const url = `http://localhost:${server.address().port}/`;
   assert.strictEqual(after.coins, before);
   console.log("ok - achat à 150 écus possible, rien n'est débité");
 
-  // 11. Accès mobile : 5 appuis sur le nom du jeu, puis désactivation
-  await p.evaluate(() => G.home());
-  for (let k = 0; k < 5; k++) await p.click("header h1");
+  // 11. Désactivation depuis le bouton 🔑
+  await p.evaluate(() => G.title());
+  await p.click(".key-btn");
   await p.click("text=Désactiver le mode test");
+  await p.evaluate(() => G.home());
   assert.strictEqual(await p.$(".test-badge"), null);
   await p.evaluate(() => G.list());
   assert.ok(await p.$$eval(".grid button[disabled]", x => x.length) > 0);
-  console.log("ok - 5 appuis ouvrent le menu ; désactivation re-verrouille");
+  console.log("ok - désactivation par le bouton 🔑 re-verrouille");
 
   assert.deepStrictEqual(errors, [], "erreurs JS");
   console.log("\nTests navigateur OK");

@@ -91,19 +91,20 @@ if (typeof document !== "undefined") (function(){
   let cur, idx, value, hintsShown, ans, active;
 
   function header(){
-    return `<header><h1 onclick="G.logoTap()" style="cursor:pointer">🎩 ${GAME_TITLE}${save.test ? ' <span class="test-badge">TEST</span>' : ""}</h1><span class="money">🪙 ${save.test ? "∞" : save.coins} écus</span></header>`;
+    return `<header><h1>🎩 ${GAME_TITLE}${save.test ? ' <span class="test-badge">TEST</span>' : ""}</h1><span class="money">🪙 ${save.test ? "∞" : save.coins} écus</span></header>`;
   }
 
   /* ---------- Écran titre ---------- */
   function title(){
     const started = save.solved.length > 0 || save.owned.length > 0;
     app.innerHTML = `<div class="title-screen">
-      <div class="title-logo" onclick="G.logoTap()"><div class="t1">${GAME_TITLE}</div><div class="t2">${GAME_SUBTITLE}</div></div>
+      <div class="title-logo"><div class="t1">${GAME_TITLE}</div><div class="t2">${GAME_SUBTITLE}</div></div>
       <div class="title-prof">${drawPortrait(save.equipped)}</div>
       <p class="title-pitch">Un manuscrit a disparu. Des indices pleins de fautes.<br>Seul un œil expert en orthographe pourra résoudre l'affaire !</p>
       <div class="title-buttons">
         <button onclick="G.home()">${started ? "▶ Continuer l'enquête" : "▶ Nouvelle enquête"}</button>
         <button class="gold" onclick="G.load()">📂 Charger une sauvegarde</button>
+        <button class="alt key-btn" onclick="G.testMenu()" title="Menu de test" aria-label="Menu de test">🔑</button>
       </div>
       ${started ? `<div class="meta" style="color:var(--parch)">${save.solved.length} / ${PUZZLES.length} mystères résolus · 🪙 ${save.coins} écus</div>` : ""}
       <div class="meta" style="color:var(--parch);opacity:.6">Un jeu pour réviser l'orthographe française</div>
@@ -164,6 +165,7 @@ if (typeof document !== "undefined") (function(){
           <button class="gold" onclick="G.download()">💾 Sauvegarder</button>
           <button class="gold" onclick="G.load()">📂 Charger</button>
           <button class="alt" onclick="G.reset()">Recommencer à zéro</button>
+          <button class="alt" onclick="G.title()">⟵ Menu principal</button>
         </div></div>`;
   }
 
@@ -266,14 +268,7 @@ if (typeof document !== "undefined") (function(){
     render(); submit();
   }
 
-  /* ---------- Menu de test (Ctrl+Maj+T, ou 5 appuis sur le nom du jeu) ---------- */
-  let taps = [];
-  function logoTap(){
-    const now = Date.now();
-    taps = taps.filter(t => now - t < 2000).concat(now);
-    if (taps.length >= 5){ taps = []; testMenu(); return; }
-    setTimeout(() => { if (taps.length === 1 && Date.now() - taps[0] >= 600){ taps = []; title(); } }, 650);
-  }
+  /* ---------- Menu de test (bouton 🔑 du menu principal) ---------- */
   function testMenu(){
     G.close();
     const o = document.createElement("div"); o.className = "overlay";
@@ -300,9 +295,6 @@ if (typeof document !== "undefined") (function(){
     save.test = true; persist(); G.close(); home(); toast("🧪 Mode test activé");
   }
   function testOff(){ delete save.test; persist(); G.close(); home(); toast("Mode test désactivé"); }
-  document.addEventListener("keydown", e => {
-    if (e.ctrlKey && e.shiftKey && (e.key === "T" || e.key === "t" || e.code === "KeyT")){ e.preventDefault(); testMenu(); }
-  });
 
   function submit(){
     if (cur.t === "fill" && ans.some(v => v === null)){ alert("Complète tous les trous avant de valider !"); return; }
@@ -334,7 +326,7 @@ if (typeof document !== "undefined") (function(){
   }
 
   window.G = {
-    home, title, download, load, list, shop, buy, wear, start, render, hint, submit, solve, logoTap, testOn, testOff,
+    home, title, download, load, list, shop, buy, wear, start, render, hint, submit, solve, testMenu, testOn, testOff,
     toggle: k => { ans.has(k) ? ans.delete(k) : ans.add(k); render(); },
     pick: k => { active = k; render(); },
     choose: k => { ans[active] = cur.blanks[active].o[k]; const n = ans.findIndex(v => v === null); if (n >= 0) active = n; render(); },
