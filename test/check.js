@@ -92,4 +92,9 @@ t("sauvegarde : fichiers invalides refusés, valeurs inconnues ignorées", () =>
   assert.deepStrictEqual(s, { coins: 1, solved: [3], owned: ["chat"], equipped: {} });
 });
 
+t("mode test : la solution fournie valide chacune des 50 énigmes", () => {
+  PUZZLES.forEach((p, i) => assert.ok(G.checkAnswer(p, G.solutionFor(p)), "#" + (i + 1)));
+  assert.strictEqual(G.TEST_PASSWORD, "tes1");
+});
+
 console.log(`\n${n} tests OK`);

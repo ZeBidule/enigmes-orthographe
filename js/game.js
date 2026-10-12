@@ -61,7 +61,15 @@ function importSave(text, puzzleCount, items){
   return { coins: d.coins, solved, owned, equipped };
 }
 
-if (typeof module !== "undefined") module.exports = { baseValue, afterMistake, tokens, normalize, checkAnswer, exportSave, importSave, GAME_TITLE };
+/* Solution d'une énigme, au format attendu par checkAnswer (mode test). */
+function solutionFor(p){
+  if (p.t === "find") return new Set(tokens(p).map((t, i) => t.fix ? i : -1).filter(i => i >= 0));
+  if (p.t === "fill") return p.blanks.map(b => b.a);
+  return p.answers[0];
+}
+const TEST_PASSWORD = "tes1";
+
+if (typeof module !== "undefined") module.exports = { baseValue, afterMistake, tokens, normalize, checkAnswer, exportSave, importSave, solutionFor, TEST_PASSWORD, GAME_TITLE };
 
 /* ============================ Interface ============================ */
 if (typeof document !== "undefined") (function(){
@@ -75,19 +83,22 @@ if (typeof document !== "undefined") (function(){
 
   /* Énigmes débloquées : toutes les résolues + la suivante. */
   const nextIndex = () => { const i = PUZZLES.findIndex((_, k) => !save.solved.includes(k)); return i < 0 ? PUZZLES.length : i; };
-  const unlocked = i => save.solved.includes(i) || i === nextIndex();
+  const unlocked = i => save.test || save.solved.includes(i) || i === nextIndex();
+  /* Mode test : écus illimités (rien n'est débité). */
+  const canPay = n => save.test || save.coins >= n;
+  const pay = n => { if (!save.test) save.coins -= n; };
 
   let cur, idx, value, hintsShown, ans, active;
 
   function header(){
-    return `<header><h1 onclick="G.title()" style="cursor:pointer">🎩 ${GAME_TITLE}</h1><span class="money">🪙 ${save.coins} écus</span></header>`;
+    return `<header><h1 onclick="G.logoTap()" style="cursor:pointer">🎩 ${GAME_TITLE}${save.test ? ' <span class="test-badge">TEST</span>' : ""}</h1><span class="money">🪙 ${save.test ? "∞" : save.coins} écus</span></header>`;
   }
 
   /* ---------- Écran titre ---------- */
   function title(){
     const started = save.solved.length > 0 || save.owned.length > 0;
     app.innerHTML = `<div class="title-screen">
-      <div class="title-logo"><div class="t1">${GAME_TITLE}</div><div class="t2">${GAME_SUBTITLE}</div></div>
+      <div class="title-logo" onclick="G.logoTap()"><div class="t1">${GAME_TITLE}</div><div class="t2">${GAME_SUBTITLE}</div></div>
       <div class="title-prof">${drawPortrait(save.equipped)}</div>
       <p class="title-pitch">Un manuscrit a disparu. Des indices pleins de fautes.<br>Seul un œil expert en orthographe pourra résoudre l'affaire !</p>
       <div class="title-buttons">
@@ -175,7 +186,7 @@ if (typeof document !== "undefined") (function(){
       ITEMS.filter(it => it.slot === slot).forEach(it => {
         const own = save.owned.includes(it.id), worn = save.equipped[slot] === it.id;
         let btn;
-        if (!own) btn = `<button class="gold" ${save.coins < it.price ? "disabled" : ""} onclick="G.buy('${it.id}')">🪙 ${it.price}</button>`;
+        if (!own) btn = `<button class="gold" ${save.coins < it.price && !save.test ? "disabled" : ""} onclick="G.buy('${it.id}')">🪙 ${it.price}</button>`;
         else if (slot === "home") btn = `<span>✔ Installé</span>`;
         else btn = `<button class="alt" onclick="G.wear('${it.id}')">${worn ? "Retirer" : "Porter"}</button>`;
         html += `<div class="shop-item"><span>${esc(it.name)}</span>${btn}</div>`;
@@ -187,8 +198,8 @@ if (typeof document !== "undefined") (function(){
   }
   function buy(id){
     const it = ITEMS.find(x => x.id === id);
-    if (!it || save.owned.includes(id) || save.coins < it.price) return;
-    save.coins -= it.price; save.owned.push(id);
+    if (!it || save.owned.includes(id) || !canPay(it.price)) return;
+    pay(it.price); save.owned.push(id);
     if (it.slot !== "home") save.equipped[it.slot] = id;
     persist(); shop();
   }
@@ -239,13 +250,59 @@ if (typeof document !== "undefined") (function(){
         <button class="alt" onclick="G.home()">⟵ Maison</button>
         <button class="alt" onclick="G.hint()" ${hintsShown >= p.hints.length ? "disabled" : ""}>💡 Indice (${HINT_COST} écus)</button>
         <button onclick="G.submit()">Valider ✔</button>
+        ${save.test ? `<button class="gold" onclick="G.solve()">🧪 Solution</button>` : ""}
       </div></div>`;
   }
 
   function hint(){
-    if (save.coins < HINT_COST){ alert(`Il te faut ${HINT_COST} écus pour un indice.`); return; }
-    save.coins -= HINT_COST; hintsShown++; persist(); render();
+    if (!canPay(HINT_COST)){ alert(`Il te faut ${HINT_COST} écus pour un indice.`); return; }
+    pay(HINT_COST); hintsShown++; persist(); render();
   }
+
+  /* Mode test : remplit la bonne réponse puis valide. */
+  function solve(){
+    if (!save.test) return;
+    ans = solutionFor(cur);
+    render(); submit();
+  }
+
+  /* ---------- Menu de test (Ctrl+Maj+T, ou 5 appuis sur le nom du jeu) ---------- */
+  let taps = [];
+  function logoTap(){
+    const now = Date.now();
+    taps = taps.filter(t => now - t < 2000).concat(now);
+    if (taps.length >= 5){ taps = []; testMenu(); return; }
+    setTimeout(() => { if (taps.length === 1 && Date.now() - taps[0] >= 600){ taps = []; title(); } }, 650);
+  }
+  function testMenu(){
+    G.close();
+    const o = document.createElement("div"); o.className = "overlay";
+    o.innerHTML = save.test
+      ? `<div class="card"><h2>🧪 Menu de test</h2>
+          <p>Mode test <b>actif</b> : tous les mystères sont débloqués, les écus sont illimités et un bouton « 🧪 Solution » valide chaque mystère.</p>
+          <div class="bar" style="justify-content:center">
+            <button class="alt" onclick="G.testOff()">Désactiver le mode test</button>
+            <button onclick="G.close()">Fermer</button></div></div>`
+      : `<div class="card"><h2>🧪 Menu de test</h2>
+          <input class="answer" id="test-pwd" type="password" placeholder="Mot de passe" autocomplete="off"
+            onkeydown="if(event.key==='Enter')G.testOn()">
+          <p id="test-err" style="color:var(--ko);min-height:1.2em"></p>
+          <div class="bar" style="justify-content:center">
+            <button class="alt" onclick="G.close()">Annuler</button>
+            <button onclick="G.testOn()">Déverrouiller</button></div></div>`;
+    document.body.appendChild(o);
+    document.getElementById("test-pwd")?.focus();
+  }
+  function testOn(){
+    if (document.getElementById("test-pwd").value !== TEST_PASSWORD){
+      document.getElementById("test-err").textContent = "Mot de passe incorrect."; return;
+    }
+    save.test = true; persist(); G.close(); home(); toast("🧪 Mode test activé");
+  }
+  function testOff(){ delete save.test; persist(); G.close(); home(); toast("Mode test désactivé"); }
+  document.addEventListener("keydown", e => {
+    if (e.ctrlKey && e.shiftKey && (e.key === "T" || e.key === "t" || e.code === "KeyT")){ e.preventDefault(); testMenu(); }
+  });
 
   function submit(){
     if (cur.t === "fill" && ans.some(v => v === null)){ alert("Complète tous les trous avant de valider !"); return; }
@@ -277,7 +334,7 @@ if (typeof document !== "undefined") (function(){
   }
 
   window.G = {
-    home, title, download, load, list, shop, buy, wear, start, render, hint, submit,
+    home, title, download, load, list, shop, buy, wear, start, render, hint, submit, solve, logoTap, testOn, testOff,
     toggle: k => { ans.has(k) ? ans.delete(k) : ans.add(k); render(); },
     pick: k => { active = k; render(); },
     choose: k => { ans[active] = cur.blanks[active].o[k]; const n = ans.findIndex(v => v === null); if (n >= 0) active = n; render(); },

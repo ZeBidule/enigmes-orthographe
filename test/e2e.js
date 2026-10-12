@@ -90,6 +90,50 @@ const url = `http://localhost:${server.address().port}/`;
   assert.match(await p.textContent(".title-buttons"), /Continuer/);
   console.log("ok - écran titre (continuer)");
 
+  // 7. Menu de test : Ctrl+Maj+T, mauvais puis bon mot de passe
+  await p.keyboard.press("Control+Shift+T");
+  await p.waitForSelector("#test-pwd");
+  await p.fill("#test-pwd", "faux");
+  await p.click("text=Déverrouiller");
+  assert.strictEqual(await p.textContent("#test-err"), "Mot de passe incorrect.");
+  await p.fill("#test-pwd", "tes1");
+  await p.press("#test-pwd", "Enter");
+  await p.waitForSelector(".test-badge");
+  assert.match(await p.textContent(".money"), /∞/);
+  console.log("ok - menu de test par Ctrl+Maj+T (mot de passe vérifié)");
+
+  // 8. Tous les mystères débloqués
+  await p.click("text=📜 Mystères");
+  assert.strictEqual(await p.$$eval(".grid button[disabled]", x => x.length), 0);
+  console.log("ok - 50 mystères débloqués");
+
+  // 9. Bouton Solution sur les 3 types (find, fill, type) + mystère 50
+  for (const i of [1, 2, 4, 49]) {
+    await p.evaluate(i => { G.close(); G.start(i); }, i);
+    await p.click("text=🧪 Solution");
+    assert.strictEqual(await p.textContent(".big"), "Bravo !", "mystère " + (i + 1));
+  }
+  await p.evaluate(() => G.close());
+  console.log("ok - bouton Solution valide les mystères (3 types)");
+
+  // 10. Écus illimités : achat sans débit
+  const before = await p.evaluate(() => JSON.parse(localStorage.getItem("plume-save-v2")).coins);
+  await p.evaluate(() => G.shop());
+  await p.click(".shop-item:has-text('Chat de compagnie') button");
+  const after = await p.evaluate(() => JSON.parse(localStorage.getItem("plume-save-v2")));
+  assert.ok(after.owned.includes("chat"));
+  assert.strictEqual(after.coins, before);
+  console.log("ok - achat à 150 écus possible, rien n'est débité");
+
+  // 11. Accès mobile : 5 appuis sur le nom du jeu, puis désactivation
+  await p.evaluate(() => G.home());
+  for (let k = 0; k < 5; k++) await p.click("header h1");
+  await p.click("text=Désactiver le mode test");
+  assert.strictEqual(await p.$(".test-badge"), null);
+  await p.evaluate(() => G.list());
+  assert.ok(await p.$$eval(".grid button[disabled]", x => x.length) > 0);
+  console.log("ok - 5 appuis ouvrent le menu ; désactivation re-verrouille");
+
   assert.deepStrictEqual(errors, [], "erreurs JS");
   console.log("\nTests navigateur OK");
   await browser.close(); server.close();

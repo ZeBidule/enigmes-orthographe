@@ -19,6 +19,14 @@ de plus en plus difficiles (homophones, pluriels, conjugaison, participes passé
   contenant les mystères résolus, les écus et les objets achetés/portés.
   **📂 Charger** (écran titre ou maison) recharge ce fichier, par exemple sur un autre appareil.
 
+## Menu de test
+
+Pour tester le jeu sans tout résoudre : **Ctrl+Maj+T** (ou **5 appuis rapides sur le nom du jeu**,
+utile sur téléphone et si le navigateur garde Ctrl+Maj+T pour « rouvrir l'onglet »), mot de passe `tes1`.
+Le mode test débloque tous les mystères, rend les écus illimités et ajoute un bouton **🧪 Solution**
+qui valide le mystère. Il se désactive depuis le même menu.
+Le mot de passe est dans le code source : c'est une commodité, pas une protection.
+
 ## Structure
 
 | Fichier | Rôle |
@@ -28,7 +36,7 @@ de plus en plus difficiles (homophones, pluriels, conjugaison, participes passé
 | `js/shop.js` | Objets de la boutique et dessins SVG du professeur et de sa maison |
 | `js/game.js` | Moteur : progression, écus, indices, boutique |
 | `test/check.js` | Vérification des énigmes, du moteur et du format de sauvegarde |
-| `test/e2e.js` | Test navigateur : écran titre, partie, sauvegarde/chargement de fichier |
+| `test/e2e.js` | Test navigateur : écran titre, partie, sauvegarde/chargement, menu de test |
 
 ## Tests
 
