@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#3b2412">
-<title>Professeur Plume et le Manuscrit Perdu</title>
+<title>Plume &amp; Cie : L'Affaire du Manuscrit Perdu</title>
 <style>
   :root{--parch:#f4e4bc;--ink:#3b2412;--accent:#8b2e16;--gold:#c99a2e;--ok:#2e7d32;--ko:#b3261e}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -50,6 +50,17 @@
   .progress{height:10px;background:#d9c08a;border-radius:6px;overflow:hidden;margin:8px 0}
   .progress div{height:100%;background:var(--ok)}
   .center{text-align:center}
+  .title-screen{min-height:95vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:20px 0}
+  .title-logo .t1{font-size:clamp(2.6rem,11vw,4.2rem);font-weight:bold;color:var(--gold);letter-spacing:2px;
+    text-shadow:0 3px 0 #5a1d0e,0 6px 18px #000;font-variant:small-caps}
+  .title-logo .t2{font-size:clamp(1.05rem,4.5vw,1.5rem);color:var(--parch);font-style:italic;margin-top:4px;border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);padding:4px 10px;display:inline-block}
+  .title-prof{width:150px;background:radial-gradient(circle,#f4e4bc55,transparent 70%);animation:bob 3s ease-in-out infinite}
+  .title-prof svg{width:100%}
+  @keyframes bob{50%{transform:translateY(-8px)}}
+  .title-pitch{color:var(--parch);line-height:1.5;max-width:420px;margin:0}
+  .title-buttons{display:flex;flex-direction:column;gap:10px;width:min(320px,90%)}
+  .title-buttons button{font-size:1.15rem;padding:14px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--parch);padding:12px 18px;border-radius:10px;z-index:20;box-shadow:0 4px 12px #0008}
 </style>
 </head>
 <body>

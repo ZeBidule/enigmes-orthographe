@@ -77,4 +77,19 @@ t("boutique et dessins", () => {
   assert.ok(!/undefined|NaN/.test(svg + drawPortrait({})));
 });
 
+t("sauvegarde : export puis import identique", () => {
+  const s = { coins: 42, solved: [0, 1, 2], owned: ["forme", "chat"], equipped: { hat: "forme" } };
+  const back = G.importSave(G.exportSave(s), PUZZLES.length, ITEMS);
+  assert.deepStrictEqual(back, s);
+});
+
+t("sauvegarde : fichiers invalides refusés, valeurs inconnues ignorées", () => {
+  assert.throws(() => G.importSave("pas du json", 50, ITEMS), /pas une sauvegarde valide/);
+  assert.throws(() => G.importSave('{"coins":3}', 50, ITEMS), /pas une sauvegarde de/);
+  assert.throws(() => G.importSave('{"format":"plume-et-cie-save","coins":-5,"solved":[],"owned":[]}', 50, ITEMS), /abîmée/);
+  const s = G.importSave(JSON.stringify({ format: "plume-et-cie-save", coins: 1, solved: [3, 3, 99, "x"], owned: ["chat", "fusee"],
+    equipped: { hat: "forme", home: "chat" } }), 50, ITEMS);
+  assert.deepStrictEqual(s, { coins: 1, solved: [3], owned: ["chat"], equipped: {} });
+});
+
 console.log(`\n${n} tests OK`);

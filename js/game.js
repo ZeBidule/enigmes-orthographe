@@ -33,7 +33,35 @@ function checkAnswer(p, answer){
   return p.answers.some(a => normalize(a) === normalize(answer));
 }
 
-if (typeof module !== "undefined") module.exports = { baseValue, afterMistake, tokens, normalize, checkAnswer };
+const GAME_TITLE = "Plume & Cie";
+const GAME_SUBTITLE = "L'Affaire du Manuscrit Perdu";
+const SAVE_FORMAT = "plume-et-cie-save";
+
+/* Contenu du fichier de sauvegarde. */
+function exportSave(save){
+  return JSON.stringify({ format: SAVE_FORMAT, version: 1, date: new Date().toISOString(),
+    coins: save.coins, solved: save.solved, owned: save.owned, equipped: save.equipped }, null, 2);
+}
+/* Lit et valide un fichier de sauvegarde. Lève une erreur si le fichier est invalide.
+   Les valeurs inconnues (énigme ou objet inexistant) sont ignorées. */
+function importSave(text, puzzleCount, items){
+  let d;
+  try { d = JSON.parse(text); } catch(e) { throw new Error("Ce fichier n'est pas une sauvegarde valide."); }
+  if (!d || d.format !== SAVE_FORMAT) throw new Error("Ce fichier n'est pas une sauvegarde de " + GAME_TITLE + ".");
+  if (!Number.isInteger(d.coins) || d.coins < 0 || !Array.isArray(d.solved) || !Array.isArray(d.owned))
+    throw new Error("Sauvegarde abîmée : impossible de la charger.");
+  const ids = items.map(i => i.id);
+  const solved = [...new Set(d.solved)].filter(i => Number.isInteger(i) && i >= 0 && i < puzzleCount).sort((a, b) => a - b);
+  const owned = [...new Set(d.owned)].filter(id => ids.includes(id));
+  const equipped = {};
+  Object.entries(d.equipped || {}).forEach(([slot, id]) => {
+    const it = items.find(i => i.id === id);
+    if (it && it.slot === slot && slot !== "home" && owned.includes(id)) equipped[slot] = id;
+  });
+  return { coins: d.coins, solved, owned, equipped };
+}
+
+if (typeof module !== "undefined") module.exports = { baseValue, afterMistake, tokens, normalize, checkAnswer, exportSave, importSave, GAME_TITLE };
 
 /* ============================ Interface ============================ */
 if (typeof document !== "undefined") (function(){
@@ -52,7 +80,55 @@ if (typeof document !== "undefined") (function(){
   let cur, idx, value, hintsShown, ans, active;
 
   function header(){
-    return `<header><h1>🎩 Professeur Plume</h1><span class="money">🪙 ${save.coins} écus</span></header>`;
+    return `<header><h1 onclick="G.title()" style="cursor:pointer">🎩 ${GAME_TITLE}</h1><span class="money">🪙 ${save.coins} écus</span></header>`;
+  }
+
+  /* ---------- Écran titre ---------- */
+  function title(){
+    const started = save.solved.length > 0 || save.owned.length > 0;
+    app.innerHTML = `<div class="title-screen">
+      <div class="title-logo"><div class="t1">${GAME_TITLE}</div><div class="t2">${GAME_SUBTITLE}</div></div>
+      <div class="title-prof">${drawPortrait(save.equipped)}</div>
+      <p class="title-pitch">Un manuscrit a disparu. Des indices pleins de fautes.<br>Seul un œil expert en orthographe pourra résoudre l'affaire !</p>
+      <div class="title-buttons">
+        <button onclick="G.home()">${started ? "▶ Continuer l'enquête" : "▶ Nouvelle enquête"}</button>
+        <button class="gold" onclick="G.load()">📂 Charger une sauvegarde</button>
+      </div>
+      ${started ? `<div class="meta" style="color:var(--parch)">${save.solved.length} / ${PUZZLES.length} mystères résolus · 🪙 ${save.coins} écus</div>` : ""}
+      <div class="meta" style="color:var(--parch);opacity:.6">Un jeu pour réviser l'orthographe française</div>
+    </div>`;
+  }
+
+  /* ---------- Sauvegarde dans un fichier ---------- */
+  function download(){
+    const blob = new Blob([exportSave(save)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `plume-et-cie-sauvegarde-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast("💾 Sauvegarde téléchargée !");
+  }
+  function load(){
+    const input = document.createElement("input");
+    input.type = "file"; input.accept = ".json,application/json"; input.id = "load-file";
+    input.style.display = "none";
+    input.onchange = () => {
+      const f = input.files[0]; input.remove();
+      if (!f) return;
+      f.text().then(text => {
+        try {
+          const s = importSave(text, PUZZLES.length, ITEMS);
+          if (!confirm(`Charger cette sauvegarde ?\n${s.solved.length} mystères résolus, ${s.coins} écus, ${s.owned.length} objets.\nLa progression actuelle sera remplacée.`)) return;
+          save = s; persist(); home(); toast("📂 Sauvegarde chargée !");
+        } catch(e) { alert(e.message); }
+      });
+    };
+    document.body.appendChild(input); input.click();
+  }
+  function toast(msg){
+    const t = document.createElement("div"); t.className = "toast"; t.textContent = msg;
+    document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
   }
 
   function home(){
@@ -60,7 +136,7 @@ if (typeof document !== "undefined") (function(){
     app.innerHTML = header() + `
       <div class="card">
         <div class="scene">${drawScene(save.owned, save.equipped)}</div>
-        <h2 style="margin-top:10px">Le Manuscrit Perdu</h2>
+        <h2 style="margin-top:10px">${GAME_SUBTITLE}</h2>
         <p>Le précieux manuscrit de Lord Dictée a disparu ! Aide le Professeur Plume à le retrouver :
         chaque indice est piégé par des fautes d'orthographe.</p>
         <div class="progress"><div style="width:${done * 100 / PUZZLES.length}%"></div></div>
@@ -71,7 +147,13 @@ if (typeof document !== "undefined") (function(){
           <button class="gold" onclick="G.shop()">🛍 Boutique</button>
         </div>
       </div>
-      <div class="center"><button class="alt" onclick="G.reset()">Recommencer à zéro</button></div>`;
+      <div class="card"><h2>Sauvegarde</h2>
+        <div class="meta">Enregistre ta progression (mystères et objets achetés) dans un fichier, pour la garder ou la transférer sur un autre appareil.</div>
+        <div class="bar">
+          <button class="gold" onclick="G.download()">💾 Sauvegarder</button>
+          <button class="gold" onclick="G.load()">📂 Charger</button>
+          <button class="alt" onclick="G.reset()">Recommencer à zéro</button>
+        </div></div>`;
   }
 
   function list(){
@@ -195,7 +277,7 @@ if (typeof document !== "undefined") (function(){
   }
 
   window.G = {
-    home, list, shop, buy, wear, start, render, hint, submit,
+    home, title, download, load, list, shop, buy, wear, start, render, hint, submit,
     toggle: k => { ans.has(k) ? ans.delete(k) : ans.add(k); render(); },
     pick: k => { active = k; render(); },
     choose: k => { ans[active] = cur.blanks[active].o[k]; const n = ans.findIndex(v => v === null); if (n >= 0) active = n; render(); },
@@ -204,5 +286,5 @@ if (typeof document !== "undefined") (function(){
     close: () => document.querySelector(".overlay")?.remove(),
     reset: () => { if (confirm("Effacer toute la progression ?")){ localStorage.removeItem(SAVE_KEY); location.reload(); } }
   };
-  home();
+  title();
 })();
