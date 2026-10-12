@@ -45,7 +45,7 @@ const url = `http://localhost:${server.address().port}/`;
   await p.click("text=Boutique");
   await p.click(".shop-item:has-text('Nœud papillon') button");
   const coins = await p.evaluate(() => JSON.parse(localStorage.getItem("plume-save-v2")).coins);
-  assert.strictEqual(coins, 5 + 15 - 20);
+  assert.strictEqual(coins, 5 + 15 - 10);
   console.log("ok - partie jouée : mystère 1 résolu, nœud papillon acheté");
 
   // 3. Sauvegarder dans un fichier
@@ -55,7 +55,7 @@ const url = `http://localhost:${server.address().port}/`;
   await dl.saveAs(file);
   const content = JSON.parse(fs.readFileSync(file, "utf8"));
   assert.match(dl.suggestedFilename(), /^plume-et-cie-sauvegarde-\d{4}-\d\d-\d\d\.json$/);
-  assert.deepStrictEqual([content.solved, content.owned, content.equipped, content.coins], [["p01"], ["noeud"], { neck: "noeud" }, 0]);
+  assert.deepStrictEqual([content.solved, content.owned, content.equipped, content.coins], [["p01"], ["noeud"], { neck: "noeud" }, 10]);
   console.log("ok - fichier téléchargé :", dl.suggestedFilename());
 
   // 4. Navigateur vierge (autre appareil) : charger le fichier depuis l'écran titre
@@ -65,7 +65,7 @@ const url = `http://localhost:${server.address().port}/`;
   await chooser.setFiles(file);
   await p.waitForSelector(".progress");
   assert.match(await p.textContent("body"), /1 \/ 90 mystères résolus/);
-  assert.match(await p.textContent(".money"), /0 écus/);
+  assert.match(await p.textContent(".money"), /10 écus/);
   assert.ok(await p.$("text=Mystère 2"), "mystère 2 débloqué");
   await p.click("text=Boutique");
   assert.strictEqual(await p.textContent(".shop-item:has-text('Nœud papillon') button"), "Retirer");
@@ -136,7 +136,7 @@ const url = `http://localhost:${server.address().port}/`;
   await p.evaluate(() => G.home());
   assert.strictEqual(await p.$$eval(".scene svg", x => x.length), 2, "maison + jardin affichés");
   assert.ok(await p.$("svg[aria-label^='Le jardin']"));
-  console.log("ok - achats chat (150) et montgolfière (400) sans débit ; maison + jardin affichés");
+  console.log("ok - achats chat (110) et montgolfière (290) sans débit ; maison + jardin affichés");
 
   // 11. Désactivation depuis le bouton 🔑
   await p.evaluate(() => G.title());

@@ -71,7 +71,7 @@ function solutionFor(p){
 }
 const TEST_PASSWORD = "tes1";
 
-if (typeof module !== "undefined") module.exports = { baseValue, afterMistake, tokens, normalize, checkAnswer, exportSave, importSave, migrateSolved, solutionFor, TEST_PASSWORD, GAME_TITLE };
+if (typeof module !== "undefined") module.exports = { baseValue, afterMistake, tokens, normalize, checkAnswer, exportSave, importSave, migrateSolved, START_COINS, HINT_COST, solutionFor, TEST_PASSWORD, GAME_TITLE };
 
 /* ============================ Interface ============================ */
 if (typeof document !== "undefined") (function(){

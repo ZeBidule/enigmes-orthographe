@@ -6,47 +6,47 @@
    ===================================================================== */
 const ITEMS = [
   // Chapeaux
-  { id:"beret",    slot:"hat",  name:"Béret",                  price:30 },
-  { id:"melon",    slot:"hat",  name:"Chapeau melon",          price:50 },
-  { id:"explo",    slot:"hat",  name:"Casque d'explorateur",   price:70 },
-  { id:"forme",    slot:"hat",  name:"Haut-de-forme",          price:100 },
+  { id:"beret",    slot:"hat",  name:"Béret",                  price:20 },
+  { id:"melon",    slot:"hat",  name:"Chapeau melon",          price:35 },
+  { id:"explo",    slot:"hat",  name:"Casque d'explorateur",   price:50 },
+  { id:"forme",    slot:"hat",  name:"Haut-de-forme",          price:70 },
   // Vestes
-  { id:"tweed",    slot:"coat", name:"Veste en tweed",         price:40 },
-  { id:"bleue",    slot:"coat", name:"Redingote bleue",        price:80 },
-  { id:"cape",     slot:"coat", name:"Cape violette",          price:120 },
+  { id:"tweed",    slot:"coat", name:"Veste en tweed",         price:25 },
+  { id:"bleue",    slot:"coat", name:"Redingote bleue",        price:55 },
+  { id:"cape",     slot:"coat", name:"Cape violette",          price:85 },
   // Cou
-  { id:"noeud",    slot:"neck", name:"Nœud papillon",          price:20 },
-  { id:"echarpe",  slot:"neck", name:"Écharpe rouge",          price:35 },
+  { id:"noeud",    slot:"neck", name:"Nœud papillon",          price:10 },
+  { id:"echarpe",  slot:"neck", name:"Écharpe rouge",          price:25 },
   // Visage
-  { id:"lunettes", slot:"face", name:"Lunettes rondes",        price:25 },
-  { id:"monocle",  slot:"face", name:"Monocle doré",           price:60 },
+  { id:"lunettes", slot:"face", name:"Lunettes rondes",        price:15 },
+  { id:"monocle",  slot:"face", name:"Monocle doré",           price:40 },
   // Main
-  { id:"canne",    slot:"hand", name:"Canne",                  price:40 },
-  { id:"loupe",    slot:"hand", name:"Loupe de détective",     price:55 },
+  { id:"canne",    slot:"hand", name:"Canne",                  price:25 },
+  { id:"loupe",    slot:"hand", name:"Loupe de détective",     price:40 },
   // Maison
-  { id:"tapis",    slot:"home", name:"Tapis",                  price:25 },
-  { id:"plante",   slot:"home", name:"Plante verte",           price:20 },
-  { id:"rideaux",  slot:"home", name:"Rideaux",                price:30 },
-  { id:"lampe",    slot:"home", name:"Lampe",                  price:35 },
-  { id:"tableau",  slot:"home", name:"Tableau",                price:45 },
-  { id:"globe",    slot:"home", name:"Globe terrestre",        price:60 },
-  { id:"horloge",  slot:"home", name:"Horloge de parquet",     price:80 },
-  { id:"lustre",   slot:"home", name:"Lustre",                 price:90 },
-  { id:"biblio",   slot:"home", name:"Bibliothèque",           price:110 },
-  { id:"chat",     slot:"home", name:"Chat de compagnie",      price:150 },
+  { id:"tapis",    slot:"home", name:"Tapis",                  price:15 },
+  { id:"plante",   slot:"home", name:"Plante verte",           price:10 },
+  { id:"rideaux",  slot:"home", name:"Rideaux",                price:20 },
+  { id:"lampe",    slot:"home", name:"Lampe",                  price:25 },
+  { id:"tableau",  slot:"home", name:"Tableau",                price:30 },
+  { id:"globe",    slot:"home", name:"Globe terrestre",        price:40 },
+  { id:"horloge",  slot:"home", name:"Horloge de parquet",     price:55 },
+  { id:"lustre",   slot:"home", name:"Lustre",                 price:65 },
+  { id:"biblio",   slot:"home", name:"Bibliothèque",           price:80 },
+  { id:"chat",     slot:"home", name:"Chat de compagnie",      price:110 },
   // Jardin
-  { id:"fleurs",   slot:"garden", name:"Parterre de fleurs",   price:40 },
-  { id:"potager",  slot:"garden", name:"Potager",              price:60 },
-  { id:"lampadaire", slot:"garden", name:"Lampadaire",         price:70 },
-  { id:"banc",     slot:"garden", name:"Banc",                 price:80 },
-  { id:"arbre",    slot:"garden", name:"Grand chêne",          price:100 },
-  { id:"niche",    slot:"garden", name:"Niche et son chien",   price:150 },
-  { id:"cabane",   slot:"garden", name:"Cabane de jardin",     price:160 },
-  { id:"fontaine", slot:"garden", name:"Fontaine",             price:200 },
+  { id:"fleurs",   slot:"garden", name:"Parterre de fleurs",   price:25 },
+  { id:"potager",  slot:"garden", name:"Potager",              price:40 },
+  { id:"lampadaire", slot:"garden", name:"Lampadaire",         price:50 },
+  { id:"banc",     slot:"garden", name:"Banc",                 price:55 },
+  { id:"arbre",    slot:"garden", name:"Grand chêne",          price:70 },
+  { id:"niche",    slot:"garden", name:"Niche et son chien",   price:110 },
+  { id:"cabane",   slot:"garden", name:"Cabane de jardin",     price:115 },
+  { id:"fontaine", slot:"garden", name:"Fontaine",             price:145 },
   // Véhicules
-  { id:"velo",     slot:"vehicle", name:"Vélo",                price:90 },
-  { id:"voiture",  slot:"vehicle", name:"Voiture ancienne",    price:300 },
-  { id:"ballon",   slot:"vehicle", name:"Montgolfière",        price:400 }
+  { id:"velo",     slot:"vehicle", name:"Vélo",                price:65 },
+  { id:"voiture",  slot:"vehicle", name:"Voiture ancienne",    price:220 },
+  { id:"ballon",   slot:"vehicle", name:"Montgolfière",        price:290 }
 ];
 const DECOR_SLOTS = ["home", "garden", "vehicle"];
 const SLOT_NAMES = { hat:"Chapeaux", coat:"Vestes", neck:"Cou", face:"Visage", hand:"Accessoires", home:"Maison", garden:"Jardin", vehicle:"Véhicules" };

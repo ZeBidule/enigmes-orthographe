@@ -145,6 +145,14 @@ t("sauvegarde : fichiers invalides refusés, valeurs inconnues ignorées", () =>
   assert.deepStrictEqual(s, { coins: 1, solved: ["p04"], owned: ["chat", "ballon"], equipped: {} });
 });
 
+t("économie : on peut tout acheter en prenant 1 indice toutes les 5 questions", () => {
+  const gains = PUZZLES.reduce((a, p) => a + G.baseValue(p), 0) + G.START_COINS;
+  const hints = Math.floor(PUZZLES.length / 5) * G.HINT_COST;
+  const shop = ITEMS.reduce((a, i) => a + i.price, 0);
+  assert.ok(gains - hints >= shop, `budget ${gains - hints} < boutique ${shop}`);
+  assert.ok(gains - hints - shop < 150, "la marge reste petite : la boutique reste un objectif");
+});
+
 t("ancienne sauvegarde (positions 0..49) convertie en identifiants", () => {
   assert.deepStrictEqual(G.migrateSolved([0, 9, 49, "p70"]), ["p01", "p10", "p50", "p70"]);
   const old = JSON.stringify({ format: "plume-et-cie-save", version: 1, coins: 7, solved: [0, 1, 2], owned: [], equipped: {} });

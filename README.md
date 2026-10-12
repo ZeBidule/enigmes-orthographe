@@ -16,6 +16,8 @@ accords, orthographe des mots, nombres en lettres).
   Les écus servent à acheter des indices et, dans la boutique, des vêtements pour le professeur,
   des objets pour sa maison, des aménagements pour son jardin (fontaine, chêne, niche…)
   et des véhicules (vélo, voiture ancienne, montgolfière).
+  Les prix sont calculés pour qu'on puisse **tout acheter** en prenant un indice toutes les 5 questions
+  (gains maximum 2 270 écus − 18 indices × 3 = 2 216 écus ; boutique complète : 2 130 écus).
 - La progression est enregistrée automatiquement dans le navigateur (localStorage).
 - **💾 Sauvegarder** (écran maison) télécharge un fichier `plume-et-cie-sauvegarde-AAAA-MM-JJ.json`
   contenant les mystères résolus, les écus et les objets achetés/portés.
