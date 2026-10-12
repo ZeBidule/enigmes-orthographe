@@ -1,19 +1,21 @@
 # Plume & Cie : L'Affaire du Manuscrit Perdu
 
 Petit jeu d'énigmes pour réviser l'orthographe française au collège.
-Le précieux manuscrit de Lord Dictée a disparu : 50 mystères à résoudre, dans l'ordre,
-de plus en plus difficiles (homophones, pluriels, conjugaison, participes passés, pièges d'experts).
+Le précieux manuscrit de Lord Dictée a disparu : 90 mystères à résoudre, dans l'ordre,
+de plus en plus difficiles, qui mélangent 6 catégories (homophones, participes passés, conjugaison,
+accords, orthographe des mots, nombres en lettres).
 
 **Jouer : https://zebidule.github.io/enigmes-orthographe/** (téléphone ou ordinateur, aucun install).
 
 ## Principe
 
-- 5 chapitres de 10 mystères ; un mystère se débloque quand le précédent est résolu.
+- 9 chapitres de 10 mystères ; un mystère se débloque quand le précédent est résolu.
 - 3 types d'énigmes : trouver les mots fautifs, compléter des trous, taper la réponse au clavier
   (les accents comptent ; une barre d'accents aide sur ordinateur).
-- Chaque mystère rapporte des **écus** (15 à 35 selon le chapitre, -20 % par erreur).
-  Les écus servent à acheter des indices et, dans la boutique, des vêtements pour le professeur
-  et des objets pour sa maison.
+- Chaque mystère rapporte des **écus** (15 à 35 selon sa difficulté, -20 % par erreur).
+  Les écus servent à acheter des indices et, dans la boutique, des vêtements pour le professeur,
+  des objets pour sa maison, des aménagements pour son jardin (fontaine, chêne, niche…)
+  et des véhicules (vélo, voiture ancienne, montgolfière).
 - La progression est enregistrée automatiquement dans le navigateur (localStorage).
 - **💾 Sauvegarder** (écran maison) télécharge un fichier `plume-et-cie-sauvegarde-AAAA-MM-JJ.json`
   contenant les mystères résolus, les écus et les objets achetés/portés.
@@ -21,31 +23,37 @@ de plus en plus difficiles (homophones, pluriels, conjugaison, participes passé
 
 ## Répartition des énigmes
 
-### Par type
-
-| Chapitre | Trouver les fautes | Compléter les trous | Réponse à taper | Total |
+| | Trouver les fautes | Compléter les trous | Réponse à taper | Total |
 |---|---|---|---|---|
-| 1 — Le manoir | 3 | 5 | 2 | 10 |
-| 2 — Le village | 3 | 4 | 3 | 10 |
-| 3 — La gare | 3 | 4 | 3 | 10 |
-| 4 — Le château | 2 | 4 | 4 | 10 |
-| 5 — Le grenier | 2 | 4 | 4 | 10 |
-| **Total** | **13 (26 %)** | **21 (42 %)** | **16 (32 %)** | **50** |
+| Énigmes | 30 (33 %) | 30 (33 %) | 30 (33 %) | 90 |
 
-### Par catégorie
+| Catégorie | Nb | Notions |
+|---|---|---|
+| Homophones grammaticaux | 15 | et/est, a/à, son/sont, on/ont, ces/ses, ou/où, ce/se, c'est/s'est, mes/mais, la/là/l'a, peu/peut, quand/quant, leur/leurs, sans/s'en, quel que/quelque, comte/conte, plutôt/plus tôt, quoi que, davantage |
+| Participes passés | 15 | avec être, avec avoir (COD avant/après), voix passive, pronominaux, participe suivi d'un infinitif, formes irrégulières |
+| Conjugaison | 15 | -er/-é, présent, imparfait, futur, conditionnel, passé simple, subjonctif, impératif, verbes irréguliers |
+| Pluriels et accords | 15 | pluriels en -al/-ou, noms composés, adjectifs de couleur, féminins, tout, chaque/plusieurs, demi/nu, accord avec plusieurs noms |
+| Orthographe des mots | 15 | accents, cédille, m devant m/b/p, s/ss, g/ge/gu, consonnes doubles, mots invariables |
+| Nombres en lettres | 15 | vingt, cent, mille, million, « et un », nombres ordinaux |
 
-| Catégorie | Nb | Énigmes | Notions |
-|---|---|---|---|
-| Homophones grammaticaux | 12 | 1-10, 43, 49 | et/est, a/à, son/sont, on/ont, ces/ses, ou/où, ce/se, c'est/s'est, mes/mais, la/là/l'a, peu/peut, quand/quant, leur/leurs, sans/s'en, dans/d'en, quel que/quelque |
-| Participes passés | 13 | 31-40, 45, 46, 48 | avec être, avec avoir (COD placé avant ou après), voix passive, verbes pronominaux, formes irrégulières |
-| Conjugaison | 10 | 21-30 | -er/-é, présent, imparfait, futur, conditionnel, passé simple, subjonctif, impératif, verbes irréguliers |
-| Pluriels et accords dans le groupe du nom | 8 | 11-18 | pluriels en -al/-ou, œil/yeux, adjectifs de couleur, féminins particuliers, tout/tous/toute/toutes |
-| Orthographe des mots | 5 | 41, 42, 44, 47, 50 | consonnes doubles, accueil, dilemme, -emment, mots invariables, cédille |
-| Nombres en lettres | 2 | 19, 20 | accord de vingt et cent |
+### Par chapitre
 
-Certaines énigmes mélangent plusieurs notions ; elles sont classées selon la notion principale
-(9 : aussi un accord du déterminant ; 21 : aussi un homophone ; 33 : aussi près de/prêt et aucun ;
-49 : aussi l'accord de « eux-mêmes »).
+Chaque chapitre mélange les 6 catégories (1 ou 2 énigmes de chacune) et les 3 types (3 ou 4 de chaque).
+
+| Chapitre | Trouver les fautes | Compléter les trous | Réponse à taper | Homophones grammaticaux | Participes passés | Conjugaison | Pluriels et accords | Orthographe des mots | Nombres en lettres | Difficulté moyenne |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Chapitre 1 — Le mot sur la porte | 4 | 3 | 3 | 2 | 1 | 2 | 2 | 2 | 1 | 1.4 / 5 |
+| Chapitre 2 — Les premiers témoins | 3 | 3 | 4 | 1 | 1 | 2 | 2 | 2 | 2 | 2.1 / 5 |
+| Chapitre 3 — La piste du village | 4 | 3 | 3 | 2 | 2 | 2 | 2 | 1 | 1 | 2.5 / 5 |
+| Chapitre 4 — Le train de minuit | 3 | 3 | 4 | 1 | 2 | 2 | 1 | 2 | 2 | 2.8 / 5 |
+| Chapitre 5 — Le bal du château | 3 | 4 | 3 | 2 | 2 | 1 | 1 | 2 | 2 | 2.8 / 5 |
+| Chapitre 6 — Le port dans la brume | 3 | 4 | 3 | 1 | 2 | 1 | 2 | 2 | 2 | 3.2 / 5 |
+| Chapitre 7 — Les secrets du musée | 4 | 3 | 3 | 2 | 1 | 2 | 1 | 2 | 2 | 3.4 / 5 |
+| Chapitre 8 — La nuit à l'observatoire | 3 | 3 | 4 | 2 | 2 | 1 | 2 | 1 | 2 | 4.3 / 5 |
+| Chapitre 9 — Le grenier du manoir | 3 | 4 | 3 | 2 | 2 | 2 | 2 | 1 | 1 | 4.8 / 5 |
+| **Total** | **30** | **30** | **30** | **15** | **15** | **15** | **15** | **15** | **15** | |
+
+Certaines énigmes mélangent plusieurs notions ; elles sont classées selon la notion principale.
 
 ## Menu de test
 
@@ -59,11 +67,18 @@ Le mot de passe est dans le code source : c'est une commodité, pas une protecti
 | Fichier | Rôle |
 |---|---|
 | `index.html` | Page et styles |
-| `js/puzzles.js` | Les 50 énigmes (format décrit en tête de fichier) |
-| `js/shop.js` | Objets de la boutique et dessins SVG du professeur et de sa maison |
+| `js/puzzles.js` | Les 90 énigmes (format décrit en tête de fichier) et l'ordre de jeu `CHAPTER_PLAN` |
+| `tools/arrange.js` | Génère `CHAPTER_PLAN` en respectant les règles de répartition |
+| `js/shop.js` | Objets de la boutique et dessins SVG du professeur, de sa maison et de son jardin |
 | `js/game.js` | Moteur : progression, écus, indices, boutique |
 | `test/check.js` | Vérification des énigmes, du moteur et du format de sauvegarde |
 | `test/e2e.js` | Test navigateur : écran titre, partie, sauvegarde/chargement, menu de test |
+
+## Ajouter des énigmes
+
+1. Ajouter l'énigme à la fin de `ALL_PUZZLES` avec un nouvel `id` (ne jamais renuméroter : les sauvegardes s'en servent).
+2. Lancer `node tools/arrange.js` pour recalculer les chapitres.
+3. Lancer les tests.
 
 ## Tests
 

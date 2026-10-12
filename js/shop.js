@@ -1,7 +1,8 @@
 /* =====================================================================
    Boutique et dessin (SVG) du Professeur Plume et de sa maison.
    slot : emplacement sur le professeur (un seul objet porté par slot).
-   slot "home" : objet de décoration, toujours affiché une fois acheté.
+   slots de décor (DECOR_SLOTS : home, garden, vehicle) : toujours affichés une fois achetés,
+   dans la maison (home) ou dans le jardin (garden, vehicle).
    ===================================================================== */
 const ITEMS = [
   // Chapeaux
@@ -32,9 +33,23 @@ const ITEMS = [
   { id:"horloge",  slot:"home", name:"Horloge de parquet",     price:80 },
   { id:"lustre",   slot:"home", name:"Lustre",                 price:90 },
   { id:"biblio",   slot:"home", name:"Bibliothèque",           price:110 },
-  { id:"chat",     slot:"home", name:"Chat de compagnie",      price:150 }
+  { id:"chat",     slot:"home", name:"Chat de compagnie",      price:150 },
+  // Jardin
+  { id:"fleurs",   slot:"garden", name:"Parterre de fleurs",   price:40 },
+  { id:"potager",  slot:"garden", name:"Potager",              price:60 },
+  { id:"lampadaire", slot:"garden", name:"Lampadaire",         price:70 },
+  { id:"banc",     slot:"garden", name:"Banc",                 price:80 },
+  { id:"arbre",    slot:"garden", name:"Grand chêne",          price:100 },
+  { id:"niche",    slot:"garden", name:"Niche et son chien",   price:150 },
+  { id:"cabane",   slot:"garden", name:"Cabane de jardin",     price:160 },
+  { id:"fontaine", slot:"garden", name:"Fontaine",             price:200 },
+  // Véhicules
+  { id:"velo",     slot:"vehicle", name:"Vélo",                price:90 },
+  { id:"voiture",  slot:"vehicle", name:"Voiture ancienne",    price:300 },
+  { id:"ballon",   slot:"vehicle", name:"Montgolfière",        price:400 }
 ];
-const SLOT_NAMES = { hat:"Chapeaux", coat:"Vestes", neck:"Cou", face:"Visage", hand:"Accessoires", home:"Maison" };
+const DECOR_SLOTS = ["home", "garden", "vehicle"];
+const SLOT_NAMES = { hat:"Chapeaux", coat:"Vestes", neck:"Cou", face:"Visage", hand:"Accessoires", home:"Maison", garden:"Jardin", vehicle:"Véhicules" };
 
 const SKIN = "#f1c27d";
 const COAT_COLORS = { none:"#7a6a5a", tweed:"#8a5a2b", bleue:"#2c4a8a", cape:"#6a2c8a" };
@@ -131,9 +146,46 @@ function drawScene(owned, equipped){
     ${drawHome(owned)}${drawProfessor(equipped)}${owned.includes("chat") ? drawCat() : ""}</svg>`;
 }
 
+
+/* ---------- Jardin (extérieur) ---------- */
+function drawGarden(owned){
+  const h = id => owned.includes(id);
+  let s = `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Le jardin du Professeur Plume">
+    <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0f5"/><stop offset="1" stop-color="#d9f1ff"/></linearGradient></defs>
+    <rect width="400" height="130" fill="url(#sky)"/>
+    <circle cx="330" cy="30" r="16" fill="#ffe27a"/>
+    <path d="M0 125 q80 -40 170 -5 q90 -35 230 0 v20 H0z" fill="#8cc06a"/>
+    <rect y="125" width="400" height="95" fill="#6fae4c"/>
+    <path d="M60 170 q20 25 0 50 h40 q-20 -25 0 -50z" fill="#d8c08a"/>`;
+  // Maison (façade, toujours présente)
+  s += `<rect x="15" y="80" width="110" height="90" fill="#e9d8b4" stroke="#7b4f2a" stroke-width="2"/>
+    <path d="M5 82 L70 38 L135 82z" fill="#a8323a"/>
+    <rect x="58" y="125" width="24" height="45" fill="#6b3f1d"/><circle cx="77" cy="148" r="2" fill="#c99a2e"/>
+    <rect x="25" y="95" width="24" height="22" fill="#9fd3f0" stroke="#5a3a1a" stroke-width="3"/>
+    <rect x="91" y="95" width="24" height="22" fill="#9fd3f0" stroke="#5a3a1a" stroke-width="3"/>
+    <rect x="100" y="45" width="12" height="25" fill="#7b4f2a"/>`;
+  if (h("ballon")) s += `<g><path d="M225 70 q-30 -20 -30 -42 a30 30 0 0 1 60 0 q0 22 -30 42z" fill="#e2563d"/>
+    <path d="M225 70 q-12 -20 -12 -42 a12 30 0 0 1 24 0 q0 22 -12 42z" fill="#f2c94c"/>
+    <line x1="215" y1="64" x2="218" y2="78" stroke="#5a3a1a"/><line x1="235" y1="64" x2="232" y2="78" stroke="#5a3a1a"/>
+    <rect x="216" y="78" width="18" height="12" fill="#8a5a2b"/></g>`;
+  if (h("arbre")) s += `<rect x="352" y="100" width="16" height="72" fill="#6b3f1d"/><circle cx="360" cy="85" r="34" fill="#3e8e3a"/><circle cx="338" cy="98" r="20" fill="#357a32"/><circle cx="382" cy="98" r="20" fill="#357a32"/>`;
+  if (h("cabane")) s += `<rect x="272" y="118" width="48" height="40" fill="#a0703f" stroke="#6b3f1d" stroke-width="2"/><path d="M266 120 l30 -22 l30 22z" fill="#6b3f1d"/><rect x="288" y="132" width="16" height="26" fill="#5a3a1a"/>`;
+  if (h("potager")) s += [0, 1, 2].map(r => `<rect x="140" y="${132 + r * 9}" width="62" height="6" fill="#7b4f2a"/>` + [0, 1, 2, 3, 4].map(k => `<circle cx="${146 + k * 12}" cy="${131 + r * 9}" r="3.5" fill="${r === 1 ? "#e2563d" : "#4caf50"}"/>`).join("")).join("");
+  if (h("lampadaire")) s += `<line x1="136" y1="120" x2="136" y2="200" stroke="#2a2a2a" stroke-width="4"/><path d="M128 120 h16 l-4 -12 h-8z" fill="#2a2a2a"/><circle cx="136" cy="116" r="4" fill="#ffe27a"/>`;
+  if (h("fontaine")) s += `<ellipse cx="195" cy="192" rx="32" ry="9" fill="#9aa5ad"/><ellipse cx="195" cy="189" rx="26" ry="6" fill="#4a9ad8"/><rect x="190" y="160" width="10" height="30" fill="#9aa5ad"/><ellipse cx="195" cy="160" rx="14" ry="4" fill="#9aa5ad"/><path d="M195 158 q-12 -18 -18 8 M195 158 q12 -18 18 8" fill="none" stroke="#7cc4f0" stroke-width="2"/>`;
+  if (h("banc")) s += `<rect x="236" y="176" width="54" height="6" fill="#8a5a2b"/><rect x="236" y="166" width="54" height="5" fill="#8a5a2b"/><rect x="240" y="182" width="4" height="14" fill="#3b2412"/><rect x="282" y="182" width="4" height="14" fill="#3b2412"/>`;
+  if (h("niche")) s += `<rect x="300" y="172" width="38" height="28" fill="#c0392b"/><path d="M296 174 l23 -16 l23 16z" fill="#7b241c"/><path d="M312 200 v-14 a7 7 0 0 1 14 0 v14z" fill="#3b2412"/>
+    <g transform="translate(330 186)"><ellipse cx="14" cy="10" rx="13" ry="7" fill="#c8a165"/><circle cx="26" cy="2" r="7" fill="#c8a165"/><ellipse cx="29" cy="0" rx="3" ry="6" fill="#8a6a3a"/><circle cx="29" cy="1" r="1.3" fill="#000"/><rect x="4" y="14" width="3" height="7" fill="#c8a165"/><rect x="20" y="14" width="3" height="7" fill="#c8a165"/></g>`;
+  if (h("velo")) s += `<g transform="translate(350 190)" fill="none" stroke="#1f4e8a" stroke-width="2.5"><circle cx="8" cy="14" r="9"/><circle cx="38" cy="14" r="9"/><path d="M8 14 l12 -14 h14 l4 14 M20 0 l8 14 h-20 M34 0 l-2 -6 h-5"/></g>`;
+  if (h("voiture")) s += `<g transform="translate(14 178)"><path d="M0 26 v-12 q4 -4 18 -6 l12 -12 h34 l14 14 q12 2 14 6 v10z" fill="#1d5c4a"/><rect x="34" y="-1" width="14" height="10" fill="#cfefff"/><rect x="52" y="-1" width="12" height="10" fill="#cfefff"/>
+    <circle cx="22" cy="28" r="9" fill="#222"/><circle cx="22" cy="28" r="4" fill="#bbb"/><circle cx="76" cy="28" r="9" fill="#222"/><circle cx="76" cy="28" r="4" fill="#bbb"/><circle cx="92" cy="18" r="3" fill="#ffe27a"/></g>`;
+  if (h("fleurs")) s += [...Array(16)].map((_, k) => `<line x1="${142 + k * 12}" y1="216" x2="${142 + k * 12}" y2="206" stroke="#2e7d32" stroke-width="2"/><circle cx="${142 + k * 12}" cy="204" r="4" fill="${["#e2563d", "#f2c94c", "#d36ac2", "#ffffff"][k % 4]}"/>`).join("");
+  return s + "</svg>";
+}
+
 /* Professeur seul (petit portrait pour les énigmes). */
 function drawPortrait(equipped){
   return `<svg viewBox="140 50 120 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${drawProfessor(equipped)}</svg>`;
 }
 
-if (typeof module !== "undefined") module.exports = { ITEMS, SLOT_NAMES, drawScene, drawPortrait };
+if (typeof module !== "undefined") module.exports = { ITEMS, SLOT_NAMES, DECOR_SLOTS, drawScene, drawGarden, drawPortrait };

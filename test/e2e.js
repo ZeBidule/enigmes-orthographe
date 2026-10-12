@@ -55,7 +55,7 @@ const url = `http://localhost:${server.address().port}/`;
   await dl.saveAs(file);
   const content = JSON.parse(fs.readFileSync(file, "utf8"));
   assert.match(dl.suggestedFilename(), /^plume-et-cie-sauvegarde-\d{4}-\d\d-\d\d\.json$/);
-  assert.deepStrictEqual([content.solved, content.owned, content.equipped, content.coins], [[0], ["noeud"], { neck: "noeud" }, 0]);
+  assert.deepStrictEqual([content.solved, content.owned, content.equipped, content.coins], [["p01"], ["noeud"], { neck: "noeud" }, 0]);
   console.log("ok - fichier téléchargé :", dl.suggestedFilename());
 
   // 4. Navigateur vierge (autre appareil) : charger le fichier depuis l'écran titre
@@ -64,7 +64,7 @@ const url = `http://localhost:${server.address().port}/`;
   const [chooser] = await Promise.all([p.waitForEvent("filechooser"), p.click("text=Charger une sauvegarde")]);
   await chooser.setFiles(file);
   await p.waitForSelector(".progress");
-  assert.match(await p.textContent("body"), /1 \/ 50 mystères résolus/);
+  assert.match(await p.textContent("body"), /1 \/ 90 mystères résolus/);
   assert.match(await p.textContent(".money"), /0 écus/);
   assert.ok(await p.$("text=Mystère 2"), "mystère 2 débloqué");
   await p.click("text=Boutique");
@@ -82,7 +82,7 @@ const url = `http://localhost:${server.address().port}/`;
   await ch2.setFiles(badFile);
   await p.waitForTimeout(500);
   assert.match(alertMsg, /pas une sauvegarde/);
-  assert.match(await p.textContent("body"), /1 \/ 50 mystères résolus/);
+  assert.match(await p.textContent("body"), /1 \/ 90 mystères résolus/);
   console.log("ok - fichier invalide refusé, progression conservée");
 
   // 6. Écran titre en mode "Continuer"
@@ -111,10 +111,11 @@ const url = `http://localhost:${server.address().port}/`;
   // 8. Tous les mystères débloqués
   await p.click("text=📜 Mystères");
   assert.strictEqual(await p.$$eval(".grid button[disabled]", x => x.length), 0);
-  console.log("ok - 50 mystères débloqués");
+  console.log("ok - 90 mystères débloqués");
 
   // 9. Bouton Solution sur les 3 types (find, fill, type) + mystère 50
-  for (const i of [1, 2, 4, 49]) {
+  const picks = await p.evaluate(() => ["find", "fill", "type"].map(t => PUZZLES.findIndex(x => x.t === t)).concat(PUZZLES.length - 1));
+  for (const i of picks) {
     await p.evaluate(i => { G.close(); G.start(i); }, i);
     await p.click("text=🧪 Solution");
     assert.strictEqual(await p.textContent(".big"), "Bravo !", "mystère " + (i + 1));
@@ -129,7 +130,13 @@ const url = `http://localhost:${server.address().port}/`;
   const after = await p.evaluate(() => JSON.parse(localStorage.getItem("plume-save-v2")));
   assert.ok(after.owned.includes("chat"));
   assert.strictEqual(after.coins, before);
-  console.log("ok - achat à 150 écus possible, rien n'est débité");
+  await p.click(".shop-item:has-text('Montgolfière') button");
+  const g = await p.evaluate(() => JSON.parse(localStorage.getItem("plume-save-v2")));
+  assert.ok(g.owned.includes("ballon") && g.coins === before);
+  await p.evaluate(() => G.home());
+  assert.strictEqual(await p.$$eval(".scene svg", x => x.length), 2, "maison + jardin affichés");
+  assert.ok(await p.$("svg[aria-label^='Le jardin']"));
+  console.log("ok - achats chat (150) et montgolfière (400) sans débit ; maison + jardin affichés");
 
   // 11. Désactivation depuis le bouton 🔑
   await p.evaluate(() => G.title());
@@ -140,6 +147,15 @@ const url = `http://localhost:${server.address().port}/`;
   await p.evaluate(() => G.list());
   assert.ok(await p.$$eval(".grid button[disabled]", x => x.length) > 0);
   console.log("ok - désactivation par le bouton 🔑 re-verrouille");
+
+  // 12. Ancienne sauvegarde du navigateur (version 50 énigmes, progression par position)
+  await p.evaluate(() => localStorage.setItem("plume-save-v2", JSON.stringify({ coins: 33, solved: [0, 1, 2], owned: ["tapis"], equipped: {} })));
+  await p.reload();
+  await p.click("text=Continuer");
+  assert.match(await p.textContent("body"), /3 \/ 90 mystères résolus/);
+  const migrated = await p.evaluate(() => { G.list(); return [...document.querySelectorAll(".grid button")].filter(b => b.textContent.startsWith("✔")).length; });
+  assert.strictEqual(migrated, 3);
+  console.log("ok - ancienne sauvegarde du navigateur reprise (3 mystères, écus et objets conservés)");
 
   assert.deepStrictEqual(errors, [], "erreurs JS");
   console.log("\nTests navigateur OK");

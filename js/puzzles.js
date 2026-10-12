@@ -1,32 +1,47 @@
 /* =====================================================================
-   Les 50 mystères du Professeur Plume.
-   Types :
-   - "find" : toucher les mots fautifs. Dans text, [faute|correction].
-   - "fill" : compléter des trous. parts.length = blanks.length + 1.
+   Les 90 mystères de Plume & Cie.
+   Chaque énigme a :
+   - id   : identifiant stable (sert aux sauvegardes : ne jamais le changer).
+   - cat  : catégorie (voir CATEGORIES).
+   - lvl  : difficulté de 1 à 5.
+   - t    : type
+     "find" : toucher les mots fautifs. Dans text, [faute|correction].
+     "fill" : compléter des trous. parts.length = blanks.length + 1.
               blanks : { o: [options], a: "bonne réponse" }
-   - "type" : taper la réponse au clavier. sentence contient "___".
+     "type" : taper la réponse au clavier. sentence contient "___".
               answers : réponses acceptées.
-   Chapitre = difficulté (1 à 5). Ordre du tableau = ordre du jeu.
+   L'ordre de jeu et les chapitres sont dans CHAPTER_PLAN (en bas),
+   généré par tools/arrange.js.
    ===================================================================== */
-const CHAPTERS = [
-  "",
-  "Chapitre 1 — Le manoir",
-  "Chapitre 2 — Le village",
-  "Chapitre 3 — La gare",
-  "Chapitre 4 — Le château",
-  "Chapitre 5 — Le grenier"
+const CATEGORIES = {
+  homophones:  "Homophones grammaticaux",
+  participes:  "Participes passés",
+  conjugaison: "Conjugaison",
+  accords:     "Pluriels et accords",
+  orthographe: "Orthographe des mots",
+  nombres:     "Nombres en lettres"
+};
+const CHAPTER_NAMES = [
+  "Le mot sur la porte",
+  "Les premiers témoins",
+  "La piste du village",
+  "Le train de minuit",
+  "Le bal du château",
+  "Le port dans la brume",
+  "Les secrets du musée",
+  "La nuit à l'observatoire",
+  "Le grenier du manoir"
 ];
 
-const PUZZLES = [
-  // ---------------- Chapitre 1 : homophones simples ----------------
-  { ch:1, t:"find", title:"Le mot du majordome",
+const ALL_PUZZLES = [
+  { id:"p01", cat:"homophones", lvl:1, t:"find", title:"Le mot du majordome",
     story:"Le manuscrit de Lord Dictée a disparu ! Sur la porte du manoir, le majordome a laissé un petit mot... avec quelques fautes.",
     text:"Le majordome [et|est] parti chercher le thé et des biscuits. Il a posé la clé [a|à] côté de la porte. Les invités [son|sont] dans le salon.",
     hints:["Remplace « et » par « était » : si ça marche, il faut « est ». Remplace « a » par « avait » : si ça ne marche pas, il faut « à ».",
            "Les fautes : « et » (→ est), le second « a » (→ à) et « son » (→ sont, verbe être : « étaient »)."],
     rule:"<b>et / est</b> : « est » se remplace par « était ».<br><b>a / à</b> : « a » se remplace par « avait ».<br><b>son / sont</b> : « sont » se remplace par « étaient »." },
 
-  { ch:1, t:"fill", title:"Le témoin du jardin",
+  { id:"p02", cat:"homophones", lvl:1, t:"fill", title:"Le témoin du jardin",
     story:"Le jardinier raconte ce qu'il a vu cette nuit-là.",
     parts:["Le jardinier "," vu une ombre "," minuit. Les chiens "," aboyé, puis "," a entendu un cri."],
     blanks:[{o:["a","à"],a:"a"},{o:["a","à"],a:"à"},{o:["on","ont"],a:"ont"},{o:["on","ont"],a:"on"}],
@@ -34,7 +49,7 @@ const PUZZLES = [
            "Réponses : a, à, ont, on."],
     rule:"<b>on / ont</b> : « ont » = verbe avoir (« avaient »), « on » = pronom (« il »)." },
 
-  { ch:1, t:"type", title:"Les lunettes du comte",
+  { id:"p03", cat:"homophones", lvl:1, t:"type", title:"Les lunettes du comte",
     story:"Le comte est très distrait. Il ne retrouve plus rien !",
     q:"Écris « ces » ou « ses ».",
     sentence:"Le comte cherche ___ propres lunettes.",
@@ -43,7 +58,7 @@ const PUZZLES = [
            "La réponse est « ses » (= les siennes)."],
     rule:"<b>ses</b> = les siens, les siennes (possession).<br><b>ces</b> = ceux-là, celles-là (on montre)." },
 
-  { ch:1, t:"fill", title:"La question de la cuisinière",
+  { id:"p04", cat:"homophones", lvl:1, t:"fill", title:"La question de la cuisinière",
     story:"La cuisinière s'interroge à voix haute.",
     parts:[""," est passé le manuscrit ? Dans la bibliothèque "," dans le grenier ? C'est l'endroit "," je l'ai vu."],
     blanks:[{o:["Ou","Où"],a:"Où"},{o:["ou","où"],a:"ou"},{o:["ou","où"],a:"où"}],
@@ -51,14 +66,14 @@ const PUZZLES = [
            "Réponses : Où, ou, où."],
     rule:"<b>ou</b> = ou bien (choix).<br><b>où</b> = lieu ou moment (avec un accent)." },
 
-  { ch:1, t:"find", title:"Le réveil de la cuisinière",
+  { id:"p05", cat:"homophones", lvl:1, t:"find", title:"Le réveil de la cuisinière",
     story:"La cuisinière a écrit son témoignage. Trouve les fautes !",
     text:"[Se|Ce] matin, la cuisinière [c'est|s'est] levée tôt. Elle [ce|se] demande qui a pris la clé. C'est étrange.",
     hints:["« se » et « s'est » vont avec un verbe pronominal (se lever, se demander). « ce » et « c'est » montrent quelque chose (= cela).",
            "Les fautes : « Se » (→ Ce), « c'est » (→ s'est), « ce » (→ se). « C'est étrange » est correct."],
     rule:"<b>ce / se</b> : « se » accompagne un verbe (elle se lève) ; « ce » accompagne un nom (ce matin).<br><b>c'est / s'est</b> : « c'est » = cela est ; « s'est » = verbe pronominal (elle s'est levée)." },
 
-  { ch:1, t:"fill", title:"Le sac du facteur",
+  { id:"p06", cat:"homophones", lvl:1, t:"fill", title:"Le sac du facteur",
     story:"Le facteur est passé au manoir. Il semble fâché.",
     parts:["J'ai cherché "," clés partout, "," je ne les trouve pas."],
     blanks:[{o:["mes","mais","met"],a:"mes"},{o:["mes","mais","mets"],a:"mais"}],
@@ -66,7 +81,7 @@ const PUZZLES = [
            "Réponses : mes, mais."],
     rule:"<b>mes</b> = les miens (possession).<br><b>mais</b> = pourtant (opposition)." },
 
-  { ch:1, t:"fill", title:"La table vide",
+  { id:"p07", cat:"homophones", lvl:1, t:"fill", title:"La table vide",
     story:"Où était le manuscrit avant le vol ?",
     parts:["Le manuscrit était ",", sur "," table. Quelqu'un "," pris."],
     blanks:[{o:["la","là","l'a"],a:"là"},{o:["la","là","l'a"],a:"la"},{o:["la","là","l'a"],a:"l'a"}],
@@ -74,14 +89,14 @@ const PUZZLES = [
            "Réponses : là, la, l'a."],
     rule:"<b>là</b> = ici, à cet endroit.<br><b>l'a</b> = l'avait.<br><b>la</b> = article devant un nom (la table)." },
 
-  { ch:1, t:"find", title:"Le chat du manoir",
+  { id:"p08", cat:"homophones", lvl:1, t:"find", title:"Le chat du manoir",
     story:"Le chat a peut-être vu le voleur... Le majordome a écrit une note sur lui.",
     text:"Le vieux chat dort [peut|peu]. [Quant|Quand] il entend du bruit, il se cache. Il [peu|peut] voir dans le noir.",
     hints:["« peut » = pouvait. « quand » = lorsque. « quant à » = en ce qui concerne.",
            "Les fautes : « peut » (→ peu), « Quant » (→ Quand), « peu » (→ peut)."],
     rule:"<b>peu / peut</b> : « peut » se remplace par « pouvait ».<br><b>quand / quant</b> : « quand » = lorsque ; « quant à » = pour ce qui est de." },
 
-  { ch:1, t:"type", title:"Les outils",
+  { id:"p09", cat:"homophones", lvl:1, t:"type", title:"Les outils",
     story:"Les jardiniers rangent la remise après l'enquête.",
     q:"Écris « leur » ou « leurs ».",
     sentence:"Les jardiniers rangent ___ outils.",
@@ -90,23 +105,22 @@ const PUZZLES = [
            "« outils » est au pluriel : leurs."],
     rule:"<b>leur</b> devant un nom singulier, <b>leurs</b> devant un nom pluriel.<br>Devant un verbe, « leur » ne prend jamais de s (je leur parle)." },
 
-  { ch:1, t:"fill", title:"La fuite du voleur",
-    story:"Fin du premier chapitre : on comprend comment le voleur est sorti.",
+  { id:"p10", cat:"homophones", lvl:1, t:"fill", title:"La fuite du voleur",
+    story:"On comprend enfin comment le voleur est sorti.",
     parts:["Le voleur est parti "," laisser de trace. Il "," est allé par la fenêtre, "," la nuit."],
     blanks:[{o:["sans","s'en","cent"],a:"sans"},{o:["sans","s'en","c'en"],a:"s'en"},{o:["dans","d'en","dent"],a:"dans"}],
     hints:["« s'en aller » est un verbe : il s'en va, il s'en est allé.",
            "Réponses : sans, s'en, dans."],
     rule:"<b>sans</b> = absence ; <b>s'en</b> = se + en (s'en aller) ; <b>cent</b> = 100.<br><b>dans</b> = à l'intérieur ; <b>d'en</b> = de + en." },
 
-  // ---------------- Chapitre 2 : pluriels et accords ----------------
-  { ch:2, t:"find", title:"Le marché",
+  { id:"p11", cat:"accords", lvl:2, t:"find", title:"Le marché",
     story:"Le professeur suit une piste jusqu'au marché du village.",
     text:"Au marché, on vend des [chevals|chevaux], des [bijous|bijoux] et des [journals|journaux]. Les choux sont frais.",
     hints:["La plupart des noms en -al font -aux au pluriel. Sept noms en -ou prennent un x : bijou, caillou, chou, genou, hibou, joujou, pou.",
            "Les fautes : chevals (→ chevaux), bijous (→ bijoux), journals (→ journaux)."],
     rule:"<b>-al → -aux</b> (cheval, journal), sauf bal, carnaval, festival, chacal, récital, régal.<br><b>-ou → -ous</b>, sauf bijou, caillou, chou, genou, hibou, joujou, pou → <b>-oux</b>." },
 
-  { ch:2, t:"type", title:"Le hibou",
+  { id:"p12", cat:"accords", lvl:2, t:"type", title:"Le hibou",
     story:"Un hibou observe le professeur depuis un arbre.",
     q:"Écris le pluriel de « un œil ».",
     sentence:"un œil → des ___",
@@ -115,7 +129,7 @@ const PUZZLES = [
            "Commence par « y »..."],
     rule:"<b>un œil → des yeux</b> (pluriel irrégulier)." },
 
-  { ch:2, t:"fill", title:"La couturière",
+  { id:"p13", cat:"accords", lvl:2, t:"fill", title:"La couturière",
     story:"La couturière décrit une cliente suspecte.",
     parts:["Elle portait une robe "," et des chaussures ",". Elle avait des fleurs "," dans les cheveux."],
     blanks:[{o:["bleu","bleue","bleus","bleues"],a:"bleue"},{o:["marron","marrons","marronnes"],a:"marron"},{o:["orange","oranges"],a:"orange"}],
@@ -123,7 +137,7 @@ const PUZZLES = [
            "Réponses : bleue, marron, orange. (Exceptions : rose, mauve, fauve s'accordent.)"],
     rule:"Adjectif de couleur simple → accord (une robe bleue).<br>Couleur venant d'un nom (marron, orange, cerise) → <b>invariable</b>. Exceptions : rose, mauve, fauve, écarlate." },
 
-  { ch:2, t:"type", title:"La vieille dame",
+  { id:"p14", cat:"accords", lvl:2, t:"type", title:"La vieille dame",
     story:"Une passante a vu quelqu'un courir avec un gros livre.",
     q:"Mets au féminin : « un vieil homme ».",
     sentence:"une ___ femme",
@@ -132,14 +146,14 @@ const PUZZLES = [
            "Il y a deux « l » et un « e » final."],
     rule:"<b>vieux / vieil → vieille</b>. De même : beau / bel → belle ; nouveau / nouvel → nouvelle." },
 
-  { ch:2, t:"find", title:"Les rues du village",
+  { id:"p15", cat:"accords", lvl:2, t:"find", title:"Les rues du village",
     story:"Le professeur lit le journal local.",
     text:"Les [enfant|enfants] du village jouent dans les rues [étroite|étroites]. Leurs ballons rouges roulent vers les [maison|maisons].",
     hints:["Après « les », le nom et son adjectif prennent la marque du pluriel.",
            "Les fautes : enfant, étroite, maison (il manque le « s »)."],
     rule:"Le nom et l'adjectif s'accordent en genre et en nombre avec le déterminant (les rues étroites)." },
 
-  { ch:2, t:"fill", title:"Toute la ville",
+  { id:"p16", cat:"accords", lvl:2, t:"fill", title:"Toute la ville",
     story:"Le vol fait le tour du village.",
     parts:[""," les habitants sont là. "," la ville parle du vol. "," les maisons sont fermées. Le chien a mangé "," le gâteau."],
     blanks:[{o:["Tout","Tous","Toute","Toutes"],a:"Tous"},{o:["Tout","Tous","Toute","Toutes"],a:"Toute"},{o:["Tout","Tous","Toute","Toutes"],a:"Toutes"},{o:["tout","tous","toute","toutes"],a:"tout"}],
@@ -147,7 +161,7 @@ const PUZZLES = [
            "Réponses : Tous, Toute, Toutes, tout."],
     rule:"<b>tout</b> (masc. sing.), <b>toute</b> (fém. sing.), <b>tous</b> (masc. pl.), <b>toutes</b> (fém. pl.)." },
 
-  { ch:2, t:"fill", title:"La fête du village",
+  { id:"p17", cat:"accords", lvl:2, t:"fill", title:"La fête du village",
     story:"Le maire annonce le programme des festivités.",
     parts:["Le village organise des "," et des "," remplis d'","."],
     blanks:[{o:["bals","baux"],a:"bals"},{o:["festivals","festivaux"],a:"festivals"},{o:["animals","animaux"],a:"animaux"}],
@@ -155,14 +169,14 @@ const PUZZLES = [
            "Réponses : bals, festivals, animaux."],
     rule:"Exceptions en <b>-als</b> : bal, carnaval, chacal, festival, récital, régal." },
 
-  { ch:2, t:"find", title:"La boulangère",
+  { id:"p18", cat:"accords", lvl:2, t:"find", title:"La boulangère",
     story:"La boulangère a vu passer le voleur. Son témoignage écrit contient des erreurs.",
     text:"La boulangère porte une veste [neuf|neuve] et une jupe [long|longue]. Son mari a une chemise [blanc|blanche].",
     hints:["Ces adjectifs décrivent des noms féminins : ils doivent être au féminin.",
            "neuf → neuve, long → longue, blanc → blanche."],
     rule:"Féminins particuliers : neuf → neuve, long → longue, blanc → blanche, doux → douce, sec → sèche." },
 
-  { ch:2, t:"fill", title:"Le clocher",
+  { id:"p19", cat:"nombres", lvl:2, t:"fill", title:"Le clocher",
     story:"Le professeur monte au clocher pour observer le village.",
     parts:["Le clocher a "," ans. Il compte "," marches, et "," personnes peuvent se tenir sur la place."],
     blanks:[{o:["quatre-vingt","quatre-vingts"],a:"quatre-vingts"},{o:["deux cent","deux cents"],a:"deux cents"},{o:["deux cent quatre-vingts","deux cents quatre-vingts","deux cent quatre-vingt"],a:"deux cent quatre-vingts"}],
@@ -170,7 +184,7 @@ const PUZZLES = [
            "Réponses : quatre-vingts (80), deux cents (200), deux cent quatre-vingts (280)."],
     rule:"<b>vingt</b> et <b>cent</b> prennent un s s'ils sont multipliés et en fin de nombre : quatre-vingts, deux cents. Mais : quatre-vingt-deux, deux cent trois." },
 
-  { ch:2, t:"type", title:"L'âge du maire",
+  { id:"p20", cat:"nombres", lvl:2, t:"type", title:"L'âge du maire",
     story:"Le maire est très fier de son âge.",
     q:"Écris le nombre 80 en lettres.",
     sentence:"Le maire a ___ ans.",
@@ -179,8 +193,7 @@ const PUZZLES = [
            "Avec un trait d'union et un s à la fin."],
     rule:"<b>quatre-vingts</b> prend un s, mais <b>quatre-vingt-un</b> n'en prend pas." },
 
-  // ---------------- Chapitre 3 : conjugaison ----------------
-  { ch:3, t:"fill", title:"Le quai n°3",
+  { id:"p21", cat:"conjugaison", lvl:3, t:"fill", title:"Le quai n°3",
     story:"La piste mène à la gare. Un train va bientôt partir !",
     parts:["Le train va ",". Le chef de gare a ",". Il faut "," vite !"],
     blanks:[{o:["arriver","arrivé","arrivez"],a:"arriver"},{o:["sifflé","siffler","sifflez"],a:"sifflé"},{o:["monter","monté","montez"],a:"monter"}],
@@ -188,7 +201,7 @@ const PUZZLES = [
            "Réponses : arriver, sifflé, monter."],
     rule:"<b>-er ou -é ?</b> Remplace par un verbe du 3e groupe : « mordre » → -er (infinitif) ; « mordu » → -é (participe passé)." },
 
-  { ch:3, t:"type", title:"Le guichet",
+  { id:"p22", cat:"conjugaison", lvl:3, t:"type", title:"Le guichet",
     story:"Le guichetier pose une colle au professeur.",
     q:"Conjugue « finir » au présent.",
     sentence:"nous ___",
@@ -197,14 +210,14 @@ const PUZZLES = [
            "On ajoute « -iss- » au pluriel."],
     rule:"2e groupe au présent : je finis, tu finis, il finit, nous <b>finissons</b>, vous finissez, ils finissent." },
 
-  { ch:3, t:"find", title:"Le contrôleur",
+  { id:"p23", cat:"conjugaison", lvl:3, t:"find", title:"Le contrôleur",
     story:"Le carnet du contrôleur contient des notes... pleines de fautes.",
     text:"Le contrôleur [vérifit|vérifie] les billets. Tu [prend|prends] ta valise et je [cour|cours] vers le quai.",
     hints:["Verbes en -ier : il vérifie (comme il crie). Avec « tu », toujours un s. « courir » : je cours.",
            "Les fautes : vérifit (→ vérifie), prend (→ prends), cour (→ cours)."],
     rule:"Avec <b>tu</b>, le verbe se termine presque toujours par <b>-s</b>.<br>Verbes en -ier : je vérifie, il vérifie." },
 
-  { ch:3, t:"fill", title:"Futur ou conditionnel ?",
+  { id:"p24", cat:"conjugaison", lvl:3, t:"fill", title:"Futur ou conditionnel ?",
     story:"Un voyageur raconte ses projets.",
     parts:["Demain, je "," à Paris, c'est sûr. Si j'avais un billet, je "," ce soir. Quand tu ",", nous verrons."],
     blanks:[{o:["irai","irais"],a:"irai"},{o:["partirai","partirais"],a:"partirais"},{o:["viendras","viendrais"],a:"viendras"}],
@@ -212,7 +225,7 @@ const PUZZLES = [
            "Réponses : irai, partirais, viendras."],
     rule:"<b>Futur</b> : je partirai (certain). <b>Conditionnel</b> : je partirais (si...). Astuce : remplace « je » par « nous » → nous partirons / nous partirions." },
 
-  { ch:3, t:"type", title:"La salle d'attente",
+  { id:"p25", cat:"conjugaison", lvl:3, t:"type", title:"La salle d'attente",
     story:"Dans la salle d'attente, un vieux voyageur se souvient.",
     q:"Conjugue « être » à l'imparfait.",
     sentence:"Autrefois, nous ___ jeunes.",
@@ -221,14 +234,14 @@ const PUZZLES = [
            "Terminaison de « nous » à l'imparfait : -ions."],
     rule:"<b>être</b> à l'imparfait : j'étais, tu étais, il était, nous étions, vous étiez, ils étaient." },
 
-  { ch:3, t:"find", title:"Le récit du voyageur",
+  { id:"p26", cat:"conjugaison", lvl:3, t:"find", title:"Le récit du voyageur",
     story:"Un voyageur a écrit ce qu'il a vu dans le train.",
     text:"Le train [roulé|roulait] lentement. Les voyageurs [regardait|regardaient] le paysage. Soudain, un homme [criat|cria] : « Au voleur ! »",
     hints:["Imparfait : -ait / -aient. Passé simple des verbes en -er : il cria, il chanta (jamais de t).",
            "Les fautes : roulé (→ roulait), regardait (→ regardaient), criat (→ cria)."],
     rule:"<b>Imparfait</b> : action longue (il roulait).<br><b>Passé simple</b> 1er groupe : il cria, ils crièrent." },
 
-  { ch:3, t:"type", title:"Le départ",
+  { id:"p27", cat:"conjugaison", lvl:3, t:"type", title:"Le départ",
     story:"Le chef de gare annonce le prochain départ.",
     q:"Conjugue « aller » au futur.",
     sentence:"Demain, ils ___ à la mer.",
@@ -237,7 +250,7 @@ const PUZZLES = [
            "Avec « ils », terminaison -ont."],
     rule:"<b>aller</b> au futur : j'irai, tu iras, il ira, nous irons, vous irez, ils <b>iront</b>." },
 
-  { ch:3, t:"fill", title:"La nuit sur le quai",
+  { id:"p28", cat:"conjugaison", lvl:3, t:"fill", title:"La nuit sur le quai",
     story:"Le professeur imagine la scène du vol.",
     parts:["J'"," le train. Le quai "," vide. Les lampes "," faiblement."],
     blanks:[{o:["attendais","attendait","attendaient"],a:"attendais"},{o:["étais","était","étaient"],a:"était"},{o:["brillait","brillais","brillaient"],a:"brillaient"}],
@@ -245,7 +258,7 @@ const PUZZLES = [
            "Réponses : attendais, était, brillaient."],
     rule:"Terminaisons de l'imparfait : -ais, -ais, -ait, -ions, -iez, <b>-aient</b>." },
 
-  { ch:3, t:"fill", title:"Les bagages",
+  { id:"p29", cat:"conjugaison", lvl:3, t:"fill", title:"Les bagages",
     story:"Le porteur aide les voyageurs.",
     parts:["Vous "," vos valises et vous "," au revoir. Nous "," prêts !"],
     blanks:[{o:["faites","faisez","fêtes"],a:"faites"},{o:["dites","disez"],a:"dites"},{o:["sommes","somme","êtes"],a:"sommes"}],
@@ -253,15 +266,14 @@ const PUZZLES = [
            "Réponses : faites, dites, sommes."],
     rule:"Seuls trois verbes font <b>-tes</b> avec « vous » : vous <b>êtes</b>, vous <b>faites</b>, vous <b>dites</b>." },
 
-  { ch:3, t:"find", title:"Le télégramme",
-    story:"Fin du chapitre 3 : un télégramme urgent arrive pour le professeur.",
+  { id:"p30", cat:"conjugaison", lvl:3, t:"find", title:"Le télégramme",
+    story:"Un télégramme urgent arrive pour le professeur.",
     text:"Il faut que tu [viens|viennes] avec moi. [Manges|Mange] vite ton sandwich ! Il faut que nous [partons|partions] avant minuit.",
     hints:["Après « il faut que », on utilise le subjonctif. À l'impératif, les verbes en -er ne prennent pas de s.",
            "Les fautes : viens (→ viennes), Manges (→ Mange), partons (→ partions)."],
     rule:"<b>Il faut que</b> + subjonctif : que tu viennes, que nous partions.<br><b>Impératif</b> 1er groupe : mange (sans s)." },
 
-  // ---------------- Chapitre 4 : participes passés ----------------
-  { ch:4, t:"fill", title:"Les invitées en retard",
+  { id:"p31", cat:"participes", lvl:4, t:"fill", title:"Les invitées en retard",
     story:"Le professeur arrive au château où se tient un grand bal.",
     parts:["Les invitées sont "," en retard. Le gâteau est ",". Ma sœur et mon frère sont "," tôt."],
     blanks:[{o:["arrivé","arrivée","arrivés","arrivées"],a:"arrivées"},{o:["cuit","cuite","cuits"],a:"cuit"},{o:["parti","partie","partis","parties"],a:"partis"}],
@@ -269,7 +281,7 @@ const PUZZLES = [
            "Réponses : arrivées, cuit, partis (masculin + féminin → masculin pluriel)."],
     rule:"Participe passé + <b>être</b> → accord avec le sujet. Si le sujet mélange masculin et féminin → masculin pluriel." },
 
-  { ch:4, t:"type", title:"Les lettres anciennes",
+  { id:"p32", cat:"participes", lvl:4, t:"type", title:"Les lettres anciennes",
     story:"Dans le bureau du château, des lettres sont posées sur le bureau.",
     q:"Accorde le participe passé de « écrire ».",
     sentence:"Les lettres ont été ___ à la plume.",
@@ -278,7 +290,7 @@ const PUZZLES = [
            "Féminin pluriel : -es."],
     rule:"Voix passive (être + participe) : accord avec le sujet. Les lettres ont été <b>écrites</b>." },
 
-  { ch:4, t:"fill", title:"Le coffre à combinaison",
+  { id:"p33", cat:"participes", lvl:4, t:"fill", title:"Le coffre à combinaison",
     story:"Dans la bibliothèque du château, un coffre est verrouillé par une inscription à trous.",
     parts:["Les clés que j'ai "," sont rangées "," la cheminée. Les invités sont "," dîner, mais "," eux n'a vu le voleur."],
     blanks:[{o:["trouvé","trouvées","trouvés","trouver"],a:"trouvées"},{o:["prés de","près de","prêt de"],a:"près de"},{o:["allé","allés","aller","allée"],a:"allés"},{o:["aucun d'","aucuns d'","aucune d'"],a:"aucun d'"}],
@@ -286,14 +298,14 @@ const PUZZLES = [
            "Réponses : trouvées, près de, allés, aucun d'."],
     rule:"<b>Avoir</b> : accord avec le COD seulement s'il est avant (les clés que j'ai trouvées).<br><b>près de</b> = proche ; <b>prêt à</b> = préparé.<br><b>aucun</b> = pas un seul → singulier." },
 
-  { ch:4, t:"find", title:"La salle de bal",
+  { id:"p34", cat:"participes", lvl:4, t:"find", title:"La salle de bal",
     story:"Le maître d'hôtel a pris des notes pendant le bal.",
     text:"Les portes que j'ai [ouvert|ouvertes] grinçaient. Elle a [mangée|mangé] une pomme. Les fleurs que tu as [cueillis|cueillies] sont fanées.",
     hints:["Avec « avoir », cherche le COD : est-il avant ou après le verbe ?",
            "ouvert → ouvertes (que = les portes), mangée → mangé (la pomme est après), cueillis → cueillies (que = les fleurs)."],
     rule:"Participe + <b>avoir</b> : pas d'accord avec le sujet ! Accord uniquement avec le COD placé avant." },
 
-  { ch:4, t:"type", title:"La tour",
+  { id:"p35", cat:"participes", lvl:4, t:"type", title:"La tour",
     story:"Le château a une tour très ancienne.",
     q:"Accorde le participe passé de « construire ».",
     sentence:"La tour qu'ils ont ___ est solide.",
@@ -302,7 +314,7 @@ const PUZZLES = [
            "Féminin singulier."],
     rule:"La tour qu'ils ont <b>construite</b> : COD (qu' = la tour) placé avant → accord." },
 
-  { ch:4, t:"fill", title:"Les ombres",
+  { id:"p36", cat:"participes", lvl:4, t:"fill", title:"Les ombres",
     story:"Un garde a vu des ombres dans les couloirs.",
     parts:["J'ai "," des ombres. Les ombres que j'ai "," étaient grandes. Puis elles sont ","."],
     blanks:[{o:["vu","vue","vus","vues"],a:"vu"},{o:["vu","vue","vus","vues"],a:"vues"},{o:["disparu","disparue","disparus","disparues"],a:"disparues"}],
@@ -310,7 +322,7 @@ const PUZZLES = [
            "Réponses : vu, vues, disparues."],
     rule:"Récapitulatif : être → accord avec le sujet ; avoir → accord avec le COD seulement s'il est placé avant." },
 
-  { ch:4, t:"type", title:"Les histoires du garde",
+  { id:"p37", cat:"participes", lvl:4, t:"type", title:"Les histoires du garde",
     story:"Le garde aime lire des romans policiers.",
     q:"Accorde le participe passé de « lire ».",
     sentence:"Ces histoires, je les ai ___ hier.",
@@ -319,14 +331,14 @@ const PUZZLES = [
            "Le participe de « lire » est « lu ». Ajoute l'accord féminin pluriel."],
     rule:"« les », « la », « l' » placés avant avoir sont des COD : je les ai <b>lues</b>." },
 
-  { ch:4, t:"find", title:"Les chevaliers",
+  { id:"p38", cat:"participes", lvl:4, t:"find", title:"Les chevaliers",
     story:"Une vieille chronique du château raconte une légende.",
     text:"Les chevaliers sont [partit|partis] à l'aube. La reine les a [salué|salués] de la tour. Leurs armures étaient [brillante|brillantes].",
     hints:["Sujet pluriel avec être ; « les » = COD avant ; adjectif qui s'accorde avec « armures ».",
            "partit → partis, salué → salués, brillante → brillantes."],
     rule:"Pense à toujours chercher qui ou quoi est concerné par le participe ou l'adjectif." },
 
-  { ch:4, t:"type", title:"Les efforts du professeur",
+  { id:"p39", cat:"participes", lvl:4, t:"type", title:"Les efforts du professeur",
     story:"Le professeur est fier de son enquête.",
     q:"Accorde le participe passé de « fournir ».",
     sentence:"Les efforts qu'il a ___ ont payé.",
@@ -335,23 +347,22 @@ const PUZZLES = [
            "Participe de fournir : fourni → avec accord masculin pluriel."],
     rule:"Les efforts qu'il a <b>fournis</b> : COD masculin pluriel placé avant." },
 
-  { ch:4, t:"fill", title:"La garde-robe",
-    story:"Fin du chapitre 4 : dans la chambre de la duchesse, un indice !",
+  { id:"p40", cat:"participes", lvl:4, t:"fill", title:"La garde-robe",
+    story:"Dans la chambre de la duchesse, un indice !",
     parts:["Combien de livres as-tu "," ? Les deux heures que j'ai "," m'ont reposé. Quelle belle robe tu as "," !"],
     blanks:[{o:["lu","lue","lus","lues"],a:"lus"},{o:["dormi","dormie","dormis","dormies"],a:"dormi"},{o:["mis","mise","mises","mit"],a:"mise"}],
     hints:["« Combien de livres » et « quelle robe » sont des COD placés avant. Mais « deux heures » indique une durée : ce n'est pas un COD !",
            "Réponses : lus, dormi, mise."],
     rule:"Un complément de durée (j'ai dormi deux heures) n'est pas un COD → pas d'accord. D'ailleurs « dormir » n'a jamais de COD." },
 
-  // ---------------- Chapitre 5 : pièges d'experts ----------------
-  { ch:5, t:"find", title:"Les trésors du grenier",
-    story:"Dernière étape : le grenier du manoir. Tout y est couvert de poussière... et de fautes.",
+  { id:"p41", cat:"orthographe", lvl:5, t:"find", title:"Les trésors du grenier",
+    story:"Le grenier du manoir. Tout y est couvert de poussière... et de fautes.",
     text:"Dans le grenier dort un vieil [apareil|appareil] photo, à côté d'une [boutteille|bouteille] vide et d'un [carosse|carrosse] miniature.",
     hints:["Ces mots ont des consonnes doubles... ou simples ! Il faut les connaître par cœur.",
            "appareil (2 p), bouteille (1 t), carrosse (2 r)."],
     rule:"Mots à retenir : a<b>pp</b>areil, bou<b>t</b>eille, ca<b>rr</b>osse, a<b>ll</b>er, a<b>p</b>ercevoir." },
 
-  { ch:5, t:"type", title:"Le mot d'accueil",
+  { id:"p42", cat:"orthographe", lvl:5, t:"type", title:"Le mot d'accueil",
     story:"Sur une vieille pancarte : « Bienvenue, merci pour votre acceuil ». Il y a une faute !",
     q:"Écris correctement le mot « acceuil ».",
     sentence:"Merci pour votre ___ !",
@@ -360,7 +371,7 @@ const PUZZLES = [
            "Le « u » vient avant le « e »."],
     rule:"Après c ou g : <b>-ueil</b> (accueil, cueillir, orgueil, recueil)." },
 
-  { ch:5, t:"fill", title:"Quel que soit l'indice",
+  { id:"p43", cat:"homophones", lvl:5, t:"fill", title:"Quel que soit l'indice",
     story:"Une inscription est gravée sur une malle.",
     parts:[""," soit l'heure, je viendrai. Il reste "," livres. "," soient tes raisons, ouvre cette malle !"],
     blanks:[{o:["Quel que","Quelle que","Quelque"],a:"Quelle que"},{o:["quelque","quelques","quels que"],a:"quelques"},{o:["Quelles que","Quelques","Quels que"],a:"Quelles que"}],
@@ -368,7 +379,7 @@ const PUZZLES = [
            "Réponses : Quelle que (l'heure), quelques, Quelles que (tes raisons)."],
     rule:"<b>Quel que</b> + être : s'accorde avec le sujet (quelle que soit l'heure).<br><b>Quelques</b> + nom = plusieurs." },
 
-  { ch:5, t:"fill", title:"Le cauchemar",
+  { id:"p44", cat:"orthographe", lvl:5, t:"fill", title:"Le cauchemar",
     story:"Un journal intime est caché sous une latte du plancher.",
     parts:["C'est un vrai ",". Il a agi ",". Cette nuit fut un ","."],
     blanks:[{o:["dilemne","dilemme","dilème"],a:"dilemme"},{o:["différemment","différament","différamment"],a:"différemment"},{o:["cauchemar","cauchemard","cauchemare"],a:"cauchemar"}],
@@ -376,7 +387,7 @@ const PUZZLES = [
            "Réponses : dilemme, différemment, cauchemar (sans d, même si on dit « cauchemarder »)."],
     rule:"<b>-ent → -emment</b> (prudent → prudemment) ; <b>-ant → -amment</b> (puissant → puissamment).<br>Pièges : dile<b>mm</b>e, cauchemar." },
 
-  { ch:5, t:"fill", title:"Le miroir",
+  { id:"p45", cat:"participes", lvl:5, t:"fill", title:"Le miroir",
     story:"Un vieux miroir porte une inscription mystérieuse.",
     parts:["Elle s'est "," les mains. Elle s'est "," ce matin. Ils se sont "," au téléphone. Puis ils se sont ","."],
     blanks:[{o:["lavé","lavée","lavés"],a:"lavé"},{o:["lavé","lavée","lavés"],a:"lavée"},{o:["parlé","parlés","parlée"],a:"parlé"},{o:["regardé","regardés","regardées"],a:"regardés"}],
@@ -384,7 +395,7 @@ const PUZZLES = [
            "Réponses : lavé, lavée, parlé, regardés."],
     rule:"Pronominaux : accord avec « se » s'il est COD (elle s'est lavée).<br>Pas d'accord si le COD est après (elle s'est lavé les mains) ou si « se » = à soi (ils se sont parlé)." },
 
-  { ch:5, t:"type", title:"L'énigme résolue",
+  { id:"p46", cat:"participes", lvl:5, t:"type", title:"L'énigme résolue",
     story:"Une note dit : « Il a résout l'énigme. » Faux !",
     q:"Écris le participe passé correct de « résoudre ».",
     sentence:"Il a ___ l'énigme.",
@@ -393,14 +404,14 @@ const PUZZLES = [
            "Il commence par « résol- »."],
     rule:"<b>résoudre</b> : je résous, il résout (présent) ; participe passé : <b>résolu</b>." },
 
-  { ch:5, t:"find", title:"Les mots invariables",
+  { id:"p47", cat:"orthographe", lvl:5, t:"find", title:"Les mots invariables",
     story:"Sur un tableau noir, quelqu'un a écrit une phrase piégée.",
     text:"[Malgrés|Malgré] la pluie, nous sommes sortis. Il est [parmis|parmi] nous. [Hormi|Hormis] le chat, tout le monde dort.",
     hints:["Ce sont des mots invariables qu'il faut apprendre par cœur.",
            "malgré (sans s), parmi (sans s), hormis (avec s)."],
     rule:"Invariables à retenir : malgré, parmi, hormis, jadis, volontiers, toujours, désormais." },
 
-  { ch:5, t:"type", title:"La naissance",
+  { id:"p48", cat:"participes", lvl:5, t:"type", title:"La naissance",
     story:"Un vieux faire-part annonce la naissance d'une fille Dictée.",
     q:"Écris le participe passé de « naître », accordé.",
     sentence:"Elle est ___ en hiver.",
@@ -409,7 +420,7 @@ const PUZZLES = [
            "Né + accord au féminin."],
     rule:"<b>naître</b> → né, née, nés, nées (avec être : accord avec le sujet)." },
 
-  { ch:5, t:"fill", title:"Les clés de la malle",
+  { id:"p49", cat:"homophones", lvl:5, t:"fill", title:"Les clés de la malle",
     story:"Le majordome avoue tout... ou presque.",
     parts:["Je "," ai donné "," clés. Ils ont ouvert la malle eux-","."],
     blanks:[{o:["leur","leurs"],a:"leur"},{o:["leur","leurs"],a:"leurs"},{o:["même","mêmes"],a:"mêmes"}],
@@ -417,14 +428,355 @@ const PUZZLES = [
            "Réponses : leur, leurs, mêmes."],
     rule:"<b>leur</b> + verbe : invariable. <b>leurs</b> + nom pluriel.<br><b>moi-même, eux-mêmes</b> : même s'accorde avec le pronom." },
 
-  { ch:5, t:"type", title:"Le manuscrit retrouvé",
+  { id:"p50", cat:"orthographe", lvl:5, t:"type", title:"Le manuscrit retrouvé",
     story:"Le manuscrit était dans la malle ! Sur la dernière page : « Ils ont recu le manuscrit ». Une ultime correction s'impose.",
     q:"Écris correctement le participe passé de « recevoir ».",
     sentence:"Ils ont ___ le manuscrit.",
     answers:["reçu"],
     hints:["Devant a, o, u, le c doit garder le son [s]...",
            "Il faut une cédille : ç."],
-    rule:"<b>ç</b> devant a, o, u pour garder le son [s] : reçu, garçon, leçon, ça." }
+    rule:"<b>ç</b> devant a, o, u pour garder le son [s] : reçu, garçon, leçon, ça." },
+
+  // ======================= Nouvelles énigmes (p51 à p90) =======================
+  // ---- Nombres en lettres ----
+  { id:"p51", cat:"nombres", lvl:1, t:"type", title:"Les fenêtres du manoir",
+    story:"Le professeur compte les fenêtres par lesquelles le voleur a pu entrer.",
+    q:"Écris le nombre 21 en lettres.",
+    sentence:"Le manoir a ___ fenêtres.",
+    answers:["vingt et un","vingt-et-un"],
+    hints:["Pour 21, 31, 41, 51, 61 et 71, on ajoute « et ».",
+           "vingt + et + un."],
+    rule:"On écrit <b>et</b> dans 21, 31, 41, 51, 61 et 71 (soixante et onze), mais pas dans 81 et 91 (quatre-vingt-un)." },
+
+  { id:"p52", cat:"nombres", lvl:1, t:"find", title:"L'argenterie",
+    story:"Le majordome vérifie que rien d'autre n'a été volé.",
+    text:"Le majordome a compté [vint|vingt] cuillères, [sinq|cinq] fourchettes et [trent|trente] couteaux.",
+    hints:["Ce sont des nombres simples : il faut les connaître par cœur.",
+           "vint → vingt, sinq → cinq, trent → trente."],
+    rule:"À retenir : vin<b>gt</b> (20), <b>c</b>inq (5), trent<b>e</b> (30), quarant<b>e</b>, cinquant<b>e</b>." },
+
+  { id:"p53", cat:"nombres", lvl:1, t:"fill", title:"La bibliothèque",
+    story:"La bibliothèque du manoir est immense.",
+    parts:["La bibliothèque compte "," livres, et le manoir a "," ans."],
+    blanks:[{o:["mille","milles","mil"],a:"mille"},{o:["deux mille","deux milles","deux mils"],a:"deux mille"}],
+    hints:["« mille » est invariable : il ne prend jamais de s.",
+           "Réponses : mille, deux mille."],
+    rule:"<b>mille</b> est toujours invariable : deux mille, trois mille." },
+
+  { id:"p54", cat:"nombres", lvl:2, t:"type", title:"L'âge du jardinier",
+    story:"Le jardinier travaille au manoir depuis toujours.",
+    q:"Écris le nombre 70 en lettres.",
+    sentence:"Le vieux jardinier a ___ ans.",
+    answers:["soixante-dix"],
+    hints:["70 = 60 + 10.",
+           "Avec un trait d'union."],
+    rule:"70 = <b>soixante-dix</b>, 71 = soixante et onze, 72 = soixante-douze." },
+
+  { id:"p55", cat:"nombres", lvl:2, t:"find", title:"Le tableau des départs",
+    story:"À la gare, le panneau d'affichage a été repeint à la main.",
+    text:"La gare a [quatres|quatre] quais et [troi|trois] horloges. Le train part à [onse|onze] heures.",
+    hints:["« quatre » ne prend jamais de s. « trois » en prend toujours un.",
+           "quatres → quatre, troi → trois, onse → onze."],
+    rule:"Les nombres comme <b>quatre</b>, <b>trois</b>, <b>onze</b> ne s'accordent pas : leur orthographe est fixe." },
+
+  { id:"p56", cat:"nombres", lvl:2, t:"type", title:"Le vieux pont",
+    story:"Pour rejoindre le village, il faut traverser un long pont de pierre.",
+    q:"Écris le nombre 300 en lettres.",
+    sentence:"Le pont mesure ___ mètres.",
+    answers:["trois cents","trois-cents"],
+    hints:["« cent » est multiplié par trois et rien ne le suit.",
+           "Il prend donc un s."],
+    rule:"<b>cent</b> prend un s quand il est multiplié et termine le nombre : trois cents, mais trois cent dix." },
+
+  { id:"p57", cat:"nombres", lvl:3, t:"fill", title:"Le phare",
+    story:"Au port, le gardien du phare a vu passer une barque suspecte.",
+    parts:["Le phare a "," marches. Ce soir-là, il y avait "," bateaux au port et des "," de mouettes."],
+    blanks:[{o:["mille deux cents","mille deux cent","milles deux cents"],a:"mille deux cents"},{o:["quatre-vingt-cinq","quatre-vingts-cinq","quatre-vingt cinq"],a:"quatre-vingt-cinq"},{o:["centaines","cents","centaine"],a:"centaines"}],
+    hints:["« mille » ne varie pas ; « cent » et « vingt » prennent un s seulement en fin de nombre. « centaine » est un nom, il s'accorde.",
+           "Réponses : mille deux cents, quatre-vingt-cinq, centaines."],
+    rule:"<b>quatre-vingt-cinq</b> : vingt n'est pas en fin de nombre → pas de s.<br><b>centaine, millier</b> sont des noms : ils s'accordent." },
+
+  { id:"p58", cat:"nombres", lvl:3, t:"find", title:"L'inventaire du musée",
+    story:"Le conservateur du musée a dressé un inventaire... avec des erreurs.",
+    text:"Le musée possède deux [cents|cent] vingt tableaux, trois [milles|mille] pièces et [quatre-vingts-dix|quatre-vingt-dix] statues.",
+    hints:["« cent » et « vingt » ne prennent un s que s'ils terminent le nombre. « mille » est invariable.",
+           "cents → cent (suivi de vingt), milles → mille, quatre-vingts-dix → quatre-vingt-dix."],
+    rule:"deux cent vingt, quatre-vingt-dix : pas de s quand un autre nombre suit." },
+
+  { id:"p59", cat:"nombres", lvl:3, t:"type", title:"Le capitaine",
+    story:"Le capitaine du port est le plus vieux marin de la région.",
+    q:"Écris le nombre 81 en lettres.",
+    sentence:"Le capitaine a ___ ans.",
+    answers:["quatre-vingt-un"],
+    hints:["Attention : pas de « et » dans 81 !",
+           "Et pas de s à « vingt », car il est suivi d'un autre nombre."],
+    rule:"81 = <b>quatre-vingt-un</b> (pas de « et », pas de s). 80 = quatre-vingts." },
+
+  { id:"p60", cat:"nombres", lvl:4, t:"find", title:"Le trésor de la ville",
+    story:"Le journal parle de la valeur du manuscrit volé.",
+    text:"La ville compte deux [million|millions] d'habitants et le trésor vaut trois [milliard|milliards] d'écus. On a vendu [cents|cent] mille billets.",
+    hints:["« million » et « milliard » sont des noms : ils prennent un s au pluriel. « cent » suivi de « mille » ne termine pas le nombre.",
+           "million → millions, milliard → milliards, cents → cent."],
+    rule:"<b>million, milliard</b> sont des noms → deux millions.<br><b>cent mille</b> : cent n'est pas en fin de nombre → pas de s." },
+
+  { id:"p61", cat:"nombres", lvl:4, t:"type", title:"La date du manuscrit",
+    story:"Le manuscrit annonce une prédiction pour une année lointaine.",
+    q:"Écris l'année 2080 en lettres.",
+    sentence:"En l'an ___, la ville sera célèbre.",
+    answers:["deux mille quatre-vingts","deux-mille-quatre-vingts"],
+    hints:["« mille » est invariable. « vingt » termine le nombre et est multiplié par quatre.",
+           "deux mille + quatre-vingts."],
+    rule:"2080 = <b>deux mille quatre-vingts</b>. Mais 2081 = deux mille quatre-vingt-un." },
+
+  { id:"p62", cat:"nombres", lvl:5, t:"type", title:"La page déchirée",
+    story:"Une page du manuscrit a été arrachée : c'est la page 200 !",
+    q:"Écris 200 en lettres, quand il désigne un numéro de page.",
+    sentence:"Il manque la page ___.",
+    answers:["deux cent","deux-cent"],
+    hints:["Ici, 200 ne compte pas des pages : il veut dire « la deux-centième ».",
+           "Quand le nombre indique un rang (page, année, numéro), cent et vingt restent invariables."],
+    rule:"Nombre ordinal (rang) → invariable : <b>page deux cent</b>, l'an mille neuf cent, la page quatre-vingt." },
+
+  { id:"p63", cat:"nombres", lvl:5, t:"fill", title:"La grande course",
+    story:"Pour fêter le retour du manuscrit, la ville organise une course.",
+    parts:["La course fait "," kilomètres, elle attire "," spectateurs et le prix vaut "," d'écus."],
+    blanks:[{o:["quatre-vingts","quatre-vingt"],a:"quatre-vingts"},{o:["quatre-vingt mille","quatre-vingts mille","quatre-vingt milles"],a:"quatre-vingt mille"},{o:["deux cents millions","deux cent millions"],a:"deux cents millions"}],
+    hints:["« mille » est un nombre : vingt n'est donc pas en fin de nombre. « million » est un nom : cent reste en fin de nombre.",
+           "Réponses : quatre-vingts, quatre-vingt mille, deux cents millions."],
+    rule:"quatre-vingt <b>mille</b> (mille est un nombre) mais deux cents <b>millions</b> (million est un nom)." },
+
+  // ---- Orthographe des mots ----
+  { id:"p64", cat:"orthographe", lvl:1, t:"find", title:"La lettre du frère",
+    story:"Le frère du majordome lui a écrit. Il a oublié tous ses accents !",
+    text:"Mon [frere|frère] habite dans une [foret|forêt] près de la [riviere|rivière].",
+    hints:["Les accents font partie de l'orthographe du mot.",
+           "frère (accent grave), forêt (accent circonflexe), rivière (accent grave)."],
+    rule:"Accent <b>grave</b> sur è devant une syllabe muette (frère, rivière). Le <b>circonflexe</b> remplace souvent un ancien s (forêt → forestier)." },
+
+  { id:"p65", cat:"orthographe", lvl:1, t:"type", title:"Le petit messager",
+    story:"Un enfant apporte un message au professeur.",
+    q:"Écris correctement le mot « garcon ».",
+    sentence:"Un petit ___ court dans la rue.",
+    answers:["garçon"],
+    hints:["Devant a, o, u, la lettre c fait le son [k]. Pour faire [s], il faut...",
+           "...une cédille !"],
+    rule:"<b>ç</b> devant a, o, u : garçon, leçon, maçon, reçu." },
+
+  { id:"p66", cat:"orthographe", lvl:2, t:"find", title:"Le combat du champion",
+    story:"Une affiche annonce un tournoi au village.",
+    text:"Le [conbat|combat] fut [inportant|important], mais le [chanpion|champion] a gagné.",
+    hints:["Devant m, b et p, on écrit m au lieu de n.",
+           "combat, important, champion."],
+    rule:"<b>m devant m, b, p</b> : combat, important, champion, emmener. Exceptions : bonbon, bonbonne, néanmoins." },
+
+  { id:"p67", cat:"orthographe", lvl:2, t:"type", title:"Toujours en retard",
+    story:"Le facteur n'arrive jamais à l'heure.",
+    q:"Écris correctement le mot « toujour ».",
+    sentence:"Le facteur est ___ en retard.",
+    answers:["toujours"],
+    hints:["C'est un mot invariable qui se termine par une lettre muette.",
+           "Comme « jamais » ou « alors »… mais avec un s."],
+    rule:"Mots invariables terminés par s : toujour<b>s</b>, jamai<b>s</b>, alor<b>s</b>, volontier<b>s</b>." },
+
+  { id:"p68", cat:"orthographe", lvl:3, t:"find", title:"Le bocal",
+    story:"Sur le bureau du conservateur, un bocal... et une note étrange.",
+    text:"Le [poison|poisson] rouge fait une [glisade|glissade] dans le bocal, puis boit une [boison|boisson].",
+    hints:["Entre deux voyelles, un seul s fait le son [z]. Pour faire [s], il en faut deux.",
+           "poisson, glissade, boisson (« poison » existe, mais c'est autre chose !)."],
+    rule:"Entre deux voyelles : <b>s</b> = [z] (poison, rose), <b>ss</b> = [s] (poisson, glissade)." },
+
+  { id:"p69", cat:"orthographe", lvl:3, t:"fill", title:"La fête du port",
+    story:"Le port se prépare pour une fête.",
+    parts:["Un "," se pose sur la "," pendant que nous "," des crêpes."],
+    blanks:[{o:["pijon","pigeon","pigon"],a:"pigeon"},{o:["guirlande","girlande","gierlande"],a:"guirlande"},{o:["mangons","mangeons","manjons"],a:"mangeons"}],
+    hints:["Devant a, o, u : « ge » fait [ʒ] (pigeon, mangeons). Devant e, i : « gu » fait [g] (guirlande).",
+           "Réponses : pigeon, guirlande, mangeons."],
+    rule:"<b>ge</b> devant a, o, u pour le son [ʒ] (pigeon, nous mangeons).<br><b>gu</b> devant e, i pour le son [g] (guirlande, guêpe)." },
+
+  { id:"p70", cat:"orthographe", lvl:4, t:"type", title:"La pluie",
+    story:"Le témoin explique pourquoi il est parti tôt.",
+    q:"Écris correctement « parcequ'il ».",
+    sentence:"Il est parti ___ pleuvait.",
+    answers:["parce qu'il"],
+    hints:["C'est une locution en deux mots.",
+           "« parce que » devient « parce qu' » devant une voyelle."],
+    rule:"<b>parce que</b> s'écrit en deux mots (parce qu'il). Ne pas confondre avec <b>par ce que</b> (par la chose que)." },
+
+  { id:"p71", cat:"orthographe", lvl:4, t:"find", title:"L'échafaudage",
+    story:"Un ouvrier a vu quelque chose sur le toit du musée.",
+    text:"J'ai [apperçu|aperçu] une [silhouète|silhouette] près de l'[échaffaudage|échafaudage].",
+    hints:["Ces mots ont un piège de consonne simple ou double.",
+           "aperçu (1 p), silhouette (2 t), échafaudage (1 f)."],
+    rule:"À retenir : a<b>p</b>ercevoir, silhoue<b>tt</b>e, écha<b>f</b>aud." },
+
+  { id:"p72", cat:"orthographe", lvl:5, t:"type", title:"Le gâteau du chef",
+    story:"Le chef de l'observatoire a préparé un gâteau pour le professeur.",
+    q:"Écris correctement le mot « exelent ».",
+    sentence:"Ce gâteau est ___ !",
+    answers:["excellent"],
+    hints:["Le son [ks] s'écrit « xc » ici, et il y a une consonne double.",
+           "ex-cel-lent."],
+    rule:"e<b>xc</b>e<b>ll</b>ent, comme e<b>xc</b>eption, e<b>xc</b>iter." },
+
+  { id:"p73", cat:"orthographe", lvl:5, t:"find", title:"La promesse",
+    story:"Le voleur a laissé un mot d'excuse.",
+    text:"[Néanmoin|Néanmoins], j'ai [dorénavent|dorénavant] promis d'être [plutot|plutôt] calme.",
+    hints:["Des mots invariables avec des pièges : s final, -ant, accent circonflexe.",
+           "Néanmoins, dorénavant, plutôt."],
+    rule:"Invariables à retenir : néanmoin<b>s</b>, doréna<b>vant</b>, plut<b>ô</b>t, aussitôt, bientôt." },
+
+  // ---- Pluriels et accords ----
+  { id:"p74", cat:"accords", lvl:1, t:"find", title:"Les vélos",
+    story:"Des enfants ont vu passer quelqu'un en courant.",
+    text:"Mes [ami|amis] ont des [vélo|vélos] [rouge|rouges].",
+    hints:["Après « mes » et « des », le nom et l'adjectif sont au pluriel.",
+           "amis, vélos, rouges."],
+    rule:"Au pluriel, le nom et l'adjectif prennent un <b>s</b> en général." },
+
+  { id:"p75", cat:"accords", lvl:2, t:"find", title:"La tante du professeur",
+    story:"Le professeur parle de sa tante, qui l'a toujours aidé.",
+    text:"Ma tante est [gentil|gentille], [heureux|heureuse] et très [sportif|sportive].",
+    hints:["Ces adjectifs décrivent une femme : ils doivent être au féminin.",
+           "gentille, heureuse, sportive."],
+    rule:"Féminins à retenir : -il → <b>-ille</b> (gentille), -eux → <b>-euse</b>, -if → <b>-ive</b>." },
+
+  { id:"p76", cat:"accords", lvl:3, t:"fill", title:"Les noms composés",
+    story:"Le professeur note ce qu'il a vu dans la journée.",
+    parts:["Au marché : des ",". Dans le ciel : des ",". Au musée : des ","."],
+    blanks:[{o:["choux-fleurs","chou-fleurs","choux-fleur"],a:"choux-fleurs"},{o:["arc-en-ciels","arcs-en-ciel","arcs-en-ciels"],a:"arcs-en-ciel"},{o:["chef-d'œuvres","chefs-d'œuvre","chefs-d'œuvres"],a:"chefs-d'œuvre"}],
+    hints:["Dans un nom composé, seuls les noms et les adjectifs s'accordent... si le sens le permet. Un arc « en ciel » : il n'y a qu'un ciel.",
+           "Réponses : choux-fleurs, arcs-en-ciel, chefs-d'œuvre."],
+    rule:"Nom + nom : les deux s'accordent (choux-fleurs).<br>Nom + préposition + nom : seul le premier s'accorde (arcs-en-ciel, chefs-d'œuvre)." },
+
+  { id:"p77", cat:"accords", lvl:3, t:"find", title:"Les cadeaux",
+    story:"Une liste de cadeaux est retrouvée dans une poche.",
+    text:"Chaque [enfants|enfant] a reçu [plusieur|plusieurs] cadeaux et [quelque|quelques] bonbons.",
+    hints:["« chaque » est toujours suivi du singulier. « plusieurs » prend toujours un s.",
+           "enfant, plusieurs, quelques."],
+    rule:"<b>chaque</b> + singulier. <b>plusieurs</b> s'écrit toujours avec s. <b>quelques</b> (= plusieurs) + pluriel." },
+
+  { id:"p78", cat:"accords", lvl:4, t:"type", title:"La valise du suspect",
+    story:"On retrouve la valise d'un suspect : une veste et un pantalon tout neufs.",
+    q:"Accorde l'adjectif « neuf ».",
+    sentence:"Une veste et un pantalon ___.",
+    answers:["neufs"],
+    hints:["L'adjectif se rapporte à un nom féminin ET à un nom masculin.",
+           "Masculin + féminin → masculin pluriel."],
+    rule:"Adjectif qui qualifie un nom masculin et un nom féminin → <b>masculin pluriel</b>." },
+
+  { id:"p79", cat:"accords", lvl:4, t:"find", title:"Minuit et demi",
+    story:"Le garde de l'observatoire raconte sa nuit.",
+    text:"Il est rentré à minuit et [demie|demi]. Il marchait [nus|nu]-pieds depuis une [demie|demi]-heure.",
+    hints:["Avant le nom (avec un trait d'union), « demi » et « nu » sont invariables. Après le nom, « demi » s'accorde en genre seulement : minuit est masculin.",
+           "minuit et demi, nu-pieds, une demi-heure."],
+    rule:"<b>demi-, nu-</b> devant le nom : invariables (une demi-heure, nu-pieds).<br>Après : genre seulement (une heure et demie, minuit et demi)." },
+
+  { id:"p80", cat:"accords", lvl:5, t:"fill", title:"Les couleurs",
+    story:"Le portrait du voleur se précise.",
+    parts:["Il a les yeux ",", porte des chaussettes "," et des gants ","."],
+    blanks:[{o:["bleu clair","bleus clairs","bleus clair"],a:"bleu clair"},{o:["vert pomme","vertes pomme","vertes pommes"],a:"vert pomme"},{o:["rose","roses"],a:"roses"}],
+    hints:["Un adjectif de couleur composé (deux mots) reste invariable. « rose » est une exception qui s'accorde.",
+           "Réponses : bleu clair, vert pomme, roses."],
+    rule:"Couleur composée → <b>invariable</b> (des yeux bleu clair).<br><b>rose, mauve, fauve, écarlate</b> s'accordent même s'ils viennent d'un nom." },
+
+  // ---- Conjugaison ----
+  { id:"p81", cat:"conjugaison", lvl:1, t:"type", title:"Le chien des voisins",
+    story:"Les voisins ont un chien qui aboie la nuit.",
+    q:"Conjugue « avoir » au présent.",
+    sentence:"Les voisins ___ un chien.",
+    answers:["ont"],
+    hints:["Le sujet est « les voisins » = ils.",
+           "Ils ... (verbe avoir)."],
+    rule:"<b>avoir</b> au présent : j'ai, tu as, il a, nous avons, vous avez, ils <b>ont</b>." },
+
+  { id:"p82", cat:"conjugaison", lvl:2, t:"find", title:"Le départ précipité",
+    story:"Une conversation entendue derrière une porte.",
+    text:"Je [prend|prends] mon sac, tu [veu|veux] partir et il [peux|peut] venir.",
+    hints:["Avec je et tu : -s ou -x. Avec il : -d ou -t.",
+           "prends, veux, peut."],
+    rule:"3e groupe au présent : je prend<b>s</b>, tu veu<b>x</b>, il peu<b>t</b>, il pren<b>d</b>." },
+
+  { id:"p83", cat:"conjugaison", lvl:3, t:"fill", title:"La légende du port",
+    story:"Un vieux marin raconte une légende au passé simple.",
+    parts:["Les marins ",". Le capitaine "," la barre, et nous "," le voyage."],
+    blanks:[{o:["chantèrent","chantairent","chantérent"],a:"chantèrent"},{o:["prit","prenda","prena"],a:"prit"},{o:["finîmes","finimes","finissâmes"],a:"finîmes"}],
+    hints:["Passé simple : ils chant-èrent ; prendre → il prit ; nous fin-îmes (avec un accent circonflexe).",
+           "Réponses : chantèrent, prit, finîmes."],
+    rule:"Passé simple : ils chant<b>èrent</b>, il pr<b>it</b>, nous fin<b>îmes</b>, vous fin<b>îtes</b>." },
+
+  { id:"p84", cat:"conjugaison", lvl:4, t:"type", title:"L'invitation",
+    story:"Le directeur du musée accueille le professeur.",
+    q:"Conjugue « s'asseoir » à l'impératif, à la 2e personne du singulier.",
+    sentence:"___ ici, je te prie !",
+    answers:["assieds-toi","assois-toi"],
+    hints:["À l'impératif, le pronom se place après le verbe, avec un trait d'union.",
+           "Deux formes sont correctes : assieds-toi ou assois-toi."],
+    rule:"<b>s'asseoir</b> : assieds-toi / assois-toi, asseyons-nous, asseyez-vous." },
+
+  { id:"p85", cat:"conjugaison", lvl:5, t:"find", title:"Les consignes",
+    story:"Le directeur de l'observatoire donne ses consignes.",
+    text:"Bien qu'il [pleut|pleuve], il faut que vous [faisiez|fassiez] attention et que nous [allons|allions] vite.",
+    hints:["« bien que » et « il faut que » sont suivis du subjonctif.",
+           "qu'il pleuve, que vous fassiez, que nous allions."],
+    rule:"Subjonctifs irréguliers : qu'il <b>pleuve</b>, que vous <b>fassiez</b>, que nous <b>allions</b>, qu'il <b>soit</b>." },
+
+  // ---- Homophones ----
+  { id:"p86", cat:"homophones", lvl:3, t:"find", title:"Le conte du comte",
+    story:"Au bal, un invité lit une histoire.",
+    text:"Le [conte|comte] a lu un [comte|conte] à [sang|cent] invités.",
+    hints:["Un comte est un noble ; un conte est une histoire. 100 s'écrit cent.",
+           "comte, conte, cent."],
+    rule:"<b>comte</b> (noble) / <b>conte</b> (histoire) / <b>compte</b> (calcul).<br><b>cent</b> (100) / <b>sang</b> / <b>sans</b>." },
+
+  { id:"p87", cat:"homophones", lvl:4, t:"fill", title:"Plutôt ou plus tôt ?",
+    story:"Le conservateur laisse des instructions.",
+    parts:[""," il arrive, prévenez-moi. Il est venu "," que prévu. "," que de dormir, il lit."],
+    blanks:[{o:["Quoi qu'","Quoiqu'"],a:"Quoi qu'"},{o:["plus tôt","plutôt"],a:"plus tôt"},{o:["Plutôt","Plus tôt"],a:"Plutôt"}],
+    hints:["« quoi que » = quelle que soit la chose que ; « quoique » = bien que. « plus tôt » est le contraire de « plus tard ».",
+           "Réponses : Quoi qu', plus tôt, Plutôt."],
+    rule:"<b>quoi que</b> = n'importe quoi ; <b>quoique</b> = bien que.<br><b>plus tôt</b> ≠ plus tard ; <b>plutôt</b> = de préférence." },
+
+  { id:"p88", cat:"homophones", lvl:5, t:"type", title:"Davantage",
+    story:"Le professeur encourage son assistant.",
+    q:"Écris « davantage » ou « d'avantage ».",
+    sentence:"Il faut travailler ___.",
+    answers:["davantage"],
+    hints:["Ici, le mot veut dire « plus ».",
+           "En un seul mot."],
+    rule:"<b>davantage</b> = plus. <b>d'avantage</b> = de + avantage (un bénéfice) : il n'a pas d'avantage." },
+
+  // ---- Participes passés ----
+  { id:"p89", cat:"participes", lvl:3, t:"fill", title:"Le courrier",
+    story:"Le facteur apporte des nouvelles au professeur.",
+    parts:["Ils ont "," jusqu'ici. Elles sont "," en train. La lettre que j'ai "," est étrange."],
+    blanks:[{o:["couru","courus"],a:"couru"},{o:["venu","venues","venus"],a:"venues"},{o:["reçu","reçue","reçus"],a:"reçue"}],
+    hints:["Avoir sans COD avant → pas d'accord. Être → accord avec le sujet. COD avant avoir → accord.",
+           "Réponses : couru, venues, reçue."],
+    rule:"Résumé : être → accord avec le sujet ; avoir → accord seulement avec le COD placé avant." },
+
+  { id:"p90", cat:"participes", lvl:5, t:"find", title:"Le concert",
+    story:"Un concert a eu lieu au château le soir du vol.",
+    text:"Les musiciens que j'ai [entendu|entendus] jouer étaient doués. Les fleurs se sont [fanés|fanées]. Les heures se sont [succédées|succédé].",
+    hints:["Les musiciens font l'action de jouer → accord. « se faner » : accord avec le sujet. « succéder À » : se n'est pas COD → pas d'accord.",
+           "entendus, fanées, succédé."],
+    rule:"Participe + infinitif : accord si le COD fait l'action (les musiciens que j'ai entendus jouer).<br>Pronominaux : pas d'accord si « se » est COI (elles se sont succédé, parlé, plu)." }
 ];
 
-if (typeof module !== "undefined") module.exports = { PUZZLES, CHAPTERS };
+/* Ordre de jeu : un tableau d'identifiants par chapitre (généré par tools/arrange.js). */
+const CHAPTER_PLAN = [
+  ["p01","p06","p64","p53","p65","p74","p81","p82","p12","p89"],
+  ["p02","p51","p52","p14","p17","p66","p67","p26","p27","p33"],
+  ["p08","p10","p11","p56","p15","p22","p30","p69","p32","p40"],
+  ["p09","p18","p19","p20","p21","p68","p24","p35","p71","p37"],
+  ["p04","p54","p07","p55","p16","p25","p36","p38","p70","p73"],
+  ["p05","p13","p75","p57","p59","p83","p34","p39","p44","p42"],
+  ["p03","p28","p58","p29","p77","p31","p86","p61","p41","p72"],
+  ["p23","p76","p60","p78","p87","p46","p47","p48","p63","p88"],
+  ["p79","p84","p43","p45","p62","p49","p85","p80","p90","p50"]
+];
+
+/* Liste ordonnée utilisée par le jeu ; p.ch = numéro de chapitre. */
+const PUZZLES = CHAPTER_PLAN.flatMap((ids, c) => ids.map(id => Object.assign(ALL_PUZZLES.find(p => p.id === id), { ch: c + 1 })));
+const CHAPTERS = [""].concat(CHAPTER_NAMES.map((n, i) => `Chapitre ${i + 1} — ${n}`));
+
+if (typeof module !== "undefined") module.exports = { ALL_PUZZLES, PUZZLES, CHAPTERS, CHAPTER_NAMES, CHAPTER_PLAN, CATEGORIES };

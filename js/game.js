@@ -7,15 +7,15 @@ const HINT_COST = 3;
 const SAVE_KEY = "plume-save-v2";
 
 /* Valeur d'une énigme selon son chapitre (difficulté 1 à 5). */
-function baseValue(p){ return 10 + 5 * p.ch; }
+function baseValue(p){ return 10 + 5 * p.lvl; }
 /* Une erreur retire 20 % de la valeur, sans descendre sous 40 %. */
 function afterMistake(p, value){ const b = baseValue(p); return Math.max(Math.ceil(b * 0.4), value - Math.ceil(b * 0.2)); }
 
-/* Découpe le texte : "[faux|bon]." -> {shown:"faux.", word:"faux", fix:"bon"} */
+/* Découpe le texte : "l'[faux|bon]." -> {shown:"l'faux.", word:"faux", fix:"bon"} */
 function tokens(p){
   return p.text.split(" ").map(tok => {
-    const m = tok.match(/^\[([^|\]]+)\|([^\]]+)\](.*)$/);
-    return m ? { shown: m[1] + m[3], word: m[1], fix: m[2] } : { shown: tok };
+    const m = tok.match(/^([^\[]*)\[([^|\]]+)\|([^\]]+)\](.*)$/);
+    return m ? { shown: m[1] + m[2] + m[4], word: m[2], fix: m[3] } : { shown: tok };
   });
 }
 /* Normalise une saisie clavier : casse, espaces, apostrophe typographique, point final.
@@ -39,24 +39,26 @@ const SAVE_FORMAT = "plume-et-cie-save";
 
 /* Contenu du fichier de sauvegarde. */
 function exportSave(save){
-  return JSON.stringify({ format: SAVE_FORMAT, version: 1, date: new Date().toISOString(),
+  return JSON.stringify({ format: SAVE_FORMAT, version: 2, date: new Date().toISOString(),
     coins: save.coins, solved: save.solved, owned: save.owned, equipped: save.equipped }, null, 2);
 }
 /* Lit et valide un fichier de sauvegarde. Lève une erreur si le fichier est invalide.
    Les valeurs inconnues (énigme ou objet inexistant) sont ignorées. */
-function importSave(text, puzzleCount, items){
+/* Anciennes versions (50 énigmes) : progression enregistrée par position (0 = p01). */
+function migrateSolved(list){ return list.map(x => Number.isInteger(x) ? "p" + String(x + 1).padStart(2, "0") : x); }
+function importSave(text, puzzleIds, items){
   let d;
   try { d = JSON.parse(text); } catch(e) { throw new Error("Ce fichier n'est pas une sauvegarde valide."); }
   if (!d || d.format !== SAVE_FORMAT) throw new Error("Ce fichier n'est pas une sauvegarde de " + GAME_TITLE + ".");
   if (!Number.isInteger(d.coins) || d.coins < 0 || !Array.isArray(d.solved) || !Array.isArray(d.owned))
     throw new Error("Sauvegarde abîmée : impossible de la charger.");
   const ids = items.map(i => i.id);
-  const solved = [...new Set(d.solved)].filter(i => Number.isInteger(i) && i >= 0 && i < puzzleCount).sort((a, b) => a - b);
+  const solved = [...new Set(migrateSolved(d.solved))].filter(id => puzzleIds.includes(id));
   const owned = [...new Set(d.owned)].filter(id => ids.includes(id));
   const equipped = {};
   Object.entries(d.equipped || {}).forEach(([slot, id]) => {
     const it = items.find(i => i.id === id);
-    if (it && it.slot === slot && slot !== "home" && owned.includes(id)) equipped[slot] = id;
+    if (it && it.slot === slot && !["home", "garden", "vehicle"].includes(slot) && owned.includes(id)) equipped[slot] = id;
   });
   return { coins: d.coins, solved, owned, equipped };
 }
@@ -69,7 +71,7 @@ function solutionFor(p){
 }
 const TEST_PASSWORD = "tes1";
 
-if (typeof module !== "undefined") module.exports = { baseValue, afterMistake, tokens, normalize, checkAnswer, exportSave, importSave, solutionFor, TEST_PASSWORD, GAME_TITLE };
+if (typeof module !== "undefined") module.exports = { baseValue, afterMistake, tokens, normalize, checkAnswer, exportSave, importSave, migrateSolved, solutionFor, TEST_PASSWORD, GAME_TITLE };
 
 /* ============================ Interface ============================ */
 if (typeof document !== "undefined") (function(){
@@ -79,11 +81,12 @@ if (typeof document !== "undefined") (function(){
   let save;
   try { save = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch(e) {}
   if (!save) save = { coins: START_COINS, solved: [], owned: [], equipped: {} };
+  save.solved = migrateSolved(save.solved);
   const persist = () => localStorage.setItem(SAVE_KEY, JSON.stringify(save));
 
   /* Énigmes débloquées : toutes les résolues + la suivante. */
-  const nextIndex = () => { const i = PUZZLES.findIndex((_, k) => !save.solved.includes(k)); return i < 0 ? PUZZLES.length : i; };
-  const unlocked = i => save.test || save.solved.includes(i) || i === nextIndex();
+  const nextIndex = () => { const i = PUZZLES.findIndex(p => !save.solved.includes(p.id)); return i < 0 ? PUZZLES.length : i; };
+  const unlocked = i => save.test || save.solved.includes(PUZZLES[i].id) || i === nextIndex();
   /* Mode test : écus illimités (rien n'est débité). */
   const canPay = n => save.test || save.coins >= n;
   const pay = n => { if (!save.test) save.coins -= n; };
@@ -130,7 +133,7 @@ if (typeof document !== "undefined") (function(){
       if (!f) return;
       f.text().then(text => {
         try {
-          const s = importSave(text, PUZZLES.length, ITEMS);
+          const s = importSave(text, PUZZLES.map(p => p.id), ITEMS);
           if (!confirm(`Charger cette sauvegarde ?\n${s.solved.length} mystères résolus, ${s.coins} écus, ${s.owned.length} objets.\nLa progression actuelle sera remplacée.`)) return;
           save = s; persist(); home(); toast("📂 Sauvegarde chargée !");
         } catch(e) { alert(e.message); }
@@ -148,6 +151,7 @@ if (typeof document !== "undefined") (function(){
     app.innerHTML = header() + `
       <div class="card">
         <div class="scene">${drawScene(save.owned, save.equipped)}</div>
+        <div class="scene" style="margin-top:8px">${drawGarden(save.owned)}</div>
         <h2 style="margin-top:10px">${GAME_SUBTITLE}</h2>
         <p>Le précieux manuscrit de Lord Dictée a disparu ! Aide le Professeur Plume à le retrouver :
         chaque indice est piégé par des fautes d'orthographe.</p>
@@ -173,7 +177,7 @@ if (typeof document !== "undefined") (function(){
     let html = "", last = 0;
     PUZZLES.forEach((p, i) => {
       if (p.ch !== last){ if (last) html += "</div>"; html += `<div class="chap">${CHAPTERS[p.ch]}</div><div class="grid">`; last = p.ch; }
-      const ok = save.solved.includes(i);
+      const ok = save.solved.includes(p.id);
       html += `<button class="${ok ? "alt" : ""}" ${unlocked(i) ? `onclick="G.start(${i})"` : "disabled"}>${ok ? "✔" : unlocked(i) ? "" : "🔒"}${i + 1}</button>`;
     });
     app.innerHTML = header() + `<div class="card"><h2>Les mystères</h2>
@@ -189,12 +193,13 @@ if (typeof document !== "undefined") (function(){
         const own = save.owned.includes(it.id), worn = save.equipped[slot] === it.id;
         let btn;
         if (!own) btn = `<button class="gold" ${save.coins < it.price && !save.test ? "disabled" : ""} onclick="G.buy('${it.id}')">🪙 ${it.price}</button>`;
-        else if (slot === "home") btn = `<span>✔ Installé</span>`;
+        else if (DECOR_SLOTS.includes(slot)) btn = `<span>✔ Installé</span>`;
         else btn = `<button class="alt" onclick="G.wear('${it.id}')">${worn ? "Retirer" : "Porter"}</button>`;
         html += `<div class="shop-item"><span>${esc(it.name)}</span>${btn}</div>`;
       });
     });
-    app.innerHTML = header() + `<div class="card"><div class="scene">${drawScene(save.owned, save.equipped)}</div></div>
+    app.innerHTML = header() + `<div class="card"><div class="scene">${drawScene(save.owned, save.equipped)}</div>
+      <div class="scene" style="margin-top:8px">${drawGarden(save.owned)}</div></div>
       <div class="card"><h2>La boutique</h2><div class="meta">Gagne des écus en résolvant des mystères.</div>${html}
       <div class="bar"><button class="alt" onclick="G.home()">⟵ Maison</button></div></div>`;
   }
@@ -202,7 +207,7 @@ if (typeof document !== "undefined") (function(){
     const it = ITEMS.find(x => x.id === id);
     if (!it || save.owned.includes(id) || !canPay(it.price)) return;
     pay(it.price); save.owned.push(id);
-    if (it.slot !== "home") save.equipped[it.slot] = id;
+    if (!DECOR_SLOTS.includes(it.slot)) save.equipped[it.slot] = id;
     persist(); shop();
   }
   function wear(id){
@@ -214,7 +219,7 @@ if (typeof document !== "undefined") (function(){
   function start(i){
     if (!unlocked(i)) return;
     idx = i; cur = PUZZLES[i];
-    value = save.solved.includes(i) ? 0 : baseValue(cur);
+    value = save.solved.includes(cur.id) ? 0 : baseValue(cur);
     hintsShown = 0; active = 0;
     ans = cur.t === "find" ? new Set() : cur.t === "fill" ? cur.blanks.map(() => null) : "";
     render();
@@ -244,7 +249,7 @@ if (typeof document !== "undefined") (function(){
     app.innerHTML = header() + `<div class="card">
       <div class="meta">${CHAPTERS[p.ch]}</div>
       <h2>Mystère ${idx + 1} — ${esc(p.title)}</h2>
-      <div class="meta">Récompense : <b>${value}</b> écus · Difficulté ${"★".repeat(p.ch)}${"☆".repeat(5 - p.ch)}</div>
+      <div class="meta">Récompense : <b>${value}</b> écus · Difficulté ${"★".repeat(p.lvl)}${"☆".repeat(5 - p.lvl)}</div>
       <div class="story">${drawPortrait(save.equipped)}<span>${p.story}</span></div>
       <p><b>${q}</b></p>
       ${body}${hints}
@@ -301,7 +306,7 @@ if (typeof document !== "undefined") (function(){
     if (cur.t === "type" && !ans.trim()){ alert("Tape ta réponse avant de valider !"); return; }
     const ok = checkAnswer(cur, ans);
     let gain = 0;
-    if (ok && !save.solved.includes(idx)){ gain = value; save.coins += gain; save.solved.push(idx); persist(); }
+    if (ok && !save.solved.includes(cur.id)){ gain = value; save.coins += gain; save.solved.push(cur.id); persist(); }
     if (!ok && value > 0) value = afterMistake(cur, value);
     result(ok, gain);
   }
