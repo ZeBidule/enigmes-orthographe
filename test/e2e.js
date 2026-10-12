@@ -111,7 +111,7 @@ const url = `http://localhost:${server.address().port}/`;
   // 8. Tous les mystères débloqués
   await p.click("text=📜 Mystères");
   assert.strictEqual(await p.$$eval(".grid button[disabled]", x => x.length), 0);
-  console.log("ok - 90 mystères débloqués");
+  console.log("ok - 100 mystères débloqués (bonus compris)");
 
   // 9. Bouton Solution sur les 3 types (find, fill, type) + mystère 50
   const picks = await p.evaluate(() => ["find", "fill", "type"].map(t => PUZZLES.findIndex(x => x.t === t)).concat(PUZZLES.length - 1));
@@ -156,6 +156,22 @@ const url = `http://localhost:${server.address().port}/`;
   const migrated = await p.evaluate(() => { G.list(); return [...document.querySelectorAll(".grid button")].filter(b => b.textContent.startsWith("✔")).length; });
   assert.strictEqual(migrated, 3);
   console.log("ok - ancienne sauvegarde du navigateur reprise (3 mystères, écus et objets conservés)");
+
+  // 13. Bonus : verrouillés tant que l'histoire n'est pas finie, puis accessibles
+  const mainIds = await p.evaluate(() => PUZZLES.filter(x => !x.bonus).map(x => x.id));
+  await p.evaluate(ids => localStorage.setItem("plume-save-v2", JSON.stringify({ coins: 0, solved: ids, owned: [], equipped: {} })), mainIds.slice(0, 89));
+  await p.reload(); await p.click("text=Continuer");
+  await p.evaluate(() => G.list());
+  assert.ok(await p.$(".grid button[disabled]:has-text('B1')"), "B1 verrouillé avant la fin");
+  await p.evaluate(ids => localStorage.setItem("plume-save-v2", JSON.stringify({ coins: 0, solved: ids, owned: [], equipped: {} })), mainIds);
+  await p.reload(); await p.click("text=Continuer");
+  assert.match(await p.textContent("body"), /90 \/ 90 mystères résolus · ⭐ 0 \/ 10 bonus/);
+  await p.click("text=⭐ Bonus 1");
+  assert.match(await p.textContent("h2"), /⭐ Bonus 1 — /);
+  assert.match(await p.textContent(".card"), /Récompense : 190 écus/);
+  await p.evaluate(() => G.list());
+  assert.strictEqual(await p.$$eval(".grid button[disabled]", x => x.length), 9, "B2..B10 restent dans l'ordre");
+  console.log("ok - bonus verrouillés avant la fin de l'histoire, puis accessibles dans l'ordre (190 écus)");
 
   assert.deepStrictEqual(errors, [], "erreurs JS");
   console.log("\nTests navigateur OK");

@@ -6,6 +6,7 @@ const { ITEMS, DECOR_SLOTS, SLOT_NAMES, drawScene, drawGarden, drawPortrait } = 
 const G = require("../js/game.js");
 
 const IDS = PUZZLES.map(p => p.id);
+const MAIN = PUZZLES.filter(p => !p.bonus);
 let n = 0;
 const t = (name, fn) => { fn(); n++; console.log("ok -", name); };
 
@@ -13,15 +14,15 @@ t("90 énigmes, ids uniques, chacune une seule fois dans le plan", () => {
   assert.strictEqual(ALL_PUZZLES.length, 90);
   assert.strictEqual(new Set(ALL_PUZZLES.map(p => p.id)).size, 90);
   assert.deepStrictEqual(CHAPTER_PLAN.flat().slice().sort(), ALL_PUZZLES.map(p => p.id).sort());
-  assert.strictEqual(PUZZLES.length, 90);
+  assert.strictEqual(MAIN.length, 90);
   ALL_PUZZLES.forEach(p => { assert.ok(CATEGORIES[p.cat], p.id + " catégorie"); assert.ok(p.lvl >= 1 && p.lvl <= 5, p.id + " niveau"); });
 });
 
 t("15 énigmes par catégorie, 1 ou 2 par chapitre", () => {
   Object.keys(CATEGORIES).forEach(c => {
-    assert.strictEqual(PUZZLES.filter(p => p.cat === c).length, 15, c);
+    assert.strictEqual(MAIN.filter(p => p.cat === c).length, 15, c);
     for (let ch = 1; ch <= 9; ch++) {
-      const k = PUZZLES.filter(p => p.ch === ch && p.cat === c).length;
+      const k = MAIN.filter(p => p.ch === ch && p.cat === c).length;
       assert.ok(k >= 1 && k <= 2, `${c} chapitre ${ch} : ${k}`);
     }
   });
@@ -29,9 +30,9 @@ t("15 énigmes par catégorie, 1 ou 2 par chapitre", () => {
 
 t("types équilibrés : 30/30/30, et 3 ou 4 de chaque par chapitre", () => {
   ["find", "fill", "type"].forEach(ty => {
-    assert.strictEqual(PUZZLES.filter(p => p.t === ty).length, 30, ty);
+    assert.strictEqual(MAIN.filter(p => p.t === ty).length, 30, ty);
     for (let ch = 1; ch <= 9; ch++) {
-      const k = PUZZLES.filter(p => p.ch === ch && p.t === ty).length;
+      const k = MAIN.filter(p => p.ch === ch && p.t === ty).length;
       assert.ok(k >= 3 && k <= 4, `${ty} chapitre ${ch} : ${k}`);
     }
   });
@@ -42,10 +43,10 @@ t("9 chapitres de 10, difficulté jamais en baisse dans une catégorie", () => {
   CHAPTER_PLAN.forEach(ids => assert.strictEqual(ids.length, 10));
   assert.ok(CHAPTERS[9]);
   Object.keys(CATEGORIES).forEach(c => {
-    const ps = PUZZLES.filter(p => p.cat === c);
+    const ps = MAIN.filter(p => p.cat === c);
     ps.forEach((p, i) => { if (i && ps[i - 1].ch < p.ch) assert.ok(p.lvl >= ps[i - 1].lvl, `${c} : ${ps[i - 1].id} → ${p.id}`); });
   });
-  const avg = ch => PUZZLES.filter(p => p.ch === ch).reduce((a, p) => a + p.lvl, 0) / 10;
+  const avg = ch => MAIN.filter(p => p.ch === ch).reduce((a, p) => a + p.lvl, 0) / 10;
   assert.ok(avg(9) > avg(1) + 2, "le dernier chapitre est nettement plus difficile que le premier");
 });
 
@@ -145,12 +146,31 @@ t("sauvegarde : fichiers invalides refusés, valeurs inconnues ignorées", () =>
   assert.deepStrictEqual(s, { coins: 1, solved: ["p04"], owned: ["chat", "ballon"], equipped: {} });
 });
 
-t("économie : on peut tout acheter en prenant 1 indice toutes les 5 questions", () => {
-  const gains = PUZZLES.reduce((a, p) => a + G.baseValue(p), 0) + G.START_COINS;
-  const hints = Math.floor(PUZZLES.length / 5) * G.HINT_COST;
+t("économie : tout acheter avec 1 indice toutes les 5 questions, dès la fin de l'histoire", () => {
+  const gains = MAIN.reduce((a, p) => a + G.baseValue(p), 0) + G.START_COINS;
+  const hints = Math.floor(MAIN.length / 5) * G.HINT_COST;
   const shop = ITEMS.reduce((a, i) => a + i.price, 0);
   assert.ok(gains - hints >= shop, `budget ${gains - hints} < boutique ${shop}`);
-  assert.ok(gains - hints - shop < 150, "la marge reste petite : la boutique reste un objectif");
+});
+
+t("économie : avec les bonus, tout est achetable dans le pire des cas (tous les indices, erreurs maximales)", () => {
+  const shop = ITEMS.reduce((a, i) => a + i.price, 0);
+  const worstGain = PUZZLES.reduce((a, p) => {
+    let v = G.baseValue(p);                       // on se trompe jusqu'à ce que la récompense ne baisse plus
+    for (let k = 0; k < 20; k++) v = G.afterMistake(p, v);
+    return a + v;
+  }, G.START_COINS);
+  const allHints = PUZZLES.reduce((a, p) => a + p.hints.length * G.HINT_COST, 0);
+  assert.ok(worstGain - allHints >= shop, `pire cas ${worstGain - allHints} < boutique ${shop}`);
+});
+
+t("bonus : 10 mystères difficiles après l'histoire, récompense fixe", () => {
+  const bonus = PUZZLES.filter(p => p.bonus);
+  assert.strictEqual(bonus.length, 10);
+  assert.deepStrictEqual(PUZZLES.slice(90).map(p => p.id), bonus.map(p => p.id), "après les 90 mystères");
+  bonus.forEach(p => { assert.strictEqual(p.ch, 10); assert.strictEqual(p.lvl, 5); assert.strictEqual(G.afterMistake(p, p.reward), p.reward); });
+  assert.ok(CHAPTERS[10].includes("Bonus"));
+  assert.ok(G.baseValue(bonus[0]) > G.baseValue(MAIN[89]), "un bonus rapporte plus qu'un mystère normal");
 });
 
 t("ancienne sauvegarde (positions 0..49) convertie en identifiants", () => {
@@ -159,7 +179,7 @@ t("ancienne sauvegarde (positions 0..49) convertie en identifiants", () => {
   assert.deepStrictEqual(G.importSave(old, IDS, ITEMS).solved, ["p01", "p02", "p03"]);
 });
 
-t("mode test : la solution fournie valide chacune des 90 énigmes", () => {
+t("mode test : la solution fournie valide chacune des 100 énigmes", () => {
   PUZZLES.forEach((p, i) => assert.ok(G.checkAnswer(p, G.solutionFor(p)), "#" + (i + 1)));
   assert.strictEqual(G.TEST_PASSWORD, "tes1");
 });

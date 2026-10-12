@@ -7,9 +7,9 @@ const HINT_COST = 3;
 const SAVE_KEY = "plume-save-v2";
 
 /* Valeur d'une énigme selon son chapitre (difficulté 1 à 5). */
-function baseValue(p){ return 10 + 5 * p.lvl; }
-/* Une erreur retire 20 % de la valeur, sans descendre sous 40 %. */
-function afterMistake(p, value){ const b = baseValue(p); return Math.max(Math.ceil(b * 0.4), value - Math.ceil(b * 0.2)); }
+function baseValue(p){ return p.reward || 10 + 5 * p.lvl; }
+/* Une erreur retire 20 % de la valeur, sans descendre sous 40 %. Les bonus gardent leur récompense fixe. */
+function afterMistake(p, value){ if (p.reward) return value; const b = baseValue(p); return Math.max(Math.ceil(b * 0.4), value - Math.ceil(b * 0.2)); }
 
 /* Découpe le texte : "l'[faux|bon]." -> {shown:"l'faux.", word:"faux", fix:"bon"} */
 function tokens(p){
@@ -86,6 +86,10 @@ if (typeof document !== "undefined") (function(){
 
   /* Énigmes débloquées : toutes les résolues + la suivante. */
   const nextIndex = () => { const i = PUZZLES.findIndex(p => !save.solved.includes(p.id)); return i < 0 ? PUZZLES.length : i; };
+  const mainDone = () => PUZZLES.filter(p => !p.bonus && save.solved.includes(p.id)).length;
+  const bonusDone = () => PUZZLES.filter(p => p.bonus && save.solved.includes(p.id)).length;
+  const progressText = () => `${mainDone()} / ${MAIN_COUNT} mystères résolus` +
+    (mainDone() === MAIN_COUNT ? ` · ⭐ ${bonusDone()} / ${PUZZLES.length - MAIN_COUNT} bonus` : "");
   const unlocked = i => save.test || save.solved.includes(PUZZLES[i].id) || i === nextIndex();
   /* Mode test : écus illimités (rien n'est débité). */
   const canPay = n => save.test || save.coins >= n;
@@ -109,7 +113,7 @@ if (typeof document !== "undefined") (function(){
         <button class="gold" onclick="G.load()">📂 Charger une sauvegarde</button>
         <button class="alt key-btn" onclick="G.testMenu()" title="Menu de test" aria-label="Menu de test">🔑</button>
       </div>
-      ${started ? `<div class="meta" style="color:var(--parch)">${save.solved.length} / ${PUZZLES.length} mystères résolus · 🪙 ${save.coins} écus</div>` : ""}
+      ${started ? `<div class="meta" style="color:var(--parch)">${progressText()} · 🪙 ${save.coins} écus</div>` : ""}
       <div class="meta" style="color:var(--parch);opacity:.6">Un jeu pour réviser l'orthographe française</div>
     </div>`;
   }
@@ -147,7 +151,7 @@ if (typeof document !== "undefined") (function(){
   }
 
   function home(){
-    const n = nextIndex(), done = save.solved.length;
+    const n = nextIndex(), done = mainDone();
     app.innerHTML = header() + `
       <div class="card">
         <div class="scene">${drawScene(save.owned, save.equipped)}</div>
@@ -155,10 +159,12 @@ if (typeof document !== "undefined") (function(){
         <h2 style="margin-top:10px">${GAME_SUBTITLE}</h2>
         <p>Le précieux manuscrit de Lord Dictée a disparu ! Aide le Professeur Plume à le retrouver :
         chaque indice est piégé par des fautes d'orthographe.</p>
-        <div class="progress"><div style="width:${done * 100 / PUZZLES.length}%"></div></div>
-        <div class="meta">${done} / ${PUZZLES.length} mystères résolus</div>
+        <div class="progress"><div style="width:${done * 100 / MAIN_COUNT}%"></div></div>
+        <div class="meta">${progressText()}</div>
         <div class="bar">
-          ${n < PUZZLES.length ? `<button onclick="G.start(${n})">▶ Mystère ${n + 1}</button>` : `<button disabled>🏆 Enquête terminée !</button>`}
+          ${n >= PUZZLES.length ? `<button disabled>🏆 Tout est résolu !</button>`
+            : PUZZLES[n].bonus ? `<button class="gold" onclick="G.start(${n})">⭐ Bonus ${n - MAIN_COUNT + 1}</button>`
+            : `<button onclick="G.start(${n})">▶ Mystère ${n + 1}</button>`}
           <button class="alt" onclick="G.list()">📜 Mystères</button>
           <button class="gold" onclick="G.shop()">🛍 Boutique</button>
         </div>
@@ -178,7 +184,7 @@ if (typeof document !== "undefined") (function(){
     PUZZLES.forEach((p, i) => {
       if (p.ch !== last){ if (last) html += "</div>"; html += `<div class="chap">${CHAPTERS[p.ch]}</div><div class="grid">`; last = p.ch; }
       const ok = save.solved.includes(p.id);
-      html += `<button class="${ok ? "alt" : ""}" ${unlocked(i) ? `onclick="G.start(${i})"` : "disabled"}>${ok ? "✔" : unlocked(i) ? "" : "🔒"}${i + 1}</button>`;
+      html += `<button class="${ok ? "alt" : ""}" ${unlocked(i) ? `onclick="G.start(${i})"` : "disabled"}>${ok ? "✔" : unlocked(i) ? "" : "🔒"}${p.bonus ? "B" + (i - MAIN_COUNT + 1) : i + 1}</button>`;
     });
     app.innerHTML = header() + `<div class="card"><h2>Les mystères</h2>
       <div class="meta">Résous-les dans l'ordre. Rejouer un mystère déjà résolu ne rapporte pas d'écus.</div>
@@ -248,7 +254,7 @@ if (typeof document !== "undefined") (function(){
     const hints = p.hints.slice(0, hintsShown).map((h, k) => `<div class="hint">💡 <b>Indice ${k + 1}</b> : ${h}</div>`).join("");
     app.innerHTML = header() + `<div class="card">
       <div class="meta">${CHAPTERS[p.ch]}</div>
-      <h2>Mystère ${idx + 1} — ${esc(p.title)}</h2>
+      <h2>${p.bonus ? `⭐ Bonus ${idx - MAIN_COUNT + 1}` : `Mystère ${idx + 1}`} — ${esc(p.title)}</h2>
       <div class="meta">Récompense : <b>${value}</b> écus · Difficulté ${"★".repeat(p.lvl)}${"☆".repeat(5 - p.lvl)}</div>
       <div class="story">${drawPortrait(save.equipped)}<span>${p.story}</span></div>
       <p><b>${q}</b></p>
@@ -315,16 +321,17 @@ if (typeof document !== "undefined") (function(){
     const p = cur;
     let detail = "";
     if (ok && p.t === "find") detail = "<p>" + tokens(p).filter(t => t.fix).map(t => `<s>${esc(t.word)}</s> → <b style="color:var(--ok)">${esc(t.fix)}</b>`).join(" · ") + "</p>";
-    const last = idx === PUZZLES.length - 1;
+    const last = idx === PUZZLES.length - 1, endOfStory = idx === MAIN_COUNT - 1;
     const o = document.createElement("div"); o.className = "overlay";
     o.innerHTML = `<div class="card">
       <div class="big ${ok ? "ok" : "ko"}">${ok ? "Bravo !" : "Pas encore..."}</div>
       ${ok ? `<p>« Remarquable ! Aucune faute ne t'échappe. »${gain ? `<br>Tu gagnes <b>🪙 ${gain} écus</b>.` : ""}</p>${detail}
               <div class="rule">📘 <b>À retenir</b><br>${p.rule}</div>
-              ${last ? `<p><b>🏆 Le manuscrit est retrouvé ! Lord Dictée te remercie : l'enquête est terminée.</b></p>` : ""}`
+              ${endOfStory ? `<p><b>🏆 Le manuscrit est retrouvé ! Lord Dictée te remercie : l'enquête est terminée.</b><br>⭐ ${PUZZLES.length - MAIN_COUNT} mystères bonus sont débloqués dans les archives secrètes !</p>` : ""}
+              ${last ? `<p><b>🏆 Tu as percé tous les secrets des archives. Bravo, expert de l'orthographe !</b></p>` : ""}`
            : `<p>« Hmm... ce n'est pas tout à fait ça. Réfléchis encore ! »</p>${value ? `<p>Ce mystère rapporte maintenant <b>${value}</b> écus.</p>` : ""}`}
       <div class="bar" style="justify-content:center">
-        ${ok ? `<button class="alt" onclick="G.close();G.home()">Maison</button>${!last ? `<button onclick="G.close();G.start(${idx + 1})">Mystère suivant ⟶</button>` : ""}`
+        ${ok ? `<button class="alt" onclick="G.close();G.home()">Maison</button>${!last ? `<button onclick="G.close();G.start(${idx + 1})">${PUZZLES[idx + 1].bonus ? "⭐ Bonus suivant" : "Mystère suivant"} ⟶</button>` : ""}`
              : `<button onclick="G.close();G.render()">Réessayer</button>`}
       </div></div>`;
     document.body.appendChild(o);

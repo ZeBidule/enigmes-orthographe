@@ -762,6 +762,96 @@ const ALL_PUZZLES = [
     rule:"Participe + infinitif : accord si le COD fait l'action (les musiciens que j'ai entendus jouer).<br>Pronominaux : pas d'accord si « se » est COI (elles se sont succédé, parlé, plu)." }
 ];
 
+
+/* =====================================================================
+   Mystères bonus : débloqués une fois les 90 mystères de l'histoire résolus.
+   reward : récompense fixe (pas de pénalité en cas d'erreur), calculée pour garantir
+   qu'on puisse tout acheter, même en prenant tous les indices et en faisant
+   le maximum d'erreurs (voir le test « économie » dans test/check.js).
+   ===================================================================== */
+const BONUS_REWARD = 190;
+const BONUS_PUZZLES = [
+  { id:"b01", cat:"homophones", lvl:5, t:"find", title:"La lettre anonyme",
+    story:"Lord Dictée reçoit une lettre anonyme : quelqu'un veut reprendre le manuscrit !",
+    text:"[Quand|Quant] à toi, je serai [prés|prêt]. Il a [sut|su] [ou|où] aller.",
+    hints:["« quant à » = en ce qui concerne. « prêt » = préparé. « su » est le participe de savoir. « où » = lieu.",
+           "Quand → Quant, prés → prêt, sut → su, ou → où."],
+    rule:"<b>quant à</b> (en ce qui concerne) ≠ <b>quand</b> (lorsque).<br><b>prêt</b> (préparé) ≠ <b>près</b> (proche) ≠ <b>pré</b> (prairie)." },
+
+  { id:"b02", cat:"participes", lvl:5, t:"type", title:"La chanson",
+    story:"Dans les archives, un disque ancien tourne encore.",
+    q:"Accorde (ou non !) le participe passé de « entendre ».",
+    sentence:"La chanson que j'ai ___ chanter était belle.",
+    answers:["entendu"],
+    hints:["Est-ce la chanson qui chante ? Non : elle est chantée par quelqu'un.",
+           "Le COD (que = la chanson) ne fait pas l'action de l'infinitif → pas d'accord."],
+    rule:"Participe + infinitif : accord seulement si le COD fait l'action. Les oiseaux que j'ai entendus chanter / la chanson que j'ai <b>entendu</b> chanter." },
+
+  { id:"b03", cat:"nombres", lvl:5, t:"fill", title:"Le registre des archives",
+    story:"Le registre des archives contient des chiffres... à écrire en lettres.",
+    parts:["Le comte fête ses "," ans. Le secret est à la page ",". La récompense est de "," écus."],
+    blanks:[{o:["quatre-vingts","quatre-vingt"],a:"quatre-vingts"},{o:["trois cent quatre-vingt","trois cents quatre-vingts","trois cent quatre-vingts"],a:"trois cent quatre-vingt"},{o:["deux cent mille","deux cents mille","deux cents milles"],a:"deux cent mille"}],
+    hints:["Quantité en fin de nombre → s. Numéro de page (rang) → invariable. Devant « mille », cent n'est plus en fin de nombre.",
+           "Réponses : quatre-vingts, trois cent quatre-vingt, deux cent mille."],
+    rule:"<b>vingt / cent</b> : s seulement s'ils sont multipliés, en fin de nombre, et qu'il s'agit d'une quantité (pas d'un rang)." },
+
+  { id:"b04", cat:"orthographe", lvl:5, t:"find", title:"Le refuge",
+    story:"Une carte indique un refuge où le voleur se serait caché.",
+    text:"Il a [aquis|acquis] un [abrit|abri] au prix [dérisoir|dérisoire].",
+    hints:["acquérir → a-cq-uis. Abri n'a pas de lettre finale muette. Les adjectifs en -oire prennent un e, même au masculin.",
+           "acquis, abri, dérisoire."],
+    rule:"À retenir : a<b>cq</b>uérir, abri (sans t), dériso<b>ire</b>, illuso<b>ire</b>, provisoire." },
+
+  { id:"b05", cat:"conjugaison", lvl:5, t:"type", title:"L'équation",
+    story:"Un tableau noir couvert de calculs : le professeur relève le défi.",
+    q:"Conjugue « résoudre » au présent.",
+    sentence:"Ensemble, nous ___ l'énigme.",
+    answers:["résolvons"],
+    hints:["Le radical change au pluriel : je résous, nous résol-...",
+           "Comme « dissoudre » : nous dissolvons."],
+    rule:"<b>résoudre</b> : je résous, il résout, nous <b>résolvons</b>, ils résolvent." },
+
+  { id:"b06", cat:"accords", lvl:5, t:"fill", title:"Les archivistes",
+    story:"Les archivistes découvrent que le manuscrit avait un jumeau.",
+    parts:["Ils sont "," contents. Elles sont "," honteuses et "," étonnées."],
+    blanks:[{o:["tout","tous"],a:"tout"},{o:["tout","toutes"],a:"toutes"},{o:["tout","toutes"],a:"tout"}],
+    hints:["Devant un adjectif, « tout » veut dire « très » et reste invariable... sauf devant un adjectif féminin qui commence par une consonne ou un h aspiré.",
+           "Réponses : tout, toutes, tout."],
+    rule:"<b>tout</b> + adjectif (= très) : invariable (ils sont tout contents, elles sont tout étonnées), mais <b>toute(s)</b> devant un féminin commençant par une consonne ou un h aspiré (toutes honteuses)." },
+
+  { id:"b07", cat:"homophones", lvl:5, t:"type", title:"Le rendez-vous",
+    story:"Le complice du voleur doit arriver à midi.",
+    q:"Écris « censé » ou « sensé ».",
+    sentence:"Il est ___ arriver à midi.",
+    answers:["censé"],
+    hints:["Ici, le mot veut dire « supposé ». « sensé » veut dire « qui a du bon sens ».",
+           "Avec un c, comme dans « recenser »."],
+    rule:"<b>censé</b> = supposé (il est censé venir).<br><b>sensé</b> = raisonnable (une idée sensée)." },
+
+  { id:"b08", cat:"participes", lvl:5, t:"find", title:"L'aveu du complice",
+    story:"Le complice écrit ses aveux. Même ses fautes sont compliquées !",
+    text:"Elle s'est [permise|permis] de répondre. Ils se sont [rendus|rendu] compte de l'erreur. Que d'efforts il a [fallus|fallu] !",
+    hints:["« se permettre DE » et « se rendre compte DE » : « se » n'est pas COD. « falloir » est un verbe impersonnel.",
+           "permis, rendu, fallu (toujours invariables ici)."],
+    rule:"Invariables : <b>s'est permis, se sont rendu compte, se sont plu, se sont succédé</b>. Le participe des verbes impersonnels (il a fallu, il a neigé) ne s'accorde jamais." },
+
+  { id:"b09", cat:"orthographe", lvl:5, t:"fill", title:"Le bal des archives",
+    story:"Pour fêter la fin de l'enquête, un bal est organisé dans les archives.",
+    parts:["Ils dansent en ",", sous un "," et devant un public ","."],
+    blanks:[{o:["rythme","rhytme","rythm"],a:"rythme"},{o:["chrysanthème","chrisanthème","chrysantème"],a:"chrysanthème"},{o:["enthousiaste","enthousiasthe","entousiaste"],a:"enthousiaste"}],
+    hints:["Ces mots viennent du grec : on y trouve des « y » et des « th ».",
+           "Réponses : rythme, chrysanthème, enthousiaste."],
+    rule:"Mots d'origine grecque : r<b>y</b>t<b>h</b>me, c<b>h</b>r<b>y</b>san<b>th</b>ème, en<b>th</b>ousiaste, p<b>h</b>armacie." },
+
+  { id:"b10", cat:"conjugaison", lvl:5, t:"find", title:"Le dernier secret",
+    story:"Dernier mystère : le mot final de Lord Dictée, dans lequel il a glissé des pièges.",
+    text:"Si j'[aurais|avais] su, je [serai|serais] venu. Il faut qu'il [croit|croie] en lui. Je [conclue|conclus] : bravo !",
+    hints:["Après « si », jamais de conditionnel. Le conditionnel « je serais » prend un s. Après « il faut que », subjonctif. « conclure » : je conclus.",
+           "aurais → avais, serai → serais, croit → croie, conclue → conclus."],
+    rule:"<b>Si</b> + imparfait, puis conditionnel (si j'avais su, je serais venu).<br>Subjonctif : qu'il croie. Présent : je conclus." }
+];
+BONUS_PUZZLES.forEach(p => { p.bonus = true; p.reward = BONUS_REWARD; });
+
 /* Ordre de jeu : un tableau d'identifiants par chapitre (généré par tools/arrange.js). */
 const CHAPTER_PLAN = [
   ["p01","p06","p64","p53","p65","p74","p81","p82","p12","p89"],
@@ -775,8 +865,10 @@ const CHAPTER_PLAN = [
   ["p79","p84","p43","p45","p62","p49","p85","p80","p90","p50"]
 ];
 
-/* Liste ordonnée utilisée par le jeu ; p.ch = numéro de chapitre. */
-const PUZZLES = CHAPTER_PLAN.flatMap((ids, c) => ids.map(id => Object.assign(ALL_PUZZLES.find(p => p.id === id), { ch: c + 1 })));
-const CHAPTERS = [""].concat(CHAPTER_NAMES.map((n, i) => `Chapitre ${i + 1} — ${n}`));
+/* Liste ordonnée utilisée par le jeu : l'histoire, puis les bonus (chapitre 10). */
+const PUZZLES = CHAPTER_PLAN.flatMap((ids, c) => ids.map(id => Object.assign(ALL_PUZZLES.find(p => p.id === id), { ch: c + 1 })))
+  .concat(BONUS_PUZZLES.map(p => Object.assign(p, { ch: CHAPTER_PLAN.length + 1 })));
+const MAIN_COUNT = ALL_PUZZLES.length;
+const CHAPTERS = [""].concat(CHAPTER_NAMES.map((n, i) => `Chapitre ${i + 1} — ${n}`), ["⭐ Bonus — Les archives secrètes"]);
 
-if (typeof module !== "undefined") module.exports = { ALL_PUZZLES, PUZZLES, CHAPTERS, CHAPTER_NAMES, CHAPTER_PLAN, CATEGORIES };
+if (typeof module !== "undefined") module.exports = { ALL_PUZZLES, BONUS_PUZZLES, BONUS_REWARD, MAIN_COUNT, PUZZLES, CHAPTERS, CHAPTER_NAMES, CHAPTER_PLAN, CATEGORIES };

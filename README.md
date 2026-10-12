@@ -1,7 +1,7 @@
 # Plume & Cie : L'Affaire du Manuscrit Perdu
 
 Petit jeu d'énigmes pour réviser l'orthographe française au collège.
-Le précieux manuscrit de Lord Dictée a disparu : 90 mystères à résoudre, dans l'ordre,
+Le précieux manuscrit de Lord Dictée a disparu : 90 mystères à résoudre, dans l'ordre, puis 10 mystères bonus,
 de plus en plus difficiles, qui mélangent 6 catégories (homophones, participes passés, conjugaison,
 accords, orthographe des mots, nombres en lettres).
 
@@ -16,14 +16,19 @@ accords, orthographe des mots, nombres en lettres).
   Les écus servent à acheter des indices et, dans la boutique, des vêtements pour le professeur,
   des objets pour sa maison, des aménagements pour son jardin (fontaine, chêne, niche…)
   et des véhicules (vélo, voiture ancienne, montgolfière).
-  Les prix sont calculés pour qu'on puisse **tout acheter** en prenant un indice toutes les 5 questions
-  (gains maximum 2 270 écus − 18 indices × 3 = 2 216 écus ; boutique complète : 2 130 écus).
+  Les prix sont calculés pour qu'on puisse **tout acheter** à la fin de l'histoire en prenant un indice
+  toutes les 5 questions (gains maximum 2 270 écus − 18 indices × 3 = 2 216 écus ; boutique complète : 2 130 écus).
+- **⭐ 10 mystères bonus** (« Les archives secrètes », niveau expert) se débloquent une fois les 90 mystères
+  de l'histoire résolus. Chacun rapporte **190 écus fixes** (sans pénalité d'erreur) : avec eux, tout est
+  achetable même en prenant tous les indices et en faisant beaucoup d'erreurs.
 - La progression est enregistrée automatiquement dans le navigateur (localStorage).
 - **💾 Sauvegarder** (écran maison) télécharge un fichier `plume-et-cie-sauvegarde-AAAA-MM-JJ.json`
   contenant les mystères résolus, les écus et les objets achetés/portés.
   **📂 Charger** (écran titre ou maison) recharge ce fichier, par exemple sur un autre appareil.
 
 ## Répartition des énigmes
+
+Les tableaux concernent les 90 mystères de l'histoire (les 10 bonus mélangent toutes les catégories, niveau expert).
 
 | | Trouver les fautes | Compléter les trous | Réponse à taper | Total |
 |---|---|---|---|---|
@@ -57,13 +62,6 @@ Chaque chapitre mélange les 6 catégories (1 ou 2 énigmes de chacune) et les 3
 
 Certaines énigmes mélangent plusieurs notions ; elles sont classées selon la notion principale.
 
-## Menu de test
-
-Pour tester le jeu sans tout résoudre : bouton **🔑** du menu principal (écran titre), mot de passe `tes1`.
-Le mode test débloque tous les mystères, rend les écus illimités et ajoute un bouton **🧪 Solution**
-qui valide le mystère. Il se désactive depuis le même menu.
-Le mot de passe est dans le code source : c'est une commodité, pas une protection.
-
 ## Structure
 
 | Fichier | Rôle |
@@ -74,11 +72,11 @@ Le mot de passe est dans le code source : c'est une commodité, pas une protecti
 | `js/shop.js` | Objets de la boutique et dessins SVG du professeur, de sa maison et de son jardin |
 | `js/game.js` | Moteur : progression, écus, indices, boutique |
 | `test/check.js` | Vérification des énigmes, du moteur et du format de sauvegarde |
-| `test/e2e.js` | Test navigateur : écran titre, partie, sauvegarde/chargement, menu de test |
+| `test/e2e.js` | Test navigateur : écran titre, partie, boutique, sauvegarde/chargement, bonus |
 
 ## Ajouter des énigmes
 
-1. Ajouter l'énigme à la fin de `ALL_PUZZLES` avec un nouvel `id` (ne jamais renuméroter : les sauvegardes s'en servent).
+1. Ajouter l'énigme à la fin de `ALL_PUZZLES` (ou de `BONUS_PUZZLES` pour un bonus) avec un nouvel `id` (ne jamais renuméroter : les sauvegardes s'en servent).
 2. Lancer `node tools/arrange.js` pour recalculer les chapitres.
 3. Lancer les tests.
 
