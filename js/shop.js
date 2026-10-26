@@ -177,8 +177,31 @@ function drawGarden(owned){
   if (h("niche")) s += `<rect x="300" y="172" width="38" height="28" fill="#c0392b"/><path d="M296 174 l23 -16 l23 16z" fill="#7b241c"/><path d="M312 200 v-14 a7 7 0 0 1 14 0 v14z" fill="#3b2412"/>
     <g transform="translate(330 186)"><ellipse cx="14" cy="10" rx="13" ry="7" fill="#c8a165"/><circle cx="26" cy="2" r="7" fill="#c8a165"/><ellipse cx="29" cy="0" rx="3" ry="6" fill="#8a6a3a"/><circle cx="29" cy="1" r="1.3" fill="#000"/><rect x="4" y="14" width="3" height="7" fill="#c8a165"/><rect x="20" y="14" width="3" height="7" fill="#c8a165"/></g>`;
   if (h("velo")) s += `<g transform="translate(350 190)" fill="none" stroke="#1f4e8a" stroke-width="2.5"><circle cx="8" cy="14" r="9"/><circle cx="38" cy="14" r="9"/><path d="M8 14 l12 -14 h14 l4 14 M20 0 l8 14 h-20 M34 0 l-2 -6 h-5"/></g>`;
-  if (h("voiture")) s += `<g transform="translate(14 178)"><path d="M0 26 v-12 q4 -4 18 -6 l12 -12 h34 l14 14 q12 2 14 6 v10z" fill="#1d5c4a"/><rect x="34" y="-1" width="14" height="10" fill="#cfefff"/><rect x="52" y="-1" width="12" height="10" fill="#cfefff"/>
-    <circle cx="22" cy="28" r="9" fill="#222"/><circle cx="22" cy="28" r="4" fill="#bbb"/><circle cx="76" cy="28" r="9" fill="#222"/><circle cx="76" cy="28" r="4" fill="#bbb"/><circle cx="92" cy="18" r="3" fill="#ffe27a"/></g>`;
+  if (h("voiture")) {
+    // Voiture d'époque (type Ford T, années 1920) : capote en toile, carrosserie haute,
+    // roues à rayons en bois, garde-boue noirs, marchepied, radiateur et phare en laiton.
+    const wheel = cx => `<circle cx="${cx}" cy="38.5" r="13" fill="#ead9aa" stroke="#1c1c1c" stroke-width="3"/>` +
+      [0, 30, 60, 90, 120, 150].map(a => { const dx = (10 * Math.cos(a * Math.PI / 180)).toFixed(1), dy = (10 * Math.sin(a * Math.PI / 180)).toFixed(1);
+        return `<line x1="${cx - dx}" y1="${(38.5 - dy).toFixed(1)}" x2="${(cx + +dx).toFixed(1)}" y2="${(38.5 + +dy).toFixed(1)}" stroke="#8a5a2b" stroke-width="1.1"/>`; }).join("") +
+      `<circle cx="${cx}" cy="38.5" r="2.6" fill="#c99a2e"/>`;
+    s += `<g transform="translate(12 166) scale(0.9)">
+      <rect x="3" y="1" width="60" height="5" rx="2.5" fill="#1c1c1c"/>
+      <line x1="7" y1="6" x2="7" y2="13" stroke="#1c1c1c" stroke-width="2.5"/><line x1="59" y1="6" x2="59" y2="13" stroke="#1c1c1c" stroke-width="2.5"/>
+      <rect x="5" y="12" width="56" height="26" rx="3" fill="#7b1e24"/>
+      <rect x="11" y="14" width="20" height="9" fill="#bfe3f0" stroke="#4a1216" stroke-width="1.5"/>
+      <rect x="36" y="14" width="19" height="9" fill="#bfe3f0" stroke="#4a1216" stroke-width="1.5"/>
+      <line x1="33.5" y1="12" x2="33.5" y2="38" stroke="#4a1216" stroke-width="1.5"/><circle cx="31.5" cy="29" r="1.2" fill="#c99a2e"/>
+      <path d="M60 8 l5 -1 v16 h-5z" fill="#bfe3f0" stroke="#c99a2e" stroke-width="1.5"/>
+      <path d="M61 25 h42 v13 h-42z" fill="#7b1e24"/><line x1="61" y1="25" x2="103" y2="25" stroke="#4a1216" stroke-width="2"/>
+      ${[68, 73, 78].map(x => `<line x1="${x}" y1="28" x2="${x}" y2="34" stroke="#4a1216" stroke-width="1.4"/>`).join("")}
+      <rect x="103" y="19" width="7" height="19" rx="1.5" fill="#c99a2e"/><line x1="106.5" y1="21" x2="106.5" y2="36" stroke="#8a6a1e" stroke-width="1"/>
+      <circle cx="100" cy="17" r="4" fill="#c99a2e"/><circle cx="100" cy="17" r="2.3" fill="#fff6c0"/><rect x="97" y="20" width="6" height="2" fill="#1c1c1c"/>
+      <rect x="9" y="39" width="94" height="3" fill="#1c1c1c"/>
+      ${wheel(23)}${wheel(88)}
+      <path d="M7 40 A16 16 0 0 1 39 40" fill="none" stroke="#1c1c1c" stroke-width="3.2"/>
+      <path d="M72 40 A16 16 0 0 1 104 40" fill="none" stroke="#1c1c1c" stroke-width="3.2"/>
+    </g>`;
+  }
   if (h("fleurs")) s += [...Array(16)].map((_, k) => `<line x1="${142 + k * 12}" y1="216" x2="${142 + k * 12}" y2="206" stroke="#2e7d32" stroke-width="2"/><circle cx="${142 + k * 12}" cy="204" r="4" fill="${["#e2563d", "#f2c94c", "#d36ac2", "#ffffff"][k % 4]}"/>`).join("");
   return s + "</svg>";
 }
