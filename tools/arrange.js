@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: AGPL-3.0-or-later
+ * Plume & Cie - Copyright (C) 2026 ZeBidule - GNU AGPL v3 or later, see LICENSE. */
 /* Génère l'ordre de jeu (CHAPTER_PLAN) dans js/puzzles.js.
    Lancer : node tools/arrange.js
    Contraintes :

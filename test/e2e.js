@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: AGPL-3.0-or-later
+ * Plume & Cie - Copyright (C) 2026 ZeBidule - GNU AGPL v3 or later, see LICENSE. */
 /* Test de bout en bout dans un vrai navigateur (Chromium via Playwright).
    Lancer : npx -y playwright install chromium   (une seule fois)
             PLAYWRIGHT=$(dirname $(find ~/.npm/_npx -path '*node_modules/playwright/package.json' | head -1)) node test/e2e.js
@@ -30,6 +32,10 @@ const url = `http://localhost:${server.address().port}/`;
   let p = await open();
   assert.strictEqual(await p.textContent(".title-logo .t1"), "Plume & Cie");
   assert.match(await p.textContent(".title-buttons"), /Nouvelle enquête/);
+  const src = p.locator(".legal a", { hasText: "Code source" });
+  assert.ok(await src.isVisible(), "lien code source visible sur l'écran titre");
+  assert.strictEqual(await src.getAttribute("href"), "https://github.com/ZeBidule/enigmes-orthographe");
+  assert.match(await p.textContent(".legal"), /AGPL/);
   console.log("ok - écran titre (nouvelle partie)");
 
   // 2. Jouer : résoudre le mystère 1 en touchant les 3 fautes, puis acheter un objet
@@ -50,6 +56,7 @@ const url = `http://localhost:${server.address().port}/`;
 
   // 3. Sauvegarder dans un fichier
   await p.click("text=⟵ Maison");
+  assert.ok(await p.locator(".legal a", { hasText: "Code source" }).isVisible(), "lien code source visible sur l'écran maison");
   const [dl] = await Promise.all([p.waitForEvent("download"), p.click("text=💾 Sauvegarder")]);
   const file = path.join(os.tmpdir(), dl.suggestedFilename());
   await dl.saveAs(file);

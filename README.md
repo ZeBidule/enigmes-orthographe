@@ -7,6 +7,14 @@ accords, orthographe des mots, nombres en lettres, lettres muettes en fin de mot
 
 **Jouer : https://zebidule.github.io/enigmes-orthographe/** (téléphone ou ordinateur, aucun install).
 
+## Licence
+
+Ce projet est un **logiciel libre sous licence [GNU AGPL v3 ou ultérieure](LICENSE)** (copyright © 2026 ZeBidule).
+Cette licence est « à copyleft fort » : toute personne qui reprend ce code (énigmes, dessins et moteur compris),
+le modifie et le **distribue ou le met à disposition en ligne** doit publier ses sources complètes,
+sous la même licence, et les proposer à tous les utilisateurs du service.
+Un lien « Code source » est affiché en bas du jeu pour cette raison : il doit rester dans toute version modifiée.
+
 ## Principe
 
 - 9 chapitres de 10 ou 11 mystères ; un mystère se débloque quand le précédent est résolu.
@@ -68,6 +76,7 @@ Certaines énigmes mélangent plusieurs notions ; elles sont classées selon la 
 
 | Fichier | Rôle |
 |---|---|
+| `LICENSE` | Texte intégral de la GNU AGPL v3 |
 | `index.html` | Page et styles |
 | `js/puzzles.js` | Les 96 énigmes de l'histoire, les 10 bonus (format décrit en tête de fichier) et l'ordre de jeu `CHAPTER_PLAN` |
 | `tools/arrange.js` | Génère `CHAPTER_PLAN` en respectant les règles de répartition |

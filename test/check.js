@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: AGPL-3.0-or-later
+ * Plume & Cie - Copyright (C) 2026 ZeBidule - GNU AGPL v3 or later, see LICENSE. */
 /* Vérifie la cohérence des énigmes, de la boutique et du moteur.
    Lancer : node test/check.js */
 const assert = require("assert");
@@ -122,6 +124,17 @@ t("consignes : le nombre de lettres annoncé correspond à la réponse", () => {
     assert.ok(p.answers.some(a => a.length === +m[1]), `${p.id} : ${m[1]} lettres, réponses ${p.answers}`);
   });
   assert.ok(n >= 8, "les consignes à indice de longueur existent");
+});
+
+t("licence : AGPL-3.0 (LICENSE complet, en-têtes SPDX, lien vers les sources dans le jeu)", () => {
+  const fs = require("fs"), root = __dirname + "/..";
+  const lic = fs.readFileSync(root + "/LICENSE", "utf8");
+  assert.ok(lic.includes("GNU AFFERO GENERAL PUBLIC LICENSE") && lic.includes("Version 3, 19 November 2007"));
+  assert.ok(lic.includes("13. Remote Network Interaction") && lic.length > 30000, "texte intégral");
+  ["index.html", "js/game.js", "js/puzzles.js", "js/shop.js", "test/check.js", "test/e2e.js", "tools/arrange.js"].forEach(f =>
+    assert.ok(fs.readFileSync(root + "/" + f, "utf8").slice(0, 1200).includes("SPDX-License-Identifier: AGPL-3.0-or-later"), f));
+  const html = fs.readFileSync(root + "/index.html", "utf8");
+  assert.ok(html.includes("https://github.com/ZeBidule/enigmes-orthographe") && /class="legal"/.test(html), "lien code source");
 });
 
 t("première énigme simplifiée (3 fautes)", () => {
