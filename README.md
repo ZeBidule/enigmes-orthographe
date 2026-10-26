@@ -82,6 +82,10 @@ Certaines énigmes mélangent plusieurs notions ; elles sont classées selon la 
 2. Lancer `node tools/arrange.js` pour recalculer les chapitres.
 3. Lancer les tests.
 
+Règle de rédaction : le titre, l'histoire et la consigne d'une énigme ne doivent pas donner la réponse
+(le test `énoncé` le vérifie ; seules 4 énigmes d'introduction sont tolérées dans `LEAK_ALLOWED`).
+Pour les réponses à taper, décrire le mot par une définition (« nom de 5 lettres… ») plutôt que de le citer.
+
 ## Tests
 
 ```bash

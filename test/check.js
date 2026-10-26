@@ -90,6 +90,40 @@ t("chaque énigme est complète et soluble", () => {
   });
 });
 
+/* L'énoncé (titre, histoire, consigne) ne doit pas donner la réponse.
+   Seules les premières occurrences de chaque forme sont conservées, comme exemple :
+   p03 « Écris X ou Y », p104 « Corrige le mot », p92 « pense au verbe », p103 (titre = réponse). */
+const LEAK_ALLOWED = ["p03", "p104", "p92", "p103"];
+const strip = x => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const wordsOf = x => strip(x).split(/[^a-z\u0153]+/).filter(w => w.length >= 4);
+
+t("énoncé : la réponse n'apparaît ni dans le titre, ni dans l'histoire, ni dans la consigne", () => {
+  const leaks = [];
+  PUZZLES.forEach(p => {
+    const seen = new Set(wordsOf([p.title, p.story, p.q || "", p.sentence || ""].join(" ")));
+    let answers = [];
+    if (p.t === "find") answers = G.tokens(p).filter(x => x.fix).map(x => x.fix);
+    else if (p.t === "fill") answers = p.blanks.map(b => b.a);
+    else answers = p.answers;
+    let leak = answers.some(a => wordsOf(a).some(w => seen.has(w)));
+    if (p.t === "type" && /^(Corrige le mot|Écris correctement (le mot )?«)|ou «|pense au verbe/.test(p.q)) leak = true;
+    if (leak) leaks.push(p.id);
+  });
+  assert.deepStrictEqual(leaks.sort(), LEAK_ALLOWED.slice().sort(),
+    "énigmes qui donnent la réponse : " + leaks.join(", ") + " (autorisées : " + LEAK_ALLOWED.join(", ") + ")");
+});
+
+t("consignes : le nombre de lettres annoncé correspond à la réponse", () => {
+  let n = 0;
+  PUZZLES.filter(p => p.t === "type").forEach(p => {
+    const m = (p.q || "").match(/(\d+) lettres/);
+    if (!m) return;
+    n++;
+    assert.ok(p.answers.some(a => a.length === +m[1]), `${p.id} : ${m[1]} lettres, réponses ${p.answers}`);
+  });
+  assert.ok(n >= 8, "les consignes à indice de longueur existent");
+});
+
 t("première énigme simplifiée (3 fautes)", () => {
   assert.strictEqual(G.tokens(PUZZLES[0]).filter(x => x.fix).length, 3);
 });
