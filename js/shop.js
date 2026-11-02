@@ -156,11 +156,11 @@ function drawProfessor(eq){
 function drawCat(){
   const o = "#e08a3c", d = "#a8521e";
   return `<g transform="translate(140 252)">
-    <ellipse cx="20" cy="18" rx="30" ry="7" fill="#6b4520"/><ellipse cx="20" cy="18" rx="26" ry="5" fill="#a8323a"/>
-    <path d="M-2 16 q1 -9 10 -10 h20 q12 0 14 9 z" fill="${o}"/>
+    <ellipse cx="20" cy="18" rx="30" ry="4" fill="#8a5d2c"/><ellipse cx="20" cy="18" rx="27" ry="2.5" fill="#a8323a"/>
+    <path d="M-2 20 q1 -13 10 -14 h20 q12 0 14 13 z" fill="${o}"/>
     <path d="M10 7 q2 4 0 9 M17 6 q2 5 0 10 M24 6 q2 5 0 10 M31 7 q2 4 0 9" fill="none" stroke="${d}" stroke-width="2" stroke-linecap="round"/>
-    <path d="M40 14 q12 -2 8 -12" fill="none" stroke="${o}" stroke-width="4" stroke-linecap="round"/>
-    <path d="M44 9 l4 -1 M46 4 l4 0" stroke="${d}" stroke-width="2"/>
+    <path d="M40 18 q12 -2 8 -14" fill="none" stroke="${o}" stroke-width="4" stroke-linecap="round"/>
+    <path d="M44 12 l4 -1 M46 7 l4 0" stroke="${d}" stroke-width="2"/>
     <path d="M-4 4 l1 -11 l6 6z M6 -1 l5 -7 l2 10z" fill="${o}"/><path d="M-2 0 l1 -5 l3 3z M8 -1 l3 -4 l1 5z" fill="#f2b8a0"/>
     <ellipse cx="3" cy="6" rx="10" ry="8.5" fill="${o}"/>
     <path d="M0 -1 v3 M3 -2 v4 M6 -1 v3 M-6 5 h3 M10 5 h3" stroke="${d}" stroke-width="1.4" stroke-linecap="round"/>
@@ -169,9 +169,9 @@ function drawCat(){
     <rect x="-1.4" y="3.8" width=".8" height="2.4" fill="#111"/><rect x="6.6" y="3.8" width=".8" height="2.4" fill="#111"/>
     <path d="M2 8.5 h2 l-1 1.2z" fill="#d06a7a"/>
     <path d="M-1 10 l-9 -1 M-1 11 l-9 2 M7 10 l9 -1 M7 11 l9 2" stroke="#fff" stroke-width=".5"/>
-    <path d="M-8 18 h56 l-5 18 h-46z" fill="#c9954a"/>
-    <g fill="none" stroke="#8a5d2c" stroke-width="1.2">${[22,27,32].map(y=>`<path d="M${-8+(y-18)*.28} ${y} h${56-(y-18)*.56}"/>`).join("")}${[0,8,16,24,32,40].map(x=>`<path d="M${x} 18 v18"/>`).join("")}</g>
-    <ellipse cx="20" cy="18" rx="30" ry="3" fill="none" stroke="#8a5d2c" stroke-width="3"/></g>`;
+    <path d="M-10 18 a30 3 0 0 0 60 0 l-4 10 h-52z" fill="#c9954a"/>
+    <g fill="none" stroke="#8a5d2c" stroke-width="1.2">${[22,26].map(y=>`<path d="M${-9+(y-18)*.4} ${y} h${58-(y-18)*.8}"/>`).join("")}${[0,8,16,24,32,40].map(x=>`<path d="M${x} 21 v7"/>`).join("")}</g>
+    <path d="M-10 18 a30 3 0 0 0 60 0" fill="none" stroke="#8a5d2c" stroke-width="3"/></g>`;
 }
 
 /* Scène complète : maison + professeur (+ chat devant). */
