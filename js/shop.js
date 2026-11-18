@@ -430,8 +430,8 @@ function drawGarden(owned, date){
     ${[[24,118],[190,118],[236,112],[300,116],[326,112]].map(([x,y],i)=>`<g><rect x="${x-1}" y="${y}" width="2.4" height="8" fill="#5a4630"/>${winter ? `<path d="M${x} ${y} l-5 5 M${x} ${y} l5 5 M${x} ${y-4} v4" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>` : `<circle cx="${x}" cy="${y-1}" r="${6+i%2*2}" fill="${P.far}"/>`}</g>`).join("")}
     <rect y="125" width="400" height="95" fill="${P.grass}"/>
     ${[...Array(18)].map((_,i)=>`<path d="M${(i*53)%390+4} ${135+(i*37)%78} q3 -5 6 0 M${(i*53)%390+10} ${135+(i*37)%78} q2 -4 4 0" stroke="${P.grass2}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`).join("")}
-    <path d="M58 170 q22 25 2 50 h44 q-22 -25 -2 -50z" fill="${P.path}"/>
-    ${[[78,184],[86,196],[76,208],[94,212]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="4" ry="2" fill="${shade(P.path,.88)}"/>`).join("")}`;
+    <path d="M58 170 h24 l16 50 h-56z" fill="${P.path}"/>
+    ${[[70,180],[65,192],[75,196],[62,208],[78,210]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="4" ry="2" fill="${shade(P.path,.88)}"/>`).join("")}`;
   // Maison (façade, toujours présente)
   s += `<rect x="15" y="80" width="110" height="90" fill="#efe0bc"/><rect x="15" y="80" width="110" height="90" fill="none" stroke="#7b4f2a" stroke-width="2"/>
     <rect x="15" y="162" width="110" height="8" fill="#8a7a68"/>
