@@ -206,7 +206,10 @@ function handShape(shapes){
     + shapes.map(([x, y, w, h, r]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${SKIN}"/>`).join("");
 }
 function fist(x, y){
-  return handShape([[x, y, 11.4, 15, 5]]) + `<path d="M${x + 3.8} ${y + 4.6} v5.6 M${x + 7.6} ${y + 4.6} v5.6" stroke="#c48b52" stroke-width="1" stroke-linecap="round"/><path d="M${x + 1} ${y + 1.5} q6 -3 11 0" fill="none" stroke="#c48b52" stroke-width="0"/>`;
+  const thumb = `<g transform="rotate(-18 ${x + 1} ${y + 3})">${handShape([[x - 3.4, y + 1.4, 7.4, 3.8, 1.9]])}</g>`;
+  return handShape([[x, y, 12, 16, 5.2]])
+    + `<path d="M${x + 2} ${y + 5.4} h9.4 M${x + 2} ${y + 9.2} h9.4 M${x + 2} ${y + 13} h8.4" stroke="#c48b52" stroke-width=".9" stroke-linecap="round"/>`
+    + `<path d="M${x + 4} ${y + 2} q3.6 -1.8 7 0" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".45"/>` + thumb;
 }
 
 /* ---------- Professeur ---------- */
@@ -239,8 +242,8 @@ function drawProfessor(eq){
         <path d="M180 157 q-17 0 -20 14 q-3 10 -5 24 q9 -6 14 -15 q4 -9 11 -23z" fill="${lt}" opacity=".32"/>
         <path d="M177 172 q-7 8 -9 26 q-2 12 -3 24" fill="none" stroke="${dk}" stroke-width="2" opacity=".55"/>
         <path d="M151 217 l19 4 l-1.4 8 l-19 -4z" fill="#fff" stroke="#d0d0d0" stroke-width=".7"/><circle cx="163" cy="224" r="1.4" fill="#c99a2e"/>`;
-  const openHand = handShape([[153.8, 228, 12.4, 11, 4.4], [153.6, 236, 2.7, 10, 1.35], [156.6, 236, 2.7, 13, 1.35], [159.6, 236, 2.7, 14, 1.35], [162.6, 236, 2.7, 11.5, 1.35]])
-    + `<g transform="rotate(-26 165 231)">${handShape([[164.4, 229, 3.1, 10, 1.55]])}</g>`;
+  const openHand = handShape([[153.8, 228, 12.4, 10, 4.4], [153.6, 234.6, 2.7, 8, 1.35], [156.6, 234.6, 2.7, 10.4, 1.35], [159.6, 234.6, 2.7, 11.4, 1.35], [162.6, 234.6, 2.7, 9, 1.35]])
+    + `<g transform="rotate(-26 165 231)">${handShape([[164.4, 229, 3.1, 8, 1.55]])}</g>`;
   s += `<g>${sleeve}<g transform="rotate(11 160 226)">${openHand}</g></g><g transform="translate(400 0) scale(-1 1)">${sleeve}${eq.hand ? "" : `<g transform="rotate(11 160 226)">${openHand}</g>`}</g>`;
   // Cou
   s += `<path d="M190 154 h20 l-4 8 h-12z" fill="#fff"/>`;
@@ -268,7 +271,7 @@ function drawProfessor(eq){
   if (eq.hat === "explo") s += `<ellipse cx="200" cy="107" rx="42" ry="9" fill="#c8ac70"/><ellipse cx="200" cy="106" rx="38" ry="6" fill="#d8c08a"/><path d="M174 106 q0 -32 26 -32 q26 0 26 32z" fill="#eadab0"/><path d="M200 74 v32 M190 76 q-4 14 -2 30 M210 76 q4 14 2 30" fill="none" stroke="#c8ac70" stroke-width="1.6"/><rect x="174" y="98" width="52" height="7" fill="#8a6a3a"/><circle cx="200" cy="101.5" r="3" fill="#c99a2e"/><circle cx="200" cy="75" r="3" fill="#c8ac70"/><path d="M186 80 q6 -6 14 -6" fill="none" stroke="#fff" stroke-width="2" opacity=".6" stroke-linecap="round"/>`;
   if (eq.hat === "forme") s += `<ellipse cx="200" cy="106" rx="39" ry="7" fill="#0a0a0a"/><path d="M178 106 l2 -50 q20 -6 40 0 l2 50z" fill="#161616"/><ellipse cx="200" cy="56" rx="21" ry="4.5" fill="#262626"/><path d="M184 98 l1 -38" stroke="#4a4a4a" stroke-width="3" stroke-linecap="round"/><rect x="178" y="92" width="44" height="9" fill="#a8323a"/><rect x="194" y="90" width="12" height="13" rx="1" fill="none" stroke="#e0b84a" stroke-width="2"/>`;
   // Main droite
-  if (eq.hand === "canne") s += `<line x1="248" y1="222" x2="258" y2="286" stroke="#3b2412" stroke-width="4" stroke-linecap="round"/><line x1="247" y1="222" x2="257" y2="286" stroke="#6b4a2b" stroke-width="1" opacity=".7"/><path d="M248 222 q-2 -14 -13 -9" fill="none" stroke="#e0b84a" stroke-width="5.5" stroke-linecap="round"/><path d="M248 221 q-1 -10 -9 -8" fill="none" stroke="#fff6c0" stroke-width="1.4" stroke-linecap="round"/><rect x="254" y="278" width="9" height="4" rx="1" fill="#c99a2e" transform="rotate(-8 258 280)"/><g transform="rotate(-10 246 222)">${fist(242.4, 219)}</g>`;
+  if (eq.hand === "canne") s += `<line x1="248" y1="222" x2="258" y2="286" stroke="#3b2412" stroke-width="4" stroke-linecap="round"/><line x1="247" y1="222" x2="257" y2="286" stroke="#6b4a2b" stroke-width="1" opacity=".7"/><path d="M248 222 q-2 -14 -13 -9" fill="none" stroke="#e0b84a" stroke-width="5.5" stroke-linecap="round"/><path d="M248 221 q-1 -10 -9 -8" fill="none" stroke="#fff6c0" stroke-width="1.4" stroke-linecap="round"/><rect x="254" y="278" width="9" height="4" rx="1" fill="#c99a2e" transform="rotate(-8 258 280)"/><g transform="rotate(-10 246 222)">${fist(242, 219)}</g>`;
   if (eq.hand === "loupe") s += `<line x1="244" y1="224" x2="257" y2="204" stroke="#3b2412" stroke-width="5.5" stroke-linecap="round"/><line x1="244" y1="224" x2="250" y2="214" stroke="#6b4a2b" stroke-width="3" stroke-linecap="round"/><circle cx="263" cy="190" r="14" fill="#cfefff77" stroke="#c99a2e" stroke-width="4.5"/><circle cx="263" cy="190" r="14" fill="none" stroke="#fff6c0" stroke-width=".9"/><path d="M254 184 q4 -7 12 -6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>${fist(238, 216)}`;
   return s;
 }
@@ -359,7 +362,7 @@ const SKY_DRAW = [
   // 25 Le traîneau du Père Noël
   () => `<path d="M-44 8 q10 2 20 0" stroke="#ffd84a" stroke-width="1" opacity=".5" fill="none" stroke-dasharray="1.6 2.4"/><path d="M-24 6 q8 4 18 4 h20 q4 0 4 -5 v-4 h-8 l-3 -9 h-22 l-2 8 q-6 0 -7 6z" fill="#c0343e" stroke="#7a1f26" stroke-width=".9"/><path d="M-27 3 q-4 -2 -3 -6" fill="none" stroke="#c99a2e" stroke-width="1.6" stroke-linecap="round"/><path d="M-26 14 q10 2 36 0 q3 0 4 -3" fill="none" stroke="#c99a2e" stroke-width="1.8" stroke-linecap="round"/><path d="M-18 10 v4 M2 10 v4" stroke="#c99a2e" stroke-width="1.2"/><circle cx="-12" cy="-12" r="8" fill="#8a5a2b" stroke="#5a3a1a" stroke-width=".8"/><path d="M-18 -16 q6 -3 12 0" fill="none" stroke="#c99a2e" stroke-width="1.6"/><rect x="-6" y="-8" width="7" height="6" fill="#2c7ab8" stroke="#1a4a78" stroke-width=".6"/><path d="M-2.5 -8 v6 M-6 -5 h7" stroke="#ffd84a" stroke-width=".8"/><circle cx="2" cy="-8" r="3.4" fill="#f1c27d"/><path d="M-1 -10 a3.4 3.4 0 0 1 6 0z" fill="#d8393f"/><path d="M0 -6 q2 4 4 0" fill="#fff" stroke="#fff"/><path d="M12 5 q12 0 14 -2" stroke="#8a5a2b" stroke-width=".9" fill="none"/><path d="M26 5 q2 -6 8 -6 q4 0 6 -3 l2 2 l-2 3 q-2 3 -6 3 l-1 5 h-2 l0 -4 h-4 l-1 4 h-2z" fill="#8a5a2b" stroke="#5a3a1a" stroke-width=".7"/><path d="M40 -4 l3 -5 M40 -4 l-1 -6 M43 -9 l3 -2" stroke="#5a3a1a" stroke-width=".9" stroke-linecap="round"/><circle cx="42" cy="-1" r="1.6" fill="#e53935"/>`,
   // 26 Un avion en papier
-  () => `<path d="M-34 14 q9 7 20 1 q8 -4 14 -1" fill="none" stroke="#9fb4c8" stroke-width="1" stroke-dasharray="2 3"/><ellipse cx="2" cy="16" rx="14" ry="2" fill="#7a8896" opacity=".14"/><path d="M-2 3 L-13 15 L-1 10z" fill="#bcc7d2" stroke="#8a97a3" stroke-width=".8" stroke-linejoin="round"/><path d="M23 -13 L-2 3 L-13 15z" fill="#dce4ec" stroke="#8a97a3" stroke-width=".9" stroke-linejoin="round"/><path d="M23 -13 L-26 3 L-2 4z" fill="#fff" stroke="#8a97a3" stroke-width=".9" stroke-linejoin="round"/><path d="M-26 3 L-2 4 L-2 3z" fill="#e8eef4"/><path d="M23 -13 L-2 3.4" stroke="#6a7886" stroke-width="1"/><path d="M-9 3.6 L11 -6 M-16 3.4 L2 -3" stroke="#c4cfd9" stroke-width=".7"/><path d="M-20 3.6 q12 1 18 0.4" stroke="#fff" stroke-width=".8" fill="none" opacity=".8"/>`,
+  () => `<path d="M-42 15 q8 -14 20 -6 q10 7 3 12 q-7 3 -9 -3" fill="none" stroke="#9fb4c8" stroke-width="1" stroke-dasharray="2 3" stroke-linecap="round"/><g transform="rotate(-24) scale(1 .86)"><path d="M26 0 L-22 -14 L-12 0z" fill="#fff" stroke="#8a97a3" stroke-width=".9" stroke-linejoin="round"/><path d="M26 0 L-22 14 L-12 0z" fill="#d6dee7" stroke="#8a97a3" stroke-width=".9" stroke-linejoin="round"/><path d="M26 0 L-12 0" stroke="#6a7886" stroke-width="1.2"/><path d="M-12 0 L-6 -1.4 L-6 1.4z" fill="#b8c3ce"/><path d="M-14 -11 L8 -5.4 M-8 -6 L-8 -.6" stroke="#c4cfd9" stroke-width=".7"/><path d="M-14 11 L8 5.4" stroke="#b4c0cc" stroke-width=".7"/><path d="M20 -1.6 L-6 -6.6" stroke="#fff" stroke-width=".9" stroke-linecap="round" opacity=".9"/></g>`,
   // 27 Un nuage de pluie
   () => `<g fill="#6a7886"><ellipse cx="0" cy="-5" rx="22" ry="8"/><circle cx="-10" cy="-10" r="9"/><circle cx="4" cy="-15" r="11"/><circle cx="16" cy="-9" r="8"/></g><g fill="#8a98a6"><ellipse cx="0" cy="-7" rx="20" ry="6"/><circle cx="-9" cy="-12" r="7.5"/><circle cx="4" cy="-17" r="9.5"/></g><path d="M-14 -18 q6 -5 12 -3" fill="none" stroke="#b0bcc8" stroke-width="2.4" stroke-linecap="round"/>${[[-16,3],[-8,5],[0,3],[8,5],[16,3],[-12,13],[-4,15],[4,13],[12,15]].map(([x,y])=>`<path d="M${x} ${y} q-2.2 3.6 -1.2 5.2 q1.6 1.4 2.8 -.2 q.6 -1.6 -1.6 -5z" fill="#4a90d9" stroke="#2a64a8" stroke-width=".5"/>`).join("")}`,
   // 28 Un aigle
@@ -373,7 +376,9 @@ const SKY_DRAW = [
 ];
 
 /* Réduction des éléments les plus larges pour qu'ils tiennent entre la maison et la montgolfière. */
-const SKY_SCALE = { 4:.75, 7:.8, 15:.8, 22:.78, 24:.58, 28:.67 };
+/* Inclinaison (en degrés) de certains éléments du ciel. */
+const SKY_ROT = { 5:16, 27:-14, 28:12 };
+const SKY_SCALE = { 4:.75, 7:.8, 15:.8, 22:.78, 24:.58, 25:.8, 28:.67 };
 
 /* ---------- Jardin (extérieur) ---------- */
 function drawTree(S, id){
@@ -425,7 +430,7 @@ function drawGarden(owned, date){
     <circle cx="330" cy="30" r="${S === "ete" ? 20 : 16}" fill="${P.sun}"${S === "hiver" || S === "automne" ? ` opacity=".85"` : ""}/>
     ${S === "ete" ? `<circle cx="330" cy="30" r="28" fill="#ffe27a" opacity=".3"/>` : ""}
     ${S === "ete" ? "" : `<g fill="#fff" opacity=".85"><ellipse cx="50" cy="20" rx="16" ry="5"/><ellipse cx="60" cy="16" rx="10" ry="5"/><ellipse cx="285" cy="76" rx="14" ry="4"/><ellipse cx="294" cy="72" rx="8" ry="4"/></g>`}
-    <g transform="translate(160 36) scale(${SKY_SCALE[skyIndexOf(date)] || 1})">${sky}</g>
+    <g transform="translate(160 36) rotate(${SKY_ROT[skyIndexOf(date)] || 0}) scale(${SKY_SCALE[skyIndexOf(date)] || 1})">${sky}</g>
     <path d="M0 125 q80 -40 170 -5 q90 -35 230 0 v20 H0z" fill="${P.hill}"/>
     <path d="M0 128 q60 -22 130 -8 q80 -20 160 -4 q60 -8 110 6 v14 H0z" fill="${P.hill2}"/>
     ${[[24,118],[190,118],[236,112],[300,116],[326,112]].map(([x,y],i)=>`<g><rect x="${x-1}" y="${y}" width="2.4" height="8" fill="#5a4630"/>${winter ? `<path d="M${x} ${y} l-5 5 M${x} ${y} l5 5 M${x} ${y-4} v4" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>` : `<circle cx="${x}" cy="${y-1}" r="${6+i%2*2}" fill="${P.far}"/>`}</g>`).join("")}
