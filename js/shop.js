@@ -91,7 +91,7 @@ const SKY_NAMES = [
   "Une étoile filante", "Un dirigeable", "Une soucoupe volante", "Un hélicoptère", "Des oies sauvages",
   "Un parachutiste", "Une fusée", "Un nuage en cœur", "Une comète", "Un feu d'artifice", "Une hirondelle",
   "Un ballon rouge", "Un planeur", "Un drone", "Un orage", "Une cigogne", "Saturne",
-  "Le traîneau du Père Noël", "Un avion en papier", "Un nuage de pluie", "Un dragon", "Une mouette",
+  "Le traîneau du Père Noël", "Un avion en papier", "Un nuage de pluie", "Un aigle", "Une mouette",
   "L'étoile du soir"
 ];
 function dayNumber(d){ return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5); }
@@ -206,6 +206,13 @@ function drawHome(owned, season){
   return s;
 }
 
+/* Main de l'étoile : doigts, pouce et phalanges ; fist(x, y) : poing refermé sur un manche. */
+function fingerStroke(d, w){ return `<path d="${d}" fill="none" stroke="#b8804a" stroke-width="${w + 1.2}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${SKIN}" stroke-width="${w}" stroke-linecap="round"/>`; }
+function fist(x, y){
+  return [0, 1, 2, 3].map(i => `<rect x="${x}" y="${y + i * 4.3}" width="${13 - (i === 3 ? 2 : 0)}" height="4.6" rx="2.3" fill="${SKIN}" stroke="#b8804a" stroke-width=".7"/><path d="M${x + 3} ${y + i * 4.3 + 2.3} h2" stroke="#b8804a" stroke-width=".6" opacity=".7"/>`).join("")
+    + fingerStroke(`M${x + 13} ${y + 1} q-8 -4 -13 1`, 3.4) + `<path d="M${x + 1} ${y + 17.5} h10" stroke="#fff" stroke-width="1" opacity="0"/>`;
+}
+
 /* ---------- Professeur ---------- */
 function drawProfessor(eq){
   const coat = COAT_COLORS[eq.coat || "none"], dk = shade(coat, .72), lt = shade(coat, 1.25);
@@ -236,10 +243,11 @@ function drawProfessor(eq){
         <path d="M180 157 q-17 0 -20 14 q-3 10 -5 24 q9 -6 14 -15 q4 -9 11 -23z" fill="${lt}" opacity=".32"/>
         <path d="M177 172 q-7 8 -9 26 q-2 12 -3 24" fill="none" stroke="${dk}" stroke-width="2" opacity=".55"/>
         <path d="M151 217 l19 4 l-1.4 8 l-19 -4z" fill="#fff" stroke="#d0d0d0" stroke-width=".7"/><circle cx="163" cy="224" r="1.4" fill="#c99a2e"/>`;
-  const openHand = `<path d="M151 229 l17 3 q2 7 0 13 q-2 6 -6 7 q-6 1 -9 -3 q-3 -7 -2 -20z" fill="${SKIN}" stroke="#c48b52" stroke-width=".8" stroke-linejoin="round"/>
-        <path d="M154 246 l1 -9 M158 249 l1 -11 M162 249 l0 -11 M166 246 l-1 -9" stroke="#c48b52" stroke-width=".8" fill="none" stroke-linecap="round"/>
-        <path d="M167 232 q5 3 4 10 q-1 3 -4 2 q0 -4 0 -8z" fill="${SKIN}" stroke="#c48b52" stroke-width=".8" stroke-linejoin="round"/>
-        <path d="M153 233 q6 2 12 1" fill="none" stroke="#fff" stroke-width="1.2" opacity=".45" stroke-linecap="round"/>`;
+  const openHand = `<path d="M152 227 h17 q3 6 2 13 q-1 4 -5 4 h-10 q-4 0 -5 -4 q-1 -7 1 -13z" fill="${SKIN}" stroke="#b8804a" stroke-width=".8" stroke-linejoin="round"/>
+        ${fingerStroke("M155 240 q-1 6 -1 11", 3.4)}${fingerStroke("M159 241 q0 7 0 13", 3.6)}${fingerStroke("M163 241 q1 7 1 12", 3.6)}${fingerStroke("M167 240 q2 5 2 10", 3.4)}
+        ${fingerStroke("M169 230 q6 3 6 10 q0 2 -2 3", 3.8)}
+        <path d="M156 241 q2 1 4 0 M160 242 q2 1 4 0 M164 241 q2 1 3 0" fill="none" stroke="#b8804a" stroke-width=".7" stroke-linecap="round"/>
+        <path d="M154 230 q7 3 14 0" fill="none" stroke="#fff" stroke-width="1.3" opacity=".4" stroke-linecap="round"/><path d="M158 233 v5 M162 233 v5" stroke="#d8a068" stroke-width=".7" opacity=".6"/>`;
   s += `<g>${sleeve}${openHand}</g><g transform="translate(400 0) scale(-1 1)">${sleeve}${eq.hand ? "" : openHand}</g>`;
   // Cou
   s += `<path d="M190 154 h20 l-4 8 h-12z" fill="#fff"/>`;
@@ -267,8 +275,8 @@ function drawProfessor(eq){
   if (eq.hat === "explo") s += `<ellipse cx="200" cy="107" rx="42" ry="9" fill="#c8ac70"/><ellipse cx="200" cy="106" rx="38" ry="6" fill="#d8c08a"/><path d="M174 106 q0 -32 26 -32 q26 0 26 32z" fill="#eadab0"/><path d="M200 74 v32 M190 76 q-4 14 -2 30 M210 76 q4 14 2 30" fill="none" stroke="#c8ac70" stroke-width="1.6"/><rect x="174" y="98" width="52" height="7" fill="#8a6a3a"/><circle cx="200" cy="101.5" r="3" fill="#c99a2e"/><circle cx="200" cy="75" r="3" fill="#c8ac70"/><path d="M186 80 q6 -6 14 -6" fill="none" stroke="#fff" stroke-width="2" opacity=".6" stroke-linecap="round"/>`;
   if (eq.hat === "forme") s += `<ellipse cx="200" cy="106" rx="39" ry="7" fill="#0a0a0a"/><path d="M178 106 l2 -50 q20 -6 40 0 l2 50z" fill="#161616"/><ellipse cx="200" cy="56" rx="21" ry="4.5" fill="#262626"/><path d="M184 98 l1 -38" stroke="#4a4a4a" stroke-width="3" stroke-linecap="round"/><rect x="178" y="92" width="44" height="9" fill="#a8323a"/><rect x="194" y="90" width="12" height="13" rx="1" fill="none" stroke="#e0b84a" stroke-width="2"/>`;
   // Main droite
-  if (eq.hand === "canne") s += `<line x1="248" y1="222" x2="258" y2="286" stroke="#3b2412" stroke-width="4" stroke-linecap="round"/><line x1="247" y1="222" x2="257" y2="286" stroke="#6b4a2b" stroke-width="1" opacity=".7"/><path d="M248 222 q-2 -14 -13 -9" fill="none" stroke="#e0b84a" stroke-width="5.5" stroke-linecap="round"/><path d="M248 221 q-1 -10 -9 -8" fill="none" stroke="#fff6c0" stroke-width="1.4" stroke-linecap="round"/><rect x="254" y="278" width="9" height="4" rx="1" fill="#c99a2e" transform="rotate(-8 258 280)"/><rect x="240" y="220" width="13" height="12" rx="5.5" fill="${SKIN}" stroke="#c48b52" stroke-width=".8"/><path d="M241 224 h11 M241 228 h11" stroke="#c48b52" stroke-width=".8"/><path d="M240 225 q-5 2 -4 6 q2 2 5 0z" fill="${SKIN}" stroke="#c48b52" stroke-width=".8"/>`;
-  if (eq.hand === "loupe") s += `<line x1="244" y1="224" x2="257" y2="204" stroke="#3b2412" stroke-width="5.5" stroke-linecap="round"/><line x1="244" y1="224" x2="250" y2="214" stroke="#6b4a2b" stroke-width="3" stroke-linecap="round"/><circle cx="263" cy="190" r="14" fill="#cfefff77" stroke="#c99a2e" stroke-width="4.5"/><circle cx="263" cy="190" r="14" fill="none" stroke="#fff6c0" stroke-width=".9"/><path d="M254 184 q4 -7 12 -6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><rect x="238" y="218" width="13" height="12" rx="5.5" fill="${SKIN}" stroke="#c48b52" stroke-width=".8"/><path d="M241 224 h11 M241 228 h11" stroke="#c48b52" stroke-width=".8"/><path d="M240 225 q-5 2 -4 6 q2 2 5 0z" fill="${SKIN}" stroke="#c48b52" stroke-width=".8"/>`;
+  if (eq.hand === "canne") s += `<line x1="248" y1="222" x2="258" y2="286" stroke="#3b2412" stroke-width="4" stroke-linecap="round"/><line x1="247" y1="222" x2="257" y2="286" stroke="#6b4a2b" stroke-width="1" opacity=".7"/><path d="M248 222 q-2 -14 -13 -9" fill="none" stroke="#e0b84a" stroke-width="5.5" stroke-linecap="round"/><path d="M248 221 q-1 -10 -9 -8" fill="none" stroke="#fff6c0" stroke-width="1.4" stroke-linecap="round"/><rect x="254" y="278" width="9" height="4" rx="1" fill="#c99a2e" transform="rotate(-8 258 280)"/>${fist(240, 218)}`;
+  if (eq.hand === "loupe") s += `<line x1="244" y1="224" x2="257" y2="204" stroke="#3b2412" stroke-width="5.5" stroke-linecap="round"/><line x1="244" y1="224" x2="250" y2="214" stroke="#6b4a2b" stroke-width="3" stroke-linecap="round"/><circle cx="263" cy="190" r="14" fill="#cfefff77" stroke="#c99a2e" stroke-width="4.5"/><circle cx="263" cy="190" r="14" fill="none" stroke="#fff6c0" stroke-width=".9"/><path d="M254 184 q4 -7 12 -6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>${fist(238, 216)}`;
   return s;
 }
 
@@ -346,7 +354,7 @@ const SKY_DRAW = [
   // 19 Un ballon rouge
   () => `<path d="M1 12 q-5 6 0 12 q5 6 -1 12 q-4 5 1 9" fill="none" stroke="#6a5a4a" stroke-width=".9"/><path d="M0 -17 q-13 0 -13 13 q0 11 11 17 q-3 3 -4 4 h12 q-1 -1 -4 -4 q11 -6 11 -17 q0 -13 -13 -13z" fill="#d8393f" stroke="#8a1f26" stroke-width=".9" transform="translate(0 0)"/><path d="M-1 -17 q-5 0 -9 5 q-3 5 -1 11" fill="none" stroke="#f08a8a" stroke-width="2.4" stroke-linecap="round" opacity=".8"/><ellipse cx="-6" cy="-10" rx="2.2" ry="4" fill="#fff" opacity=".7" transform="rotate(25 -6 -10)"/><path d="M-3 16 q3 -1 6 0 l-3 4z" fill="#8a1f26"/><path d="M5 -8 q3 4 3 9" fill="none" stroke="#8a1f26" stroke-width=".8" opacity=".5"/>`,
   // 20 Un planeur
-  () => `<path d="M-44 -3 q22 -9 44 -4 q22 -5 44 4 q-22 -1 -44 3 q-22 -4 -44 1z" fill="#f4f6f8" stroke="#8a929a" stroke-width=".9"/><path d="M-44 -3 q22 -3 44 -1 q22 -2 44 1" fill="none" stroke="#c0343e" stroke-width="1.6"/><path d="M-44 -2 l8 3 M44 -2 l-8 3" stroke="#8a929a" stroke-width=".7"/><path d="M-14 1 q0 -4 8 -4 h16 q12 0 24 3 q-8 3 -24 3 h-16 q-8 0 -8 -2z" fill="#fff" stroke="#8a929a" stroke-width=".9"/><path d="M-4 -3 q3 -5 9 -4 q3 1 4 4z" fill="#bfe3f0" stroke="#6a7a8a" stroke-width=".7"/><path d="M-14 0 l-10 -7 h5 l9 5z" fill="#d8393f" stroke="#8a1f26" stroke-width=".6"/><path d="M-22 1 l-8 3" stroke="#8a929a" stroke-width="1.6"/>`,
+  () => `<path d="M-30 14 q8 -6 16 0 q8 6 16 0" fill="none" stroke="#b8d0e4" stroke-width="1" stroke-dasharray="2 3" opacity=".8"/><path d="M26 3 q-1 -4 -8 -5 h-12 q-14 0 -30 4 v2.4 q15 2 30 2 h12 q7 0 8 -3.4z" fill="#fff" stroke="#8a97a3" stroke-width=".9" stroke-linejoin="round"/><path d="M-36 -1 l-3 -11 h5 l5 11z" fill="#d8393f" stroke="#8a1f26" stroke-width=".7" stroke-linejoin="round"/><path d="M-37 -10 h-9 l1 -2 h9z" fill="#e4eaf0" stroke="#8a97a3" stroke-width=".7"/><path d="M-30 4.4 q15 1 32 .6" fill="none" stroke="#c9d3dc" stroke-width="1.2"/><path d="M14 -3 q-1 -6 -8 -6 q-4 0 -5 6z" fill="#bfe3f0" stroke="#6a7a8a" stroke-width=".8"/><path d="M5 -8 q3 -1 6 1" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/><path d="M-42 -20 L-2 -8 L44 4 L45 8 L-2 -1 L-42 -16z" fill="#f6f8fa" stroke="#8a97a3" stroke-width=".9" stroke-linejoin="round"/><path d="M-42 -20 L-2 -8 L-2 -1 L-42 -16z" fill="#e2e8ee" opacity=".7"/><path d="M-42 -20 l-1.6 -2.6 l1.4 -.4 l2.2 3z M45 8 l1.6 2 l1.4 -.6 l-2 -2.6z" fill="#d8393f" stroke="#8a1f26" stroke-width=".6"/><path d="M-30 -19 l1 4 M-14 -14 l1 5 M10 -8 l1 5 M28 -2 l1 5" stroke="#9aa5b0" stroke-width=".7"/><path d="M-42 -20 q-3 -4 -1 -8" fill="none" stroke="#8a97a3" stroke-width="1.4" stroke-linecap="round"/>`,
   // 21 Un drone
   () => `<g stroke="#2a323a" stroke-width="2" stroke-linecap="round"><path d="M-6 -2 L-17 -9 M6 -2 L17 -9 M-6 3 L-17 10 M6 3 L17 10"/></g>${[[-17,-9],[17,-9],[-17,10],[17,10]].map(([x,y])=>`<ellipse cx="${x}" cy="${y-2}" rx="9" ry="1.8" fill="#6a7a8a" opacity=".45"/><path d="M${x-9} ${y-2} h18" stroke="#2a323a" stroke-width="1.2"/><circle cx="${x}" cy="${y}" r="2.2" fill="#3a4650"/>`).join("")}<rect x="-8" y="-5" width="16" height="10" rx="4" fill="#e8ecf0" stroke="#5a6874" stroke-width=".9"/><path d="M-5 -3 h10" stroke="#fff" stroke-width="1.2"/><circle cx="0" cy="7" r="3" fill="#2a323a" stroke="#6a7a8a" stroke-width=".8"/><circle cx="-.8" cy="6.2" r=".9" fill="#7ac8ff"/><circle cx="5" cy="0" r="1.2" fill="#e53935"/><circle cx="-5" cy="0" r="1.2" fill="#43a047"/><path d="M-9 14 v4 h18 v-4" fill="none" stroke="#2a323a" stroke-width="1.2"/>`,
   // 22 Un orage
@@ -361,8 +369,9 @@ const SKY_DRAW = [
   () => `<path d="M-30 12 q8 6 16 -2" fill="none" stroke="#9fb4c8" stroke-width="1" stroke-dasharray="2 3"/><path d="M-22 4 L20 -12 L4 6z" fill="#fff" stroke="#9aa5b0" stroke-width=".9" stroke-linejoin="round"/><path d="M-22 4 L20 -12 L-3 0z" fill="#e8eef4" stroke="#9aa5b0" stroke-width=".9" stroke-linejoin="round"/><path d="M-3 0 L4 6 L6 13 L-3 1z" fill="#cfd8e0" stroke="#9aa5b0" stroke-width=".8" stroke-linejoin="round"/><path d="M-3 0 L20 -12 L4 6z" fill="#dde5ec"/><path d="M-3 0 L20 -12" stroke="#7a8896" stroke-width=".8"/><path d="M-20 3 L-4 -1" stroke="#c0c9d2" stroke-width=".6"/>`,
   // 27 Un nuage de pluie
   () => `<g fill="#6a7886"><ellipse cx="0" cy="-5" rx="22" ry="8"/><circle cx="-10" cy="-10" r="9"/><circle cx="4" cy="-15" r="11"/><circle cx="16" cy="-9" r="8"/></g><g fill="#8a98a6"><ellipse cx="0" cy="-7" rx="20" ry="6"/><circle cx="-9" cy="-12" r="7.5"/><circle cx="4" cy="-17" r="9.5"/></g><path d="M-14 -18 q6 -5 12 -3" fill="none" stroke="#b0bcc8" stroke-width="2.4" stroke-linecap="round"/>${[[-16,3],[-8,5],[0,3],[8,5],[16,3],[-12,13],[-4,15],[4,13],[12,15]].map(([x,y])=>`<path d="M${x} ${y} q-2.2 3.6 -1.2 5.2 q1.6 1.4 2.8 -.2 q.6 -1.6 -1.6 -5z" fill="#4a90d9" stroke="#2a64a8" stroke-width=".5"/>`).join("")}`,
-  // 28 Un dragon
-  () => `<path d="M-22 14 q-7 -6 0 -10 q8 -3 12 3 q5 5 12 0 q4 -3 8 -8" fill="none" stroke="#2e7a3e" stroke-width="5.6" stroke-linecap="round"/><path d="M-22 14 q-7 -6 0 -10 q8 -3 12 3 q5 5 12 0 q4 -3 8 -8" fill="none" stroke="#7ac070" stroke-width="2.2" stroke-linecap="round"/><path d="M-26 16 l-4 4 l6 -1z" fill="#c0343e"/><path d="M-4 -2 L-13 -22 L-6 -17 L-3 -27 L2 -16 L9 -22 L8 -4z" fill="#b83a44" stroke="#6a1a22" stroke-width=".9" stroke-linejoin="round"/><path d="M-3 -4 L-6 -17 M2 -4 L2 -16 M6 -4 L9 -21" stroke="#6a1a22" stroke-width=".8"/><path d="M6 -4 q4 -10 12 -8 q8 -2 8 4 l-6 3 q-4 5 -10 3z" fill="#2e7a3e" stroke="#1a4a26" stroke-width=".9"/><path d="M12 -12 l-2 -6 l5 4z M17 -11 l-1 -6 l4 4z" fill="#e8d08a"/><circle cx="19" cy="-9" r="1.6" fill="#ffe27a"/><circle cx="19.3" cy="-9" r=".7" fill="#111"/><path d="M26 -6 q8 -2 12 -7 q-1 8 -6 11 q5 -1 7 -4 q-3 9 -12 8z" fill="#ff8a1a"/><path d="M27 -5 q5 -1 8 -5 q-1 5 -4 7z" fill="#ffe27a"/>`,
+  // 28 Un aigle
+  () => { const wing = `<path d="M-3 -3 q-9 -12 -22 -9 q-4 1 -3 4 l4 0 l-6 3 l6 0 l-5 4 l6 -1 l-4 4 l6 -1 l-2 4 q6 1 10 -3 q9 -2 15 -3z" fill="#6a4a2a" stroke="#3a2410" stroke-width=".8" stroke-linejoin="round"/><path d="M-3 -3 q-9 -9 -19 -8 q9 3 12 10 q4 0 7 -2z" fill="#8a6a42"/><path d="M-26 -8 l5 4 M-26 -3 l6 3 M-24 2 l6 1" stroke="#3a2410" stroke-width=".7" fill="none"/>`;
+    return `<path d="M-4 10 l-4 11 q7 3 14 0 l-4 -11z" fill="#fff" stroke="#8a97a3" stroke-width=".8" stroke-linejoin="round"/><path d="M-1 12 l-1 8 M1.4 12 l1 8" stroke="#c9d3dc" stroke-width=".7"/><g>${wing}</g><g transform="scale(-1 1)">${wing}</g><ellipse cx="0" cy="1" rx="4.4" ry="10.5" fill="#7a5632" stroke="#3a2410" stroke-width=".9"/><path d="M-2 -5 q-1 8 1 13" fill="none" stroke="#9a7648" stroke-width="1.2" stroke-linecap="round"/><circle cx="0" cy="-10.5" r="4.4" fill="#fff" stroke="#8a97a3" stroke-width=".8"/><path d="M3.2 -11.6 q5 -.6 6 3 q-3 -1 -4 1 q-1 -2 -2 -4z" fill="#f2b030" stroke="#c0861a" stroke-width=".6" stroke-linejoin="round"/><circle cx="1.2" cy="-11.4" r=".9" fill="#111"/><path d="M-1 -14.6 q1.6 -1 3.2 0" fill="none" stroke="#c9d3dc" stroke-width=".8"/>`; },
   // 29 Une mouette
   () => `<path d="M-30 -2 q10 -12 24 -4 q-4 4 -6 8 q-8 2 -14 0z" fill="#e4eaf0" stroke="#8a97a3" stroke-width=".8"/><path d="M-30 -2 q-6 2 -9 6 q8 1 13 -3z" fill="#23272d"/><path d="M30 -2 q-10 -12 -24 -4 q4 4 6 8 q8 2 14 0z" fill="#e4eaf0" stroke="#8a97a3" stroke-width=".8"/><path d="M30 -2 q6 2 9 6 q-8 1 -13 -3z" fill="#23272d"/><path d="M-12 -4 q12 -6 24 0 q2 6 -4 9 q-8 3 -16 0 q-6 -3 -4 -9z" fill="#fff" stroke="#8a97a3" stroke-width=".8"/><path d="M-8 -2 q8 -5 16 0" fill="none" stroke="#b8c4cf" stroke-width="1.4"/><path d="M-4 9 l-4 8 l6 -5z M4 9 l4 8 l-6 -5z" fill="#fff" stroke="#8a97a3" stroke-width=".6"/><circle cx="0" cy="-5.5" r="4.6" fill="#fff" stroke="#8a97a3" stroke-width=".7"/><path d="M3 -6 l6 1.6 l-6 1.4z" fill="#f2b030" stroke="#c0861a" stroke-width=".5"/><circle cx="1.4" cy="-6.4" r=".9" fill="#111"/>`,
   // 30 L'étoile du soir
@@ -370,7 +379,7 @@ const SKY_DRAW = [
 ];
 
 /* Réduction des éléments les plus larges pour qu'ils tiennent entre la maison et la montgolfière. */
-const SKY_SCALE = { 4:.75, 7:.8, 15:.8, 19:.6, 22:.78, 24:.58, 27:.75, 28:.67 };
+const SKY_SCALE = { 4:.75, 7:.8, 15:.8, 19:.62, 22:.78, 24:.58, 28:.67 };
 
 /* ---------- Jardin (extérieur) ---------- */
 function drawTree(S, id){
