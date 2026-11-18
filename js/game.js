@@ -170,12 +170,17 @@ if (typeof document !== "undefined") (function(){
     document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
   }
 
+  function gardenCaption(){
+    const d = new Date();
+    return `${SEASON_NAMES[seasonOf(d)]} · Dans le ciel : ${SKY_NAMES[skyIndexOf(d)].toLowerCase()}`;
+  }
+
   function home(){
     const n = nextIndex(), done = mainDone();
     app.innerHTML = header() + `
       <div class="card">
         <div class="scene">${drawScene(save.owned, save.equipped)}</div>
-        <div class="scene" style="margin-top:8px">${drawGarden(save.owned)}</div>
+        <div class="scene" style="margin-top:8px">${drawGarden(save.owned)}<div class="meta center">${gardenCaption()}</div></div>
         <h2 style="margin-top:10px">${GAME_SUBTITLE}</h2>
         <p>Le précieux manuscrit de Lord Dictée a disparu ! Aide le Professeur Plume à le retrouver :
         chaque indice est piégé par des fautes d'orthographe.</p>
@@ -225,7 +230,7 @@ if (typeof document !== "undefined") (function(){
       });
     });
     app.innerHTML = header() + `<div class="card"><div class="scene">${drawScene(save.owned, save.equipped)}</div>
-      <div class="scene" style="margin-top:8px">${drawGarden(save.owned)}</div></div>
+      <div class="scene" style="margin-top:8px">${drawGarden(save.owned)}<div class="meta center">${gardenCaption()}</div></div></div>
       <div class="card"><h2>La boutique</h2><div class="meta">Gagne des écus en résolvant des mystères.</div>${html}
       <div class="bar"><button class="alt" onclick="G.home()">⟵ Maison</button></div></div>`;
   }

@@ -29,6 +29,9 @@ Un lien « Code source » est affiché en bas du jeu pour cette raison : il doit
 - **⭐ 10 mystères bonus** (« Les archives secrètes », niveau expert) se débloquent une fois les 96 mystères
   de l'histoire résolus. Chacun rapporte **190 écus fixes** (sans pénalité d'erreur) : avec eux, tout est
   achetable même en prenant tous les indices et en faisant beaucoup d'erreurs.
+- Le **jardin change de saison chaque semaine** (printemps, été, automne, hiver, en rotation : arbre, fleurs, potager,
+  toit, fontaine, ciel et paysage de la fenêtre s'adaptent) et **un élément différent traverse le ciel chaque jour**,
+  parmi 30 (arc-en-ciel, avion, cerf-volant, fusée, plume, parchemin volant…). La date du jour suffit : rien n'est sauvegardé.
 - La progression est enregistrée automatiquement dans le navigateur (localStorage).
 - **💾 Sauvegarder** (écran maison) télécharge un fichier `plume-et-cie-sauvegarde-AAAA-MM-JJ.json`
   contenant les mystères résolus, les écus et les objets achetés/portés.

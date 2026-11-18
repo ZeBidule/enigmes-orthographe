@@ -4,7 +4,7 @@
    Lancer : node test/check.js */
 const assert = require("assert");
 const { ALL_PUZZLES, PUZZLES, CHAPTERS, CHAPTER_PLAN, CATEGORIES } = require("../js/puzzles.js");
-const { ITEMS, DECOR_SLOTS, SLOT_NAMES, drawScene, drawGarden, drawPortrait } = require("../js/shop.js");
+const { ITEMS, DECOR_SLOTS, SLOT_NAMES, drawScene, drawGarden, drawPortrait, SEASONS, SKY_NAMES, seasonOf, skyIndexOf } = require("../js/shop.js");
 const G = require("../js/game.js");
 
 const IDS = PUZZLES.map(p => p.id);
@@ -178,6 +178,32 @@ t("extérieur : objets de jardin et véhicules en vente, tous avec un nom de rub
   assert.deepStrictEqual(DECOR_SLOTS, ["home", "garden", "vehicle"]);
   // chaque objet de jardin modifie bien le dessin
   ITEMS.filter(i => i.slot === "garden" || i.slot === "vehicle").forEach(i => assert.notStrictEqual(drawGarden([i.id]), drawGarden([]), i.id));
+});
+
+t("jardin : saison différente chaque semaine (4 en rotation), élément du ciel différent chaque jour (30)", () => {
+  const day = n => new Date(2026, 0, 5 + n); // le 5 janvier 2026 est un lundi
+  assert.strictEqual(SKY_NAMES.length, 30);
+  for (let w = 0; w < 8; w++) {
+    for (let k = 0; k < 7; k++) assert.strictEqual(seasonOf(day(w * 7 + k)), seasonOf(day(w * 7)), "semaine " + w);
+    assert.notStrictEqual(seasonOf(day(w * 7)), seasonOf(day(w * 7 + 7)), "la saison change chaque semaine");
+  }
+  assert.strictEqual(new Set([0, 1, 2, 3].map(w => seasonOf(day(w * 7)))).size, 4);
+  assert.deepStrictEqual([...new Set([...Array(30)].map((_, n) => skyIndexOf(day(n))))].length, 30);
+  for (let n = 0; n < 60; n++) assert.notStrictEqual(skyIndexOf(day(n)), skyIndexOf(day(n + 1)));
+  assert.strictEqual(skyIndexOf(day(0)), skyIndexOf(day(30)));
+  const all = ITEMS.map(i => i.id), seen = new Set();
+  for (let n = 0; n < 30; n++) {
+    const g = drawGarden(all, day(n));
+    assert.ok(g.startsWith("<svg") && g.endsWith("</svg>") && !/undefined|NaN/.test(g), "jour " + n);
+    seen.add(g);
+  }
+  assert.strictEqual(seen.size, 30, "30 jardins distincts");
+  [0, 1, 2, 3].forEach(i => {
+    const d = day(i * 7), s = seasonOf(d), g = drawGarden(all, d);
+    assert.ok(SEASONS.includes(s) && g.includes(`data-season="${s}"`));
+    ITEMS.filter(it => it.slot === "garden").forEach(it => assert.notStrictEqual(drawGarden([it.id], d), drawGarden([], d), s + " " + it.id));
+  });
+  assert.notStrictEqual(drawGarden(all, day(0)).replace(/data-sky="\d+"/, ""), drawGarden(all, day(7)).replace(/data-sky="\d+"/, ""));
 });
 
 t("sauvegarde : export puis import identique", () => {
