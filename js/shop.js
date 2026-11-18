@@ -90,7 +90,7 @@ const SKY_NAMES = [
   "Un nuage", "Des oiseaux", "Un arc-en-ciel", "La lune", "Un avion", "Un cerf-volant", "Un papillon",
   "Une étoile filante", "Un dirigeable", "Une soucoupe volante", "Un hélicoptère", "Des oies sauvages",
   "Un parachutiste", "Une fusée", "Un nuage en cœur", "Une comète", "Un feu d'artifice", "Une hirondelle",
-  "Un ballon rouge", "Un planeur", "Un drone", "Un orage", "Une cigogne", "Saturne",
+  "Un ballon rouge", "Une coccinelle", "Un drone", "Un orage", "Une cigogne", "Saturne",
   "Le traîneau du Père Noël", "Un avion en papier", "Un nuage de pluie", "Un aigle", "Une mouette",
   "L'étoile du soir"
 ];
@@ -187,12 +187,14 @@ function drawHome(owned, season){
     <ellipse cx="200" cy="278" rx="100" ry="14.5" fill="none" stroke="#e0b050" stroke-width="2.4"/><ellipse cx="200" cy="278" rx="90" ry="11.5" fill="#a33a3a"/>
     <ellipse cx="200" cy="278" rx="82" ry="10" fill="none" stroke="#e0b050" stroke-width="1" stroke-dasharray="5 3"/>
     ${[-58,-38,-19,0,19,38,58].map((dx,i)=>`<path d="M${200+dx} 278 l5 -4 l5 4 l-5 4z" fill="${i%2?"#e0b050":"#1f3a6a"}"/>`).join("")}`;
-    // poils : fines touffes courtes sur tout le tapis
-    for (let i = 0; i < 260; i++) {
-      const a = rnd(i, 1) * Math.PI * 2, r = Math.sqrt(rnd(i, 2)), x = 200 + Math.cos(a) * r * 108, y = 278 + Math.sin(a) * r * 16.5;
+    // poils : fines touffes courtes sur tout le tapis, jusqu'au bord (découpées sur sa forme)
+    s += `<clipPath id="rugclip"><ellipse cx="200" cy="278" rx="112" ry="18"/></clipPath><g clip-path="url(#rugclip)">`;
+    for (let i = 0; i < 420; i++) {
+      const a = rnd(i, 1) * Math.PI * 2, r = i < 120 ? 1 : Math.sqrt(rnd(i, 2)), x = 200 + Math.cos(a) * r * 112, y = 278 + Math.sin(a) * r * 18;
       const col = ["#c0504a", "#5a1818", "#d8a84a", "#8a2c2c", "#e8c878", "#2a4a7a"][Math.floor(rnd(i, 3) * 6)];
       s += `<path d="M${x.toFixed(1)} ${y.toFixed(1)} l${(rnd(i, 4) * 2 - 1).toFixed(1)} -${(1.2 + rnd(i, 5) * 1.6).toFixed(1)}" stroke="${col}" stroke-width=".7" stroke-linecap="round" opacity=".75"/>`;
     }
+    s += `</g>`;
     // franges : fils aux deux extrémités
     for (let k = 0; k < 9; k++) {
       const y = 270 + k * 2.1, e = 4 + rnd(k, 7) * 3, d = (rnd(k, 8) * 2 - 1).toFixed(1), f = (rnd(k, 9) * 2).toFixed(1);
@@ -206,11 +208,13 @@ function drawHome(owned, season){
   return s;
 }
 
-/* Main de l'étoile : doigts, pouce et phalanges ; fist(x, y) : poing refermé sur un manche. */
-function fingerStroke(d, w){ return `<path d="${d}" fill="none" stroke="#b8804a" stroke-width="${w + 1.2}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${SKIN}" stroke-width="${w}" stroke-linecap="round"/>`; }
+/* Mains simples façon émoji : silhouette arrondie d'une seule couleur (contour puis remplissage). */
+function handShape(shapes){
+  return shapes.map(([x, y, w, h, r]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="#c48b52" stroke="#c48b52" stroke-width="2.4" stroke-linejoin="round"/>`).join("")
+    + shapes.map(([x, y, w, h, r]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${SKIN}"/>`).join("");
+}
 function fist(x, y){
-  return [0, 1, 2, 3].map(i => `<rect x="${x}" y="${y + i * 4.3}" width="${13 - (i === 3 ? 2 : 0)}" height="4.6" rx="2.3" fill="${SKIN}" stroke="#b8804a" stroke-width=".7"/><path d="M${x + 3} ${y + i * 4.3 + 2.3} h2" stroke="#b8804a" stroke-width=".6" opacity=".7"/>`).join("")
-    + fingerStroke(`M${x + 13} ${y + 1} q-8 -4 -13 1`, 3.4) + `<path d="M${x + 1} ${y + 17.5} h10" stroke="#fff" stroke-width="1" opacity="0"/>`;
+  return handShape([[x, y, 13, 16, 5.5]]) + `<path d="M${x + 4.3} ${y + 5} v6 M${x + 8.6} ${y + 5} v6" stroke="#c48b52" stroke-width="1" stroke-linecap="round"/><path d="M${x + 1} ${y + 1.5} q6 -3 11 0" fill="none" stroke="#c48b52" stroke-width="0"/>`;
 }
 
 /* ---------- Professeur ---------- */
@@ -243,11 +247,8 @@ function drawProfessor(eq){
         <path d="M180 157 q-17 0 -20 14 q-3 10 -5 24 q9 -6 14 -15 q4 -9 11 -23z" fill="${lt}" opacity=".32"/>
         <path d="M177 172 q-7 8 -9 26 q-2 12 -3 24" fill="none" stroke="${dk}" stroke-width="2" opacity=".55"/>
         <path d="M151 217 l19 4 l-1.4 8 l-19 -4z" fill="#fff" stroke="#d0d0d0" stroke-width=".7"/><circle cx="163" cy="224" r="1.4" fill="#c99a2e"/>`;
-  const openHand = `<path d="M152 227 h17 q3 6 2 13 q-1 4 -5 4 h-10 q-4 0 -5 -4 q-1 -7 1 -13z" fill="${SKIN}" stroke="#b8804a" stroke-width=".8" stroke-linejoin="round"/>
-        ${fingerStroke("M155 240 q-1 6 -1 11", 3.4)}${fingerStroke("M159 241 q0 7 0 13", 3.6)}${fingerStroke("M163 241 q1 7 1 12", 3.6)}${fingerStroke("M167 240 q2 5 2 10", 3.4)}
-        ${fingerStroke("M169 230 q6 3 6 10 q0 2 -2 3", 3.8)}
-        <path d="M156 241 q2 1 4 0 M160 242 q2 1 4 0 M164 241 q2 1 3 0" fill="none" stroke="#b8804a" stroke-width=".7" stroke-linecap="round"/>
-        <path d="M154 230 q7 3 14 0" fill="none" stroke="#fff" stroke-width="1.3" opacity=".4" stroke-linecap="round"/><path d="M158 233 v5 M162 233 v5" stroke="#d8a068" stroke-width=".7" opacity=".6"/>`;
+  const openHand = handShape([[152.5, 228, 16, 12, 5], [152.4, 236, 3.6, 12, 1.8], [156.6, 236, 3.6, 15, 1.8], [160.8, 236, 3.6, 14, 1.8], [165, 236, 3.6, 11, 1.8]])
+    + `<g transform="rotate(-24 169 231)">${handShape([[168, 229, 4.2, 11, 2.1]])}</g>`;
   s += `<g>${sleeve}${openHand}</g><g transform="translate(400 0) scale(-1 1)">${sleeve}${eq.hand ? "" : openHand}</g>`;
   // Cou
   s += `<path d="M190 154 h20 l-4 8 h-12z" fill="#fff"/>`;
@@ -353,8 +354,8 @@ const SKY_DRAW = [
   () => `<path d="M-22 -6 q10 -4 20 3 q3 -3 8 -2 q-3 3 -4 7 q-10 3 -24 -8z" fill="#22407a" stroke="#14264a" stroke-width=".7"/><path d="M-2 -3 q10 -10 22 -10 q-8 6 -10 14z" fill="#2a4a8a" stroke="#14264a" stroke-width=".7"/><path d="M-4 -3 q8 -2 14 2 q-2 5 -8 6 q-6 0 -6 -8z" fill="#22407a"/><path d="M-3 2 q6 4 12 0 q-3 5 -8 5z" fill="#f2e0c8"/><path d="M-4 3 q6 3 12 -1" fill="none" stroke="#d8c0a0" stroke-width=".6"/><path d="M-20 -5 l-14 14 M-20 -5 l-8 14" stroke="#14264a" stroke-width="1.4" stroke-linecap="round"/><circle cx="7" cy="-2" r="1.2" fill="#fff"/><circle cx="7.2" cy="-2" r=".6" fill="#111"/><path d="M10 -2 l4 1 l-4 1z" fill="#e08a1f"/><path d="M5 0 q2 2 4 1" stroke="#b8503f" fill="none" stroke-width="1.4"/>`,
   // 19 Un ballon rouge
   () => `<path d="M1 12 q-5 6 0 12 q5 6 -1 12 q-4 5 1 9" fill="none" stroke="#6a5a4a" stroke-width=".9"/><path d="M0 -17 q-13 0 -13 13 q0 11 11 17 q-3 3 -4 4 h12 q-1 -1 -4 -4 q11 -6 11 -17 q0 -13 -13 -13z" fill="#d8393f" stroke="#8a1f26" stroke-width=".9" transform="translate(0 0)"/><path d="M-1 -17 q-5 0 -9 5 q-3 5 -1 11" fill="none" stroke="#f08a8a" stroke-width="2.4" stroke-linecap="round" opacity=".8"/><ellipse cx="-6" cy="-10" rx="2.2" ry="4" fill="#fff" opacity=".7" transform="rotate(25 -6 -10)"/><path d="M-3 16 q3 -1 6 0 l-3 4z" fill="#8a1f26"/><path d="M5 -8 q3 4 3 9" fill="none" stroke="#8a1f26" stroke-width=".8" opacity=".5"/>`,
-  // 20 Un planeur
-  () => `<path d="M-30 14 q8 -6 16 0 q8 6 16 0" fill="none" stroke="#b8d0e4" stroke-width="1" stroke-dasharray="2 3" opacity=".8"/><path d="M26 3 q-1 -4 -8 -5 h-12 q-14 0 -30 4 v2.4 q15 2 30 2 h12 q7 0 8 -3.4z" fill="#fff" stroke="#8a97a3" stroke-width=".9" stroke-linejoin="round"/><path d="M-36 -1 l-3 -11 h5 l5 11z" fill="#d8393f" stroke="#8a1f26" stroke-width=".7" stroke-linejoin="round"/><path d="M-37 -10 h-9 l1 -2 h9z" fill="#e4eaf0" stroke="#8a97a3" stroke-width=".7"/><path d="M-30 4.4 q15 1 32 .6" fill="none" stroke="#c9d3dc" stroke-width="1.2"/><path d="M14 -3 q-1 -6 -8 -6 q-4 0 -5 6z" fill="#bfe3f0" stroke="#6a7a8a" stroke-width=".8"/><path d="M5 -8 q3 -1 6 1" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/><path d="M-42 -20 L-2 -8 L44 4 L45 8 L-2 -1 L-42 -16z" fill="#f6f8fa" stroke="#8a97a3" stroke-width=".9" stroke-linejoin="round"/><path d="M-42 -20 L-2 -8 L-2 -1 L-42 -16z" fill="#e2e8ee" opacity=".7"/><path d="M-42 -20 l-1.6 -2.6 l1.4 -.4 l2.2 3z M45 8 l1.6 2 l1.4 -.6 l-2 -2.6z" fill="#d8393f" stroke="#8a1f26" stroke-width=".6"/><path d="M-30 -19 l1 4 M-14 -14 l1 5 M10 -8 l1 5 M28 -2 l1 5" stroke="#9aa5b0" stroke-width=".7"/><path d="M-42 -20 q-3 -4 -1 -8" fill="none" stroke="#8a97a3" stroke-width="1.4" stroke-linecap="round"/>`,
+  // 20 Une coccinelle
+  () => `<g transform="rotate(-18)"><ellipse cx="-13" cy="3" rx="15" ry="4.6" fill="#eef5fb" stroke="#9fb4c8" stroke-width=".7" opacity=".9" transform="rotate(-18 -13 3)"/><ellipse cx="13" cy="3" rx="15" ry="4.6" fill="#eef5fb" stroke="#9fb4c8" stroke-width=".7" opacity=".9" transform="rotate(18 13 3)"/><path d="M-22 1 l10 3 M22 1 l-10 3 M-20 5 l9 0 M20 5 l-9 0" stroke="#c4d4e2" stroke-width=".6"/><path d="M-5 10 l-6 7 M5 10 l6 7 M-6 3 l-8 1 M6 3 l8 1 M-6 -2 l-8 -4 M6 -2 l8 -4" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/><path d="M-.8 -7 q-10.5 0 -11.5 11.5 q-1 10.5 11.5 14z" fill="#d8393f" stroke="#7a1f26" stroke-width=".9" stroke-linejoin="round"/><path d="M.8 -7 q10.5 0 11.5 11.5 q1 10.5 -11.5 14z" fill="#d8393f" stroke="#7a1f26" stroke-width=".9" stroke-linejoin="round"/><path d="M-9 -2 q-2 3 -2 7 M9 -2 q2 3 2 7" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".55"/><circle cx="-6.4" cy="2" r="2.1" fill="#1a1a1a"/><circle cx="6.4" cy="2" r="2.1" fill="#1a1a1a"/><circle cx="-5" cy="10" r="1.9" fill="#1a1a1a"/><circle cx="5" cy="10" r="1.9" fill="#1a1a1a"/><circle cx="-7.8" cy="-2.6" r="1.2" fill="#1a1a1a"/><circle cx="7.8" cy="-2.6" r="1.2" fill="#1a1a1a"/><path d="M0 -7 v21" stroke="#7a1f26" stroke-width="1"/><path d="M-6.4 -7.4 q6.4 -5 12.8 0 q-6.4 3 -12.8 0z" fill="#1a1a1a"/><circle cx="-3.4" cy="-8.2" r="1.3" fill="#fff"/><circle cx="3.4" cy="-8.2" r="1.3" fill="#fff"/><circle cx="0" cy="-12" r="3.6" fill="#1a1a1a"/><path d="M-1.8 -14 q-3 -5 -6 -5 M1.8 -14 q3 -5 6 -5" fill="none" stroke="#1a1a1a" stroke-width=".9" stroke-linecap="round"/></g>`,
   // 21 Un drone
   () => `<g stroke="#2a323a" stroke-width="2" stroke-linecap="round"><path d="M-6 -2 L-17 -9 M6 -2 L17 -9 M-6 3 L-17 10 M6 3 L17 10"/></g>${[[-17,-9],[17,-9],[-17,10],[17,10]].map(([x,y])=>`<ellipse cx="${x}" cy="${y-2}" rx="9" ry="1.8" fill="#6a7a8a" opacity=".45"/><path d="M${x-9} ${y-2} h18" stroke="#2a323a" stroke-width="1.2"/><circle cx="${x}" cy="${y}" r="2.2" fill="#3a4650"/>`).join("")}<rect x="-8" y="-5" width="16" height="10" rx="4" fill="#e8ecf0" stroke="#5a6874" stroke-width=".9"/><path d="M-5 -3 h10" stroke="#fff" stroke-width="1.2"/><circle cx="0" cy="7" r="3" fill="#2a323a" stroke="#6a7a8a" stroke-width=".8"/><circle cx="-.8" cy="6.2" r=".9" fill="#7ac8ff"/><circle cx="5" cy="0" r="1.2" fill="#e53935"/><circle cx="-5" cy="0" r="1.2" fill="#43a047"/><path d="M-9 14 v4 h18 v-4" fill="none" stroke="#2a323a" stroke-width="1.2"/>`,
   // 22 Un orage
@@ -379,7 +380,7 @@ const SKY_DRAW = [
 ];
 
 /* Réduction des éléments les plus larges pour qu'ils tiennent entre la maison et la montgolfière. */
-const SKY_SCALE = { 4:.75, 7:.8, 15:.8, 19:.62, 22:.78, 24:.58, 28:.67 };
+const SKY_SCALE = { 4:.75, 7:.8, 15:.8, 22:.78, 24:.58, 28:.67 };
 
 /* ---------- Jardin (extérieur) ---------- */
 function drawTree(S, id){
@@ -441,8 +442,7 @@ function drawGarden(owned, date){
     ${[[78,184],[86,196],[76,208],[94,212]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="4" ry="2" fill="${shade(P.path,.88)}"/>`).join("")}`;
   // Maison (façade, toujours présente)
   s += `<rect x="15" y="80" width="110" height="90" fill="#efe0bc"/><rect x="15" y="80" width="110" height="90" fill="none" stroke="#7b4f2a" stroke-width="2"/>
-    <path d="M15 160 h110 M15 150 h110" stroke="#d8c598" stroke-width="1"/><rect x="15" y="162" width="110" height="8" fill="#8a7a68"/>
-    <path d="M22 80 v82 M118 80 v82 M15 110 h110" stroke="#7b4f2a" stroke-width="1.6" opacity=".35"/>
+    <rect x="15" y="162" width="110" height="8" fill="#8a7a68"/>
     <rect x="98" y="44" width="16" height="30" fill="#8a4a3a"/><rect x="96" y="42" width="20" height="5" fill="#6a3a2a"/><path d="M99 52 h14 M99 60 h14 M105 44 v30" stroke="#6a3a2a" stroke-width=".8"/>
     ${S === "automne" || winter ? `<g fill="${winter ? "#fff" : "#d8d8d8"}" opacity=".8"><circle cx="106" cy="36" r="5"/><circle cx="112" cy="28" r="6.5"/><circle cx="121" cy="20" r="8"/></g>` : ""}
     <path d="M3 84 L70 36 L137 84z" fill="${P.roof}"/>
@@ -452,14 +452,24 @@ function drawGarden(owned, date){
     <circle cx="70" cy="62" r="7" fill="#9fd3f0" stroke="#5a3a1a" stroke-width="2.4"/><path d="M63 62 h14 M70 55 v14" stroke="#5a3a1a" stroke-width="1.2"/>
     <rect x="56" y="123" width="28" height="47" rx="2" fill="#6b3f1d"/><rect x="60" y="127" width="9" height="16" fill="#8a5a2b"/><rect x="71" y="127" width="9" height="16" fill="#8a5a2b"/><rect x="60" y="147" width="9" height="19" fill="#8a5a2b"/><rect x="71" y="147" width="9" height="19" fill="#8a5a2b"/><circle cx="79" cy="150" r="2" fill="#c99a2e"/><rect x="52" y="168" width="36" height="4" fill="#9a8a78"/>
     ${[[23,93],[91,93]].map(([x])=>`<rect x="${x-4}" y="91" width="6" height="26" fill="#2c6a5a"/><rect x="${x+26}" y="91" width="6" height="26" fill="#2c6a5a"/><rect x="${x}" y="93" width="26" height="22" fill="${winter ? "#ffe9a0" : "#9fd3f0"}" stroke="#5a3a1a" stroke-width="3"/><path d="M${x+13} 93 v22 M${x} 104 h26" stroke="#5a3a1a" stroke-width="1.6"/><rect x="${x-2}" y="115" width="30" height="6" fill="#6b3f1d"/>${winter ? "" : `<path d="M${x+2} 115 q3 -6 6 0 q3 -6 6 0 q3 -6 6 0 q3 -6 6 0" fill="none" stroke="${S === "automne" ? "#d9822b" : "#e2563d"}" stroke-width="2.4"/>`}`).join("")}`;
-  if (h("ballon")) s += `<g><line x1="215" y1="64" x2="219" y2="78" stroke="#5a3a1a"/><line x1="235" y1="64" x2="231" y2="78" stroke="#5a3a1a"/><line x1="222" y1="68" x2="222" y2="78" stroke="#5a3a1a"/><line x1="228" y1="68" x2="228" y2="78" stroke="#5a3a1a"/>
-    <path d="M225 72 q-32 -20 -32 -44 a32 32 0 0 1 64 0 q0 24 -32 44z" fill="#e2563d" stroke="#8a2a1a" stroke-width="1"/>
-    <path d="M225 72 q-13 -20 -13 -44 a13 32 0 0 1 26 0 q0 24 -13 44z" fill="#f2c94c"/>
-    <path d="M225 72 q-3 -20 -3 -44 a3 32 0 0 1 6 0 q0 24 -3 44z" fill="#2c4a8a"/>
-    <path d="M200 20 q2 -14 12 -20" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".5"/>
-    <path d="M205 52 q20 8 40 0" fill="none" stroke="#8a2a1a" stroke-width="1.4"/>
-    <path d="M221 70 l-2 4 h12 l-2 -4z" fill="#555"/><path d="M225 70 q-3 -3 0 -6 q3 3 0 6z" fill="#ffb020"/>
-    <path d="M215 78 h20 l-2 14 h-16z" fill="#8a5a2b" stroke="#5a3a1a" stroke-width="1"/><path d="M216 82 h18 M217 86 h16 M221 78 l0 14 M225 78 v14 M229 78 v14" stroke="#5a3a1a" stroke-width=".7"/><rect x="214" y="76" width="22" height="3" fill="#6b3f1d"/></g>`;
+  if (h("ballon")) {
+    const env = "M225 72 q-32 -20 -32 -44 a32 32 0 0 1 64 0 q0 24 -32 44z";
+    const cols = ["#d8393f", "#f6d04a", "#2c5aa0", "#f6d04a", "#d8393f", "#f6d04a", "#2c5aa0", "#f6d04a"];
+    const cx = i => (225 + (i / 4 - 1) * 64).toFixed(1);
+    s += `<g transform="translate(0 8)"><defs><clipPath id="balloonenv"><path d="${env}"/></clipPath></defs>
+    <g stroke="#4a3a2a" stroke-width=".9">${[[215,68,216,86],[235,68,234,86],[220,72,221,86],[230,72,229,86]].map(([x1,y1,x2,y2])=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`).join("")}</g>
+    <g clip-path="url(#balloonenv)">${cols.map((c,i)=>`<path d="M225 -4 Q${cx(i)} 28 225 72 Q${cx(i+1)} 28 225 -4z" fill="${c}"/>`).join("")}
+      <path d="M190 33 q35 9 70 0 v8 q-35 9 -70 0z" fill="#fff6d0"/>${[0,1,2,3,4,5,6,7,8].map(k=>`<path d="M${197+k*7} 37.4 l2.6 2.2 l-2.6 2.2 l-2.6 -2.2z" fill="#a8323a"/>`).join("")}
+      <path d="M190 33 q35 9 70 0 M190 41 q35 9 70 0" fill="none" stroke="#c99a2e" stroke-width="1"/>
+      <ellipse cx="251" cy="30" rx="15" ry="42" fill="#000" opacity=".2"/><ellipse cx="207" cy="12" rx="5" ry="15" fill="#fff" opacity=".4" transform="rotate(-14 207 12)"/><ellipse cx="203" cy="30" rx="2" ry="6" fill="#fff" opacity=".3"/></g>
+    <path d="${env}" fill="none" stroke="#5a1a14" stroke-width="1.3" stroke-linejoin="round"/><circle cx="225" cy="-4" r="3" fill="#c99a2e" stroke="#7a5a12" stroke-width=".8"/>
+    <path d="M214 68 h22 l-3 8 h-16z" fill="#a8323a" stroke="#5a1a14" stroke-width=".9" stroke-linejoin="round"/>
+    <rect x="221" y="75" width="8" height="3" rx="1" fill="#4a4a4a"/><path d="M225 76 q-4.5 -5 0 -11 q4.5 6 0 11z" fill="#ff8a1a"/><path d="M225 75 q-2 -3 0 -6 q2 3 0 6z" fill="#ffe27a"/>
+    <path d="M214 86 h22 l-1.6 12 q-9.4 2.4 -18.8 0z" fill="#b0763a" stroke="#5a3a1a" stroke-width="1"/>
+    <path d="M215 90 h20 M215 94 h20 M219 86 v12 M225 86 v12 M231 86 v12" stroke="#7a4a1a" stroke-width=".8"/>
+    <rect x="212" y="84" width="26" height="3.6" rx="1.8" fill="#8a5a2b" stroke="#5a3a1a" stroke-width=".8"/>
+    <path d="M211 86 v6" stroke="#4a3a2a" stroke-width=".8"/><circle cx="211" cy="94" r="2.6" fill="#d8b878" stroke="#8a6a3a" stroke-width=".7"/><path d="M239 86 v6" stroke="#4a3a2a" stroke-width=".8"/><circle cx="239" cy="94" r="2.6" fill="#d8b878" stroke="#8a6a3a" stroke-width=".7"/></g>`;
+  }
   if (h("arbre")) s += drawTree(S, S);
   if (h("cabane")) s += `<rect x="270" y="116" width="52" height="44" fill="#a0703f" stroke="#6b3f1d" stroke-width="2"/>${[276,282,288,294,300,306,312,318].map(x=>`<line x1="${x}" y1="118" x2="${x}" y2="158" stroke="#7b4f2a" stroke-width="1"/>`).join("")}
     <path d="M263 120 l33 -26 l33 26z" fill="#6b3f1d"/><path d="M269 118 q27 -22 54 0" fill="none" stroke="#4a2a12" stroke-width="1.2"/>${[102,108,114].map((y,i)=>`<path d="M${296-(y-94)*1.4} ${y} h${(y-94)*2.8}" stroke="#4a2a12" stroke-width="1.2"/>`).join("")}
