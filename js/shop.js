@@ -513,9 +513,9 @@ function drawGarden(owned, date){
       <rect x="3" y="1" width="60" height="5" rx="2.5" fill="#1c1c1c"/>
       <line x1="7" y1="6" x2="7" y2="13" stroke="#1c1c1c" stroke-width="2.5"/><line x1="59" y1="6" x2="59" y2="13" stroke="#1c1c1c" stroke-width="2.5"/>
       <rect x="5" y="12" width="56" height="26" rx="3" fill="#7b1e24"/>
-      <rect x="11" y="14" width="20" height="9" fill="#bfe3f0" stroke="#4a1216" stroke-width="1.5"/>
-      <rect x="36" y="14" width="19" height="9" fill="#bfe3f0" stroke="#4a1216" stroke-width="1.5"/>
-      <line x1="33.5" y1="12" x2="33.5" y2="38" stroke="#4a1216" stroke-width="1.5"/><circle cx="31.5" cy="29" r="1.2" fill="#c99a2e"/>
+      <rect x="11" y="6" width="20" height="17" fill="#bfe3f0" stroke="#4a1216" stroke-width="1.5"/>
+      <rect x="36" y="6" width="19" height="17" fill="#bfe3f0" stroke="#4a1216" stroke-width="1.5"/>
+      <line x1="33.5" y1="6" x2="33.5" y2="38" stroke="#4a1216" stroke-width="1.5"/><circle cx="31.5" cy="29" r="1.2" fill="#c99a2e"/>
       <path d="M60 8 l5 -1 v16 h-5z" fill="#bfe3f0" stroke="#c99a2e" stroke-width="1.5"/>
       <path d="M61 25 h42 v13 h-42z" fill="#7b1e24"/><line x1="61" y1="25" x2="103" y2="25" stroke="#4a1216" stroke-width="2"/>
       ${[68, 73, 78].map(x => `<line x1="${x}" y1="28" x2="${x}" y2="34" stroke="#4a1216" stroke-width="1.4"/>`).join("")}
