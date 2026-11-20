@@ -32,6 +32,7 @@ Un lien « Code source » est affiché en bas du jeu pour cette raison : il doit
 - Le **jardin change de saison chaque semaine** (printemps, été, automne, hiver, en rotation : arbre, fleurs, potager,
   toit, fontaine, ciel et paysage de la fenêtre s'adaptent) et **un élément différent traverse le ciel chaque jour**,
   parmi 30 (arc-en-ciel, avion, cerf-volant, fusée, dragon, drone…). La date du jour suffit : rien n'est sauvegardé.
+- En haut de la boutique, un bouton **🎨 Revenir à l'ancien personnage** affiche l'ancien dessin du professeur (et **Passer au nouveau personnage** pour revenir) ; le choix est mémorisé dans le navigateur, sans toucher à la sauvegarde.
 - La progression est enregistrée automatiquement dans le navigateur (localStorage).
 - **💾 Sauvegarder** (écran maison) télécharge un fichier `plume-et-cie-sauvegarde-AAAA-MM-JJ.json`
   contenant les mystères résolus, les écus et les objets achetés/portés.

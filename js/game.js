@@ -231,7 +231,8 @@ if (typeof document !== "undefined") (function(){
     });
     app.innerHTML = header() + `<div class="card"><div class="scene">${drawScene(save.owned, save.equipped)}</div>
       <div class="scene" style="margin-top:8px">${drawGarden(save.owned)}<div class="meta center">${gardenCaption()}</div></div></div>
-      <div class="card"><h2>La boutique</h2><div class="meta">Gagne des écus en résolvant des mystères.</div>${html}
+      <div class="card"><h2>La boutique</h2><div class="meta">Gagne des écus en résolvant des mystères.</div>
+      <div class="bar" style="margin:6px 0 10px"><button class="alt" onclick="G.toggleStyle()">🎨 ${getCharStyle() === "classic" ? "Passer au nouveau personnage" : "Revenir à l'ancien personnage"}</button></div>${html}
       <div class="bar"><button class="alt" onclick="G.home()">⟵ Maison</button></div></div>`;
   }
   function buy(id){
@@ -364,6 +365,7 @@ if (typeof document !== "undefined") (function(){
 
   window.G = {
     home, title, download, load, list, shop, buy, wear, start, render, hint, submit, solve, testMenu, testOn, testOff,
+    toggleStyle: () => { setCharStyle(getCharStyle() === "classic" ? "modern" : "classic"); shop(); },
     toggle: k => { ans.has(k) ? ans.delete(k) : ans.add(k); render(); },
     pick: k => { active = k; render(); },
     choose: k => { ans[active] = cur.blanks[active].o[k]; const n = ans.findIndex(v => v === null); if (n >= 0) active = n; render(); },

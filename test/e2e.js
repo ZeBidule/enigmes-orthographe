@@ -145,6 +145,23 @@ const url = `http://localhost:${server.address().port}/`;
   assert.ok(await p.$("svg[aria-label^='Le jardin']"));
   console.log("ok - achats chat (110) et montgolfière (290) sans débit ; maison + jardin affichés");
 
+  // 10 bis. Bouton « ancien personnage » en haut de la boutique (mémorisé, sans toucher à la sauvegarde)
+  await p.evaluate(() => G.shop());
+  const btnTxt = () => p.textContent(".card h2 + .meta + .bar button");
+  const scene0 = await p.$eval(".scene svg", e => e.innerHTML);
+  assert.ok((await btnTxt()).includes("ancien personnage"));
+  const firstItem = await p.evaluate(() => document.querySelector(".card h2 + .meta + .bar").compareDocumentPosition(document.querySelector(".shop-item")) & Node.DOCUMENT_POSITION_FOLLOWING);
+  assert.ok(firstItem, "bouton au-dessus des achats");
+  await p.click(".card h2 + .meta + .bar button");
+  assert.ok((await btnTxt()).includes("nouveau personnage"));
+  assert.notStrictEqual(await p.$eval(".scene svg", e => e.innerHTML), scene0);
+  assert.strictEqual(await p.evaluate(() => localStorage.getItem("plume-style")), "classic");
+  await p.reload(); await p.evaluate(() => G.shop());
+  assert.ok((await btnTxt()).includes("nouveau personnage"), "choix conservé après rechargement");
+  await p.click(".card h2 + .meta + .bar button");
+  assert.strictEqual(await p.$eval(".scene svg", e => e.innerHTML), scene0);
+  console.log("ok - bouton ancien/nouveau personnage (au-dessus des achats, mémorisé)");
+
   // 11. Désactivation depuis le bouton 🔑
   await p.evaluate(() => G.title());
   await p.click(".key-btn");

@@ -4,7 +4,7 @@
    Lancer : node test/check.js */
 const assert = require("assert");
 const { ALL_PUZZLES, PUZZLES, CHAPTERS, CHAPTER_PLAN, CATEGORIES } = require("../js/puzzles.js");
-const { ITEMS, DECOR_SLOTS, SLOT_NAMES, drawScene, drawGarden, drawPortrait, SEASONS, SKY_NAMES, seasonOf, skyIndexOf } = require("../js/shop.js");
+const { ITEMS, DECOR_SLOTS, SLOT_NAMES, drawScene, drawGarden, drawPortrait, SEASONS, SKY_NAMES, seasonOf, skyIndexOf, getCharStyle, setCharStyle } = require("../js/shop.js");
 const G = require("../js/game.js");
 
 const IDS = PUZZLES.map(p => p.id);
@@ -204,6 +204,19 @@ t("jardin : saison différente chaque semaine (4 en rotation), élément du ciel
     ITEMS.filter(it => it.slot === "garden").forEach(it => assert.notStrictEqual(drawGarden([it.id], d), drawGarden([], d), s + " " + it.id));
   });
   assert.notStrictEqual(drawGarden(all, day(0)).replace(/data-sky="\d+"/, ""), drawGarden(all, day(7)).replace(/data-sky="\d+"/, ""));
+});
+
+t("personnage : ancien dessin disponible (bouton de la boutique), distinct du nouveau", () => {
+  const eq = { hat: "forme", coat: "cape", neck: "noeud", face: "monocle", hand: "loupe" };
+  assert.strictEqual(getCharStyle(), "modern");
+  const nouveau = drawPortrait(eq);
+  assert.strictEqual(setCharStyle("classic"), "classic");
+  const ancien = drawPortrait(eq), scene = drawScene(["tapis"], eq);
+  assert.notStrictEqual(ancien, nouveau);
+  assert.ok(ancien.startsWith("<svg") && !/undefined|NaN/.test(ancien + scene));
+  [{}, { hat: "beret", coat: "tweed", hand: "canne" }, eq].forEach(e => assert.ok(drawPortrait(e).length > 200));
+  assert.strictEqual(setCharStyle("n'importe quoi"), "modern");
+  assert.strictEqual(drawPortrait(eq), nouveau);
 });
 
 t("sauvegarde : export puis import identique", () => {

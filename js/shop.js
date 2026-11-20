@@ -206,8 +206,66 @@ function fist(x, y){
     + `<path d="M${x + 4} ${y + 2} q3.6 -1.8 7 0" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".45"/>` + thumb;
 }
 
+/* ---------- Professeur : ancienne version (avant les améliorations), choisie par le bouton de la boutique ---------- */
+function drawProfessorClassic(eq){
+  const coat = COAT_COLORS[eq.coat || "none"];
+  let s = "";
+  // Cape (derrière le corps)
+  if (eq.coat === "cape") s += `<path d="M170 160 L146 262 h108 L230 160z" fill="#4a1c62"/>`;
+  // Jambes et chaussures
+  s += `<rect x="184" y="238" width="13" height="40" fill="#3b2a20"/><rect x="203" y="238" width="13" height="40" fill="#3b2a20"/>
+        <ellipse cx="187" cy="281" rx="12" ry="6" fill="#1a1a1a"/><ellipse cx="213" cy="281" rx="12" ry="6" fill="#1a1a1a"/>`;
+  // Corps (veste)
+  s += `<path d="M172 158 h56 l12 88 h-80z" fill="${coat}"/>
+        <path d="M192 158 h16 l-8 32z" fill="#fff"/>
+        <line x1="200" y1="190" x2="200" y2="246" stroke="#00000033" stroke-width="2"/>
+        ${[205,220,235].map(y=>`<circle cx="205" cy="${y}" r="2" fill="#c99a2e"/>`).join("")}`;
+  if (eq.coat === "tweed") s += `<path d="M175 170 l50 0 M173 190 l54 0 M171 210 l58 0 M169 230 l62 0" stroke="#6b4420" stroke-width="1" stroke-dasharray="3 3"/>`;
+  // Bras et mains
+  s += `<rect x="157" y="162" width="15" height="62" rx="7" fill="${coat}" transform="rotate(8 164 162)"/>
+        <rect x="228" y="162" width="15" height="62" rx="7" fill="${coat}" transform="rotate(-8 236 162)"/>
+        <circle cx="160" cy="226" r="8" fill="${SKIN}"/><circle cx="240" cy="226" r="8" fill="${SKIN}"/>`;
+  // Cou
+  if (eq.neck === "noeud") s += `<path d="M200 164 l-12 -7 v14z M200 164 l12 -7 v14z" fill="#a8323a"/><circle cx="200" cy="164" r="3" fill="#7a1f26"/>`;
+  if (eq.neck === "echarpe") s += `<path d="M180 154 q20 12 40 0 v10 q-20 12 -40 0z" fill="#c62828"/><path d="M212 160 l8 38 l-10 2 l-6 -38z" fill="#c62828"/>`;
+  // Tête
+  s += `<rect x="194" y="148" width="12" height="12" fill="${SKIN}"/>
+        <circle cx="200" cy="128" r="27" fill="${SKIN}"/>
+        <path d="M173 124 q-2 -26 27 -28 q29 2 27 28 q-4 -12 -10 -14 q-17 6 -34 0 q-6 2 -10 14z" fill="#cfcfcf"/>
+        <ellipse cx="172" cy="130" rx="4" ry="7" fill="${SKIN}"/><ellipse cx="228" cy="130" rx="4" ry="7" fill="${SKIN}"/>
+        <circle cx="190" cy="126" r="3" fill="#222"/><circle cx="210" cy="126" r="3" fill="#222"/>
+        <path d="M185 118 l10 -2 M205 116 l10 2" stroke="#888" stroke-width="2"/>
+        <path d="M200 129 l-3 8 h5" fill="none" stroke="#c48b52" stroke-width="2"/>
+        <path d="M200 140 q-8 -4 -18 4 q10 0 18 -2 q8 2 18 2 q-10 -8 -18 -4z" fill="#9e9e9e"/>
+        <path d="M193 147 q7 4 14 0" fill="none" stroke="#8a4a3a" stroke-width="2"/>`;
+  // Visage
+  if (eq.face === "lunettes") s += `<circle cx="190" cy="126" r="8" fill="#ffffff33" stroke="#333" stroke-width="2"/><circle cx="210" cy="126" r="8" fill="#ffffff33" stroke="#333" stroke-width="2"/><line x1="198" y1="126" x2="202" y2="126" stroke="#333" stroke-width="2"/>`;
+  if (eq.face === "monocle") s += `<circle cx="210" cy="126" r="8" fill="#ffffff44" stroke="#c99a2e" stroke-width="2.5"/><path d="M217 130 q6 20 -4 34" fill="none" stroke="#c99a2e" stroke-width="1.5"/>`;
+  // Chapeaux
+  if (eq.hat === "beret") s += `<ellipse cx="203" cy="104" rx="30" ry="10" fill="#2a2a5a"/><circle cx="205" cy="94" r="3" fill="#2a2a5a"/>`;
+  if (eq.hat === "melon") s += `<ellipse cx="200" cy="107" rx="36" ry="6" fill="#222"/><path d="M176 107 q0 -32 24 -32 q24 0 24 32z" fill="#222"/><rect x="176" y="100" width="48" height="5" fill="#5a3a1a"/>`;
+  if (eq.hat === "explo") s += `<ellipse cx="200" cy="107" rx="40" ry="8" fill="#d8c08a"/><path d="M174 107 q0 -30 26 -30 q26 0 26 30z" fill="#e8d4a0"/><rect x="174" y="100" width="52" height="5" fill="#8a6a3a"/>`;
+  if (eq.hat === "forme") s += `<ellipse cx="200" cy="106" rx="38" ry="6" fill="#111"/><rect x="178" y="56" width="44" height="50" fill="#111"/><rect x="178" y="92" width="44" height="8" fill="#a8323a"/>`;
+  // Main droite
+  if (eq.hand === "canne") s += `<line x1="248" y1="222" x2="258" y2="284" stroke="#3b2412" stroke-width="4"/><path d="M248 222 q-2 -12 -12 -8" fill="none" stroke="#c99a2e" stroke-width="5" stroke-linecap="round"/>`;
+  if (eq.hand === "loupe") s += `<line x1="244" y1="222" x2="256" y2="202" stroke="#3b2412" stroke-width="5"/><circle cx="263" cy="190" r="13" fill="#cfefff99" stroke="#c99a2e" stroke-width="4"/>`;
+  return s;
+}
+
+/* Style du personnage : "modern" (par défaut) ou "classic" (ancien dessin), mémorisé dans le navigateur. */
+const STYLE_KEY = "plume-style";
+let CHAR_STYLE = "modern";
+try { if (typeof localStorage !== "undefined" && localStorage.getItem(STYLE_KEY) === "classic") CHAR_STYLE = "classic"; } catch (e) {}
+function getCharStyle(){ return CHAR_STYLE; }
+function setCharStyle(v){
+  CHAR_STYLE = v === "classic" ? "classic" : "modern";
+  try { if (typeof localStorage !== "undefined") localStorage.setItem(STYLE_KEY, CHAR_STYLE); } catch (e) {}
+  return CHAR_STYLE;
+}
+function drawProfessor(eq){ return CHAR_STYLE === "classic" ? drawProfessorClassic(eq) : drawProfessorModern(eq); }
+
 /* ---------- Professeur ---------- */
-function drawProfessor(eq){
+function drawProfessorModern(eq){
   const coat = COAT_COLORS[eq.coat || "none"], dk = shade(coat, .72), lt = shade(coat, 1.25);
   let s = "";
   // Cape (derrière le corps)
@@ -539,4 +597,4 @@ function drawPortrait(equipped){
   return `<svg viewBox="140 50 120 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${drawProfessor(equipped)}</svg>`;
 }
 
-if (typeof module !== "undefined") module.exports = { ITEMS, SLOT_NAMES, DECOR_SLOTS, SEASONS, SEASON_NAMES, SKY_NAMES, seasonOf, skyIndexOf, drawScene, drawGarden, drawPortrait };
+if (typeof module !== "undefined") module.exports = { getCharStyle, setCharStyle, drawProfessor, ITEMS, SLOT_NAMES, DECOR_SLOTS, SEASONS, SEASON_NAMES, SKY_NAMES, seasonOf, skyIndexOf, drawScene, drawGarden, drawPortrait };
