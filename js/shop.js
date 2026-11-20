@@ -171,15 +171,21 @@ function drawHome(owned, season){
   }
   if (h("horloge")) s += `<rect x="342" y="236" width="48" height="12" fill="#4a2a12"/><rect x="346" y="228" width="40" height="10" fill="#5a3418"/>
     <rect x="350" y="132" width="32" height="100" fill="#6b3f1d"/><rect x="350" y="132" width="4" height="100" fill="#8a5a2b"/>
-    <rect x="346" y="94" width="40" height="42" fill="#7a4a22"/><path d="M346 94 q0 -22 20 -22 q20 0 20 22z" fill="#7a4a22"/>
-    <circle cx="366" cy="68" r="3" fill="#c99a2e"/><circle cx="366" cy="110" r="15" fill="#fff8e0" stroke="#c99a2e" stroke-width="3"/>
+    <rect x="346" y="92" width="40" height="44" fill="#7a4a22"/><rect x="343" y="88" width="46" height="5" rx="1.2" fill="#5a3418"/><rect x="345" y="85" width="42" height="3.4" fill="#8a5a2b"/>
+    <path d="M347 85 q0 -15 19 -15 q19 0 19 15z" fill="#7a4a22"/><path d="M352 85 q0 -10 14 -10 q14 0 14 10z" fill="#5a3418"/><path d="M355 82 q2 -5.6 11 -5.8" fill="none" stroke="#a07040" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M366 71 v-9" stroke="#c99a2e" stroke-width="2.2"/><circle cx="366" cy="60" r="3.6" fill="#e0b84a" stroke="#a87a1e" stroke-width=".8"/><circle cx="365" cy="59" r="1" fill="#fff6c0"/>
+    ${[348,384].map(x=>`<path d="M${x} 85 v-5" stroke="#c99a2e" stroke-width="1.6"/><circle cx="${x}" cy="78.6" r="2.2" fill="#e0b84a" stroke="#a87a1e" stroke-width=".6"/>`).join("")}
+    <circle cx="366" cy="110" r="15" fill="#fff8e0" stroke="#c99a2e" stroke-width="3"/>
     ${[...Array(12)].map((_,i)=>{const a=i*Math.PI/6,x1=(366+12*Math.sin(a)).toFixed(1),y1=(110-12*Math.cos(a)).toFixed(1),x2=(366+14*Math.sin(a)).toFixed(1),y2=(110-14*Math.cos(a)).toFixed(1);return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#3b2412" stroke-width="${i%3===0?1.6:.8}"/>`;}).join("")}
     <line x1="366" y1="110" x2="366" y2="99" stroke="#000" stroke-width="2" stroke-linecap="round"/><line x1="366" y1="110" x2="374" y2="114" stroke="#000" stroke-width="1.6" stroke-linecap="round"/><circle cx="366" cy="110" r="1.6" fill="#c99a2e"/>
     <rect x="356" y="142" width="20" height="74" rx="2" fill="#2a1608"/><rect x="358" y="144" width="16" height="70" fill="#3b2412"/>
     <line x1="366" y1="146" x2="366" y2="196" stroke="#c99a2e" stroke-width="1.6"/><circle cx="366" cy="198" r="7" fill="#e0b84a" stroke="#a87a1e" stroke-width="1.5"/><circle cx="364" cy="196" r="2" fill="#fff6c0"/>`;
   if (h("lampe")) s += `<ellipse cx="320" cy="150" rx="34" ry="12" fill="url(#lampglow)"/>
-    <ellipse cx="320" cy="250" rx="16" ry="4.5" fill="#2a1608"/><path d="M312 250 q8 -10 16 0z" fill="#5a3a1a"/><line x1="320" y1="150" x2="320" y2="246" stroke="#5a3a1a" stroke-width="4"/>
-    <circle cx="320" cy="214" r="3.5" fill="#c99a2e"/><circle cx="320" cy="178" r="3" fill="#c99a2e"/>
+    <ellipse cx="321" cy="254" rx="22" ry="5" fill="#000" opacity=".22"/>
+    <ellipse cx="320" cy="251" rx="19" ry="5.4" fill="#2a1608"/><ellipse cx="320" cy="249" rx="19" ry="5" fill="#4a2a12"/><ellipse cx="320" cy="248.4" rx="14" ry="3.4" fill="#6b3f1d"/><ellipse cx="320" cy="247.6" rx="10" ry="2.4" fill="none" stroke="#c99a2e" stroke-width="1.2"/>
+    <path d="M312 247 q-1 -11 8 -11 q9 0 8 11 q-8 3 -16 0z" fill="#5a3a1a"/><path d="M314 244 q0 -6 4 -7" fill="none" stroke="#a07040" stroke-width="1.4" stroke-linecap="round"/>
+    <rect x="316.4" y="233" width="7.2" height="3" rx="1.2" fill="#c99a2e"/><line x1="320" y1="150" x2="320" y2="234" stroke="#5a3a1a" stroke-width="3.6"/><line x1="318.9" y1="152" x2="318.9" y2="232" stroke="#8a5a2b" stroke-width="1" opacity=".8"/>
+    <ellipse cx="320" cy="214" rx="4.4" ry="3.4" fill="#c99a2e"/><ellipse cx="319" cy="213" rx="1.4" ry="1" fill="#fff6c0"/><rect x="316.6" y="190" width="6.8" height="2.4" rx="1" fill="#c99a2e"/><ellipse cx="320" cy="178" rx="3.6" ry="3" fill="#c99a2e"/><ellipse cx="319" cy="177" rx="1.2" ry=".9" fill="#fff6c0"/>
     <path d="M300 152 h40 l-10 -32 h-20z" fill="#f2c94c"/><path d="M300 152 h40 l-2 -6 h-36z" fill="#d8a82a"/><path d="M310 150 l4 -28 M320 150 v-30 M330 150 l-4 -28" stroke="#c99a2e" stroke-width=".8" opacity=".7"/><rect x="316" y="116" width="8" height="5" fill="#c99a2e"/>`;
   if (h("tapis")) {
     s += `<ellipse cx="200" cy="281" rx="116" ry="19" fill="#4a1010" opacity=".55"/><ellipse cx="200" cy="278" rx="112" ry="18" fill="#7a2424"/>
@@ -323,7 +329,7 @@ function drawProfessorModern(eq){
   if (eq.hat === "explo") s += `<ellipse cx="200" cy="107" rx="42" ry="9" fill="#c8ac70"/><ellipse cx="200" cy="106" rx="38" ry="6" fill="#d8c08a"/><path d="M174 106 q0 -32 26 -32 q26 0 26 32z" fill="#eadab0"/><path d="M200 74 v32 M190 76 q-4 14 -2 30 M210 76 q4 14 2 30" fill="none" stroke="#c8ac70" stroke-width="1.6"/><rect x="174" y="98" width="52" height="7" fill="#8a6a3a"/><circle cx="200" cy="101.5" r="3" fill="#c99a2e"/><circle cx="200" cy="75" r="3" fill="#c8ac70"/><path d="M186 80 q6 -6 14 -6" fill="none" stroke="#fff" stroke-width="2" opacity=".6" stroke-linecap="round"/>`;
   if (eq.hat === "forme") s += `<ellipse cx="200" cy="106" rx="39" ry="7" fill="#0a0a0a"/><path d="M178 106 l2 -50 q20 -6 40 0 l2 50z" fill="#161616"/><ellipse cx="200" cy="56" rx="21" ry="4.5" fill="#262626"/><path d="M184 98 l1 -38" stroke="#4a4a4a" stroke-width="3" stroke-linecap="round"/><rect x="178" y="92" width="44" height="9" fill="#a8323a"/><rect x="194" y="90" width="12" height="13" rx="1" fill="none" stroke="#e0b84a" stroke-width="2"/>`;
   // Main droite
-  if (eq.hand === "canne") s += `<line x1="248" y1="222" x2="258" y2="286" stroke="#3b2412" stroke-width="4" stroke-linecap="round"/><line x1="247" y1="222" x2="257" y2="286" stroke="#6b4a2b" stroke-width="1" opacity=".7"/><path d="M248 222 q-2 -14 -13 -9" fill="none" stroke="#e0b84a" stroke-width="5.5" stroke-linecap="round"/><path d="M248 221 q-1 -10 -9 -8" fill="none" stroke="#fff6c0" stroke-width="1.4" stroke-linecap="round"/><rect x="254" y="278" width="9" height="4" rx="1" fill="#c99a2e" transform="rotate(-8 258 280)"/><g transform="rotate(-10 246 222)">${fist(242, 219)}</g>`;
+  if (eq.hand === "canne") s += `<line x1="248" y1="222" x2="258" y2="286" stroke="#3b2412" stroke-width="4" stroke-linecap="round"/><path d="M248 222 q-2 -14 -13 -9" fill="none" stroke="#e0b84a" stroke-width="5.5" stroke-linecap="round"/><path d="M248 221 q-1 -10 -9 -8" fill="none" stroke="#fff6c0" stroke-width="1.4" stroke-linecap="round"/><g transform="rotate(-10 246 222)">${fist(242, 219)}</g>`;
   if (eq.hand === "loupe") s += `<line x1="244" y1="224" x2="257" y2="204" stroke="#3b2412" stroke-width="5.5" stroke-linecap="round"/><line x1="244" y1="224" x2="250" y2="214" stroke="#6b4a2b" stroke-width="3" stroke-linecap="round"/><circle cx="263" cy="190" r="14" fill="#cfefff77" stroke="#c99a2e" stroke-width="4.5"/><circle cx="263" cy="190" r="14" fill="none" stroke="#fff6c0" stroke-width=".9"/><path d="M254 184 q4 -7 12 -6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>${fist(238, 216)}`;
   return s;
 }
@@ -524,7 +530,7 @@ function drawGarden(owned, date){
   if (h("cabane")) s += `<rect x="270" y="116" width="52" height="44" fill="#a0703f" stroke="#6b3f1d" stroke-width="2"/>${[276,282,288,294,300,306,312,318].map(x=>`<line x1="${x}" y1="118" x2="${x}" y2="158" stroke="#7b4f2a" stroke-width="1"/>`).join("")}
     <path d="M263 120 l33 -26 l33 26z" fill="#6b3f1d"/><path d="M269 118 q27 -22 54 0" fill="none" stroke="#4a2a12" stroke-width="1.2"/>${[102,108,114].map((y,i)=>`<path d="M${296-(y-94)*1.4} ${y} h${(y-94)*2.8}" stroke="#4a2a12" stroke-width="1.2"/>`).join("")}
     ${winter ? `<path d="M265 121 l31 -25 l31 25" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
-    <rect x="286" y="130" width="18" height="30" fill="#5a3a1a"/><path d="M286 130 l18 30 M304 130 l-18 30" stroke="#3b2412" stroke-width="1.6"/><circle cx="301" cy="146" r="1.6" fill="#c99a2e"/>
+    <rect x="286" y="130" width="18" height="30" fill="#5a3a1a"/><path d="M286 130 l18 30 M304 130 l-18 30" stroke="#3b2412" stroke-width="1.6"/>
     <rect x="274" y="126" width="10" height="10" fill="${winter ? "#ffe9a0" : "#9fd3f0"}" stroke="#3b2412" stroke-width="2"/><path d="M279 126 v10 M274 131 h10" stroke="#3b2412" stroke-width=".8"/>`;
   if (h("potager")) {
     s += `<path d="M138 130 h66 v3 h-66z M138 158 h66" stroke="#7b4f2a" stroke-width="0"/>`;
@@ -559,7 +565,7 @@ function drawGarden(owned, date){
     <g transform="translate(330 186)"><path d="M4 6 q-7 -3 -6 -12" fill="none" stroke="#9a6d36" stroke-width="2.5" stroke-linecap="round"/><path d="M6 12 l-1 9 h3 l1 -8z M22 12 l1 9 h3 l-1 -9z" fill="#8a5d2c"/><path d="M3 8 q0 -6 8 -6 h11 q5 -1 7 -7 l6 1 q-1 8 -3 14 q-1 5 -6 6 h-17 q-6 0 -6 -8z" fill="#b5874a"/><path d="M8 14 q8 3 18 0" fill="none" stroke="#e0c08a" stroke-width="2"/><path d="M9 13 l0 8 h3 l1 -8z M25 13 l1 8 h3 l-1 -8z" fill="#b5874a"/><ellipse cx="31" cy="-5" rx="6" ry="5" fill="#b5874a"/><path d="M35 -8 q6 0 7 3 q0 3 -4 3 h-4z" fill="#c9a06a"/><circle cx="41.5" cy="-5.5" r="1.4" fill="#111"/><circle cx="33" cy="-7" r="1" fill="#111"/><path d="M28 -10 q-5 2 -3 10 q3 -1 5 -7z" fill="#6e4a22"/><path d="M27 1 q4 2 8 0" fill="none" stroke="#a8323a" stroke-width="1.5"/></g>
     <ellipse cx="350" cy="198" rx="5" ry="1.8" fill="#9aa5ad"/><path d="M345 198 q5 4 10 0z" fill="#c0392b"/>`;
   if (h("velo")) s += `<g transform="translate(350 190)" fill="none" stroke="#1f4e8a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="14" r="9" stroke="#1a1a1a" stroke-width="2.6"/><circle cx="38" cy="14" r="9" stroke="#1a1a1a" stroke-width="2.6"/>${[0,45,90,135].map(a=>{const dx=(7.5*Math.cos(a*Math.PI/180)).toFixed(1),dy=(7.5*Math.sin(a*Math.PI/180)).toFixed(1);return `<path d="M${(8-dx)} ${(14-dy)} L${(8+ +dx)} ${(14+ +dy)} M${(38-dx)} ${(14-dy)} L${(38+ +dx)} ${(14+ +dy)}" stroke="#9a9a9a" stroke-width=".6"/>`;}).join("")}
-    <path d="M8 14 l12 -14 h14 l4 14 M20 0 l8 14 h-20 M34 0 l-2 -6 h-5"/><path d="M26 -2 h-8 q-2 -3 2 -4 h7" stroke="#2a2a2a" stroke-width="3"/><path d="M33 -7 l3 0 M30 -7 l3 -2" stroke="#2a2a2a" stroke-width="2.2"/><circle cx="28" cy="14" r="3.2" stroke="#2a2a2a" stroke-width="1.4"/><path d="M26 17 l-4 4 M30 11 l4 -4" stroke="#2a2a2a" stroke-width="2"/><circle cx="8" cy="14" r="1.6" fill="#1f4e8a" stroke="none"/><circle cx="38" cy="14" r="1.6" fill="#1f4e8a" stroke="none"/><path d="M34 -6 l4 4" stroke="#c99a2e" stroke-width="2"/></g>`;
+    <path d="M8 14 l12 -14 h14 l4 14 M20 0 l8 14 h-20 M34 0 l-2 -6 h-5"/><path d="M26 -2 h-8 q-2 -3 2 -4 h7" stroke="#2a2a2a" stroke-width="3"/><path d="M33 -7 l3 0 M30 -7 l3 -2" stroke="#2a2a2a" stroke-width="2.2"/><circle cx="28" cy="14" r="3.2" stroke="#2a2a2a" stroke-width="1.4"/><path d="M26 17 l-4 4 M30 11 l4 -4" stroke="#2a2a2a" stroke-width="2"/><circle cx="8" cy="14" r="1.6" fill="#1f4e8a" stroke="none"/><circle cx="38" cy="14" r="1.6" fill="#1f4e8a" stroke="none"/></g>`;
   if (h("voiture")) {
     // Voiture d'époque (type Ford T, années 1920) : capote en toile, carrosserie haute,
     // roues à rayons en bois, garde-boue noirs, marchepied, radiateur et phare en laiton.
@@ -588,7 +594,6 @@ function drawGarden(owned, date){
   if (h("fleurs")) s += drawFlowers(S);
   if (winter) s += [...Array(26)].map((_, k) => `<circle cx="${(k * 67 + 13) % 396 + 2}" cy="${(k * 41 + 7) % 214 + 3}" r="${k % 3 ? 1.4 : 2}" fill="#fff" opacity=".9"/>`).join("");
   if (S === "automne") s += [[40,150],[120,130],[170,140],[260,150],[310,135],[22,196],[150,206],[266,206]].map(([x,y],i)=>`<ellipse cx="${x}" cy="${y}" rx="3.6" ry="1.8" fill="${["#d9822b","#c0462a","#e8b030"][i%3]}" transform="rotate(${i*37} ${x} ${y})"/>`).join("");
-  if (S === "printemps") s += [[40,150],[120,132],[300,134],[20,200],[260,208]].map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="1.8" fill="${["#fff","#ffd0e0","#fff6a0"][i%3]}"/>`).join("");
   return s + "</svg>";
 }
 
