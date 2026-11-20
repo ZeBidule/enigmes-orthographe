@@ -83,6 +83,8 @@ Certaines énigmes mélangent plusieurs notions ; elles sont classées selon la 
 | `LICENSE` | Texte intégral de la GNU AGPL v3 |
 | `index.html` | Page et styles |
 | `js/puzzles.js` | Les 96 énigmes de l'histoire, les 10 bonus (format décrit en tête de fichier) et l'ordre de jeu `CHAPTER_PLAN` |
+| `audio/` | mp3 des mots à écrire (énigmes « dictée »), générés par `tools/gen-audio.py` |
+| `tools/gen-audio.py` | Génère les mp3 avec Piper (voix française `fr_FR-siwis-medium`) |
 | `tools/arrange.js` | Génère `CHAPTER_PLAN` en respectant les règles de répartition |
 | `js/shop.js` | Objets de la boutique et dessins SVG du professeur, de sa maison et de son jardin |
 | `js/game.js` | Moteur : progression, écus, indices, boutique |
@@ -98,6 +100,7 @@ Certaines énigmes mélangent plusieurs notions ; elles sont classées selon la 
 Règle de rédaction : le titre, l'histoire et la consigne d'une énigme ne doivent pas donner la réponse
 (le test `énoncé` le vérifie ; seules 4 énigmes d'introduction sont tolérées dans `LEAK_ALLOWED`).
 Pour les réponses à taper, décrire le mot par une définition (« nom de 5 lettres… ») plutôt que de le citer.
+Pour une définition, on peut à la place ajouter `audio:"audio/pXX.mp3", say:"mot"` à l'énigme : le jeu affiche alors un bouton 🔊 à la place de la consigne. Générer le mp3 avec `python3 tools/gen-audio.py <voix.onnx>` (dépendances en tête du script).
 
 ## Tests
 

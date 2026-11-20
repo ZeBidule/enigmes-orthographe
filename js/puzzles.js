@@ -30,6 +30,8 @@
               blanks : { o: [options], a: "bonne réponse" }
      "type" : taper la réponse au clavier. sentence contient "___".
               answers : réponses acceptées.
+              audio / say (facultatifs) : mp3 du mot à taper (généré par
+              tools/gen-audio.py) ; il remplace la définition dans la consigne.
    L'ordre de jeu et les chapitres sont dans CHAPTER_PLAN (en bas),
    généré par tools/arrange.js.
    ===================================================================== */
@@ -278,6 +280,7 @@ const ALL_PUZZLES = [
     rule:"Mots à retenir : a<b>pp</b>areil, bou<b>t</b>eille, ca<b>rr</b>osse, a<b>ll</b>er, a<b>p</b>ercevoir." },
 
   { id:"p42", cat:"orthographe", lvl:5, t:"type", title:"Le mot effacé",
+    audio:"audio/p42.mp3", say:"accueil",
     story:"Sur une vieille pancarte, un mot de remerciement s'est effacé. À toi de le retrouver !",
     q:"Écris le nom (7 lettres) qui désigne la façon de recevoir quelqu'un chez soi.",
     sentence:"Merci pour votre ___ !",
@@ -451,6 +454,7 @@ const ALL_PUZZLES = [
     rule:"Accent <b>grave</b> sur è devant une syllabe muette (frère, rivière). Le <b>circonflexe</b> remplace souvent un ancien s (forêt → forestier)." },
 
   { id:"p65", cat:"orthographe", lvl:1, t:"type", title:"Le petit messager",
+    audio:"audio/p65.mp3", say:"garçon",
     story:"Un enfant apporte un message au professeur.",
     q:"Écris le nom (6 lettres) qui désigne un enfant de sexe masculin.",
     sentence:"Un petit ___ court dans la rue.",
@@ -601,6 +605,7 @@ const ALL_PUZZLES = [
     rule:"<b>quoi que</b> = n'importe quoi ; <b>quoique</b> = bien que.<br><b>plus tôt</b> ≠ plus tard ; <b>plutôt</b> = de préférence." },
 
   { id:"p88", cat:"homophones", lvl:5, t:"type", title:"Les encouragements",
+    audio:"audio/p88.mp3", say:"davantage",
     story:"Le professeur encourage son assistant.",
     q:"Écris l'adverbe (9 lettres) qui veut dire « plus ».",
     sentence:"Il faut travailler ___.",
@@ -650,6 +655,7 @@ const ALL_PUZZLES = [
     rule:"Lettre muette retrouvée grâce à la famille : li<b>t</b> (literie), trico<b>t</b> (tricoter). Pas de lettre muette quand la dernière lettre s'entend déjà : tambou<b>r</b>." },
 
   { id:"p94", cat:"muettes", lvl:2, t:"type", title:"Un obstacle pour le voleur",
+    audio:"audio/p94.mp3", say:"saut",
     story:"Le voleur a franchi le mur du jardin !",
     q:"Écris le nom (4 lettres, la dernière est muette) du mouvement qu'on fait en s'élançant dans les airs.",
     sentence:"Il a fait un grand ___ par-dessus le mur.",
@@ -674,6 +680,7 @@ const ALL_PUZZLES = [
     rule:"Noms féminins en <b>-ée, -ie, -ue</b> : une soirée, la vie, la rue.<br>Exceptions : la clé, la fourmi, la souris, la tribu, la vertu, et les noms en -té / -tié (la beauté, la moitié)." },
 
   { id:"p97", cat:"muettes", lvl:3, t:"type", title:"Le partage",
+    audio:"audio/p97.mp3", say:"moitié",
     story:"Le cuisinier a remarqué qu'il manquait un morceau du gâteau.",
     q:"Écris le nom (6 lettres) qui désigne l'une des deux parts égales d'un tout.",
     sentence:"Quelqu'un a mangé la ___ du gâteau.",
@@ -690,6 +697,7 @@ const ALL_PUZZLES = [
     rule:"Noms masculins sans e : un poi<b>l</b>, un fauteui<b>l</b>, un travai<b>l</b>, un sommei<b>l</b>.<br>Noms féminins avec e : une paille, une bouteille, une feuille. « Un reste » s'écrit avec e, comme « rester »." },
 
   { id:"p99", cat:"muettes", lvl:4, t:"type", title:"Les traces dans la boue",
+    audio:"audio/p99.mp3", say:"bord",
     story:"Des traces de pas mènent jusqu'à la rivière.",
     q:"Écris le nom (4 lettres, la dernière est muette) qui désigne le côté d'une rivière, là où l'eau s'arrête.",
     sentence:"Les traces s'arrêtent au ___ de la rivière.",
@@ -706,6 +714,7 @@ const ALL_PUZZLES = [
     rule:"Lettres muettes rares : cro<b>c</b> (crochet), dra<b>p</b> (draper), ban<b>c</b> (banquette), estoma<b>c</b>, taba<b>c</b>." },
 
   { id:"p101", cat:"muettes", lvl:5, t:"type", title:"Le chasseur",
+    audio:"audio/p101.mp3", say:"fusil",
     story:"Un chasseur a croisé le voleur dans la forêt.",
     q:"Écris le nom (5 lettres, la dernière est muette) de l'arme à feu du chasseur.",
     sentence:"Le chasseur porte un ___ sur l'épaule.",
@@ -772,6 +781,7 @@ const ALL_PUZZLES = [
     rule:"Arbres fruitiers en <b>-ier</b> (pommier, cerisier). Le nom <b>marché</b> ≠ le verbe marcher. Le son [ɛ] dans <b>lait</b> (laitier)." },
 
   { id:"p109", cat:"sons", lvl:3, t:"type", title:"Le concert",
+    audio:"audio/p109.mp3", say:"orchestre",
     story:"Ce soir-là, des musiciens jouaient au château.",
     q:"Écris le nom (9 lettres) de l'ensemble de musiciens qui joue ensemble.",
     sentence:"L'___ joue une valse.",
@@ -788,6 +798,7 @@ const ALL_PUZZLES = [
     rule:"Le son <b>[ɑ̃]</b> : an (enfant), en (parent), <b>am / em</b> devant b, p (chambre, temps)." },
 
   { id:"p111", cat:"sons", lvl:4, t:"type", title:"Le panneau",
+    audio:"audio/p111.mp3", say:"attention",
     story:"Un panneau est cloué à l'entrée de l'escalier du grenier.",
     q:"Écris le nom (9 lettres, en -tion) qui invite à être vigilant.",
     sentence:"___ à la marche !",
@@ -804,6 +815,7 @@ const ALL_PUZZLES = [
     rule:"Le son <b>[ʒ]</b> : j (jardin), <b>g</b> devant e, i, y (gibier, plage), <b>ge</b> devant a, o, u (bourgeon, nageoire)." },
 
   { id:"p113", cat:"sons", lvl:5, t:"type", title:"Le ménage",
+    audio:"audio/p113.mp3", say:"balai",
     story:"Le majordome nettoie la scène du crime.",
     q:"Écris le nom (5 lettres) de l'objet à long manche qui sert à nettoyer le sol.",
     sentence:"Le majordome passe le ___.",

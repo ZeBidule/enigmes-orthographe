@@ -267,6 +267,17 @@ t("ancienne sauvegarde (positions 0..49) convertie en identifiants", () => {
   assert.deepStrictEqual(G.importSave(old, IDS, ITEMS).solved, ["p01", "p02", "p03"]);
 });
 
+t("énigmes dictée : mp3 présent, mot dicté = une réponse acceptée, bouton 🔊", () => {
+  const fs = require("fs"), path = require("path");
+  const D = ALL_PUZZLES.filter(p => p.audio);
+  assert.ok(D.length >= 10);
+  D.forEach(p => {
+    assert.strictEqual(p.t, "type", p.id);
+    assert.ok(fs.statSync(path.join(__dirname, "..", p.audio)).size > 1000, p.id + " mp3");
+    assert.ok(p.answers.includes(p.say), p.id + " say");
+  });
+});
+
 t("mode test : la solution fournie valide chacune des 100 énigmes", () => {
   PUZZLES.forEach((p, i) => assert.ok(G.checkAnswer(p, G.solutionFor(p)), "#" + (i + 1)));
   assert.strictEqual(G.TEST_PASSWORD, "tes1");

@@ -259,7 +259,7 @@ if (typeof document !== "undefined") (function(){
 
   function render(){
     const p = cur;
-    let body = "", q = p.q;
+    let body = "", q = p.q, listen = "";
     if (p.t === "find"){
       const nb = tokens(p).filter(t => t.fix).length;
       q = q || `Touche les ${nb} mots mal orthographiés, puis valide.`;
@@ -272,6 +272,10 @@ if (typeof document !== "undefined") (function(){
         ? `<span class="blank ${active === k ? "active" : ""}" onclick="G.pick(${k})">${ans[k] ? esc(ans[k]) : "?"}</span>` : "")).join("")}</div>
         <div class="choices">${p.blanks[active].o.map((o, k) => `<button class="gold" onclick="G.choose(${k})">${esc(o)}</button>`).join("")}</div>`;
     } else {
+      if (p.audio){
+        q = "Écoute le mot, puis écris-le.";
+        listen = `<div class="center"><button class="gold listen" onclick="G.play()" aria-label="Écouter le mot" title="Écouter le mot">🔊</button></div>`;
+      }
       body = `<div class="letter">${esc(p.sentence).replace("___", '<span class="blank">?</span>')}</div>
         <input class="answer" id="answer" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
           placeholder="Tape ta réponse ici" value="${esc(ans)}" oninput="G.typed(this.value)" onkeydown="if(event.key==='Enter')G.submit()">
@@ -284,7 +288,7 @@ if (typeof document !== "undefined") (function(){
       <div class="meta">Récompense : <b>${value}</b> écus · Difficulté ${"★".repeat(p.lvl)}${"☆".repeat(5 - p.lvl)}</div>
       <div class="story">${drawPortrait(save.equipped)}<span>${p.story}</span></div>
       <p><b>${q}</b></p>
-      ${body}${hints}
+      ${listen}${body}${hints}
       <div class="bar">
         <button class="alt" onclick="G.home()">⟵ Maison</button>
         <button class="alt" onclick="G.hint()" ${hintsShown >= p.hints.length ? "disabled" : ""}>💡 Indice (${HINT_COST} écus)</button>
@@ -370,6 +374,7 @@ if (typeof document !== "undefined") (function(){
     pick: k => { active = k; render(); },
     choose: k => { ans[active] = cur.blanks[active].o[k]; const n = ans.findIndex(v => v === null); if (n >= 0) active = n; render(); },
     typed: v => { ans = v; },
+    play: () => { if (cur.audio) new Audio(cur.audio).play().catch(() => {}); },
     addChar: c => { const el = document.getElementById("answer"); ans = el.value + c; el.value = ans; el.focus(); },
     close: () => document.querySelector(".overlay")?.remove(),
     reset: () => { if (confirm("Effacer toute la progression ?")){ localStorage.removeItem(SAVE_KEY); location.reload(); } }
